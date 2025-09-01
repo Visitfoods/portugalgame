@@ -9,9 +9,9 @@
   <body class="bg-[#0b0f14] text-white min-h-screen">
     <div id="app" class="min-h-screen"></div>
 
-    <div id="stage" class="fixed inset-0">
+    <div id="stage" class="fixed inset-0 pointer-events-none">
       <!-- Video background for camera feed (shown during game) -->
-      <video id="camera" autoplay playsinline muted class="hidden absolute inset-0 w-full h-full object-cover transform -scale-x-100 z-[1]"></video>
+      <video id="camera" autoplay playsinline muted class="hidden absolute inset-0 w-full h-full object-cover transform -scale-x-100 z-[1] pointer-events-none"></video>
       <!-- Game canvas on top -->
       <canvas id="game" class="absolute inset-0 w-full h-full pointer-events-none z-[2]"></canvas>
     </div>
