@@ -1,82 +1,50 @@
 import type { Vec2 } from "../../utils/types";
 
-// MediaPipe FaceMesh integration (light wrapper)
-// Loads from CDN for the model files to keep bundle small
-
-type Results = {
-  multiFaceLandmarks?: { x: number; y: number; z: number }[][]
-}
+// MediaPipe Tasks Vision – Face Landmarker (modern API)
+// https://developers.google.com/mediapipe/solutions/vision/face_landmarker/web_js
 
 export class FaceTracker {
-  private faceMesh?: any;
+  private landmarker?: any;
   private active = false;
   private landmarks: Vec2[] | null = null; // normalized [0..1]
-  private onResultsBound = this.onResults.bind(this);
 
   async init(): Promise<void> {
-    // Try ESM import first
-    let FaceMeshCtor: any | null = null;
-    try {
-      const mod: any = await import('@mediapipe/face_mesh');
-      FaceMeshCtor = mod?.FaceMesh ?? null;
-      if (typeof FaceMeshCtor !== 'function') throw new Error('FaceMesh export not found');
-    } catch {
-      // Fallback to UMD script from public and grab global
-      await loadScript('/mediapipe/face_mesh/face_mesh.js');
-      const ns = (window as any).FaceMesh;
-      FaceMeshCtor = ns && (ns.FaceMesh || ns);
-    }
-    const FACE_MESH = new FaceMeshCtor({
-      // Serve assets locally to avoid CDN/404/CORS issues on prod
-      locateFile: (file: string) => `/mediapipe/face_mesh/${file}`
+    const vision = await import('@mediapipe/tasks-vision');
+    const FilesetResolver = (vision as any).FilesetResolver;
+    const FaceLandmarker = (vision as any).FaceLandmarker;
+    const fileset = await FilesetResolver.forVisionTasks(
+      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.15/wasm'
+    );
+    this.landmarker = await FaceLandmarker.createFromOptions(fileset, {
+      baseOptions: {
+        modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
+        delegate: 'GPU',
+      },
+      outputFaceBlendshapes: false,
+      runningMode: 'VIDEO',
+      numFaces: 1
     });
-    FACE_MESH.setOptions({
-      maxNumFaces: 1,
-      selfieMode: true,
-      refineLandmarks: true,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5
-    });
-    FACE_MESH.onResults(this.onResultsBound);
-    this.faceMesh = FACE_MESH;
-  }
-
-  private onResults(results: Results) {
-    const lm = results.multiFaceLandmarks?.[0];
-    if (!lm) {
-      this.landmarks = null;
-      return;
-    }
-    // Store normalized [0..1] coords, flip X for selfie if needed (MediaPipe already returns mirrored with selfieMode)
-    this.landmarks = lm.map(p => ({ x: p.x, y: p.y }));
   }
 
   async start(video: HTMLVideoElement): Promise<void> {
-    if (!this.faceMesh) await this.init();
+    if (!this.landmarker) await this.init();
     this.active = true;
-    const loop = async () => {
+    const loop = () => {
       if (!this.active) return;
-      await this.faceMesh!.send({ image: video });
-      // Throttle to ~20fps processing
+      const ts = performance.now();
+      const res = this.landmarker!.detectForVideo(video, ts);
+      const lm = res?.faceLandmarks?.[0];
+      if (lm && lm.length) {
+        this.landmarks = lm.map((p: any) => ({ x: p.x, y: p.y }));
+      } else {
+        this.landmarks = null;
+      }
+      // Throttle tracking to ~20 fps for perf
       setTimeout(loop, 50);
     };
     loop();
   }
 
-  stop(): void {
-    this.active = false;
-  }
-
+  stop(): void { this.active = false; }
   getLandmarks(): Vec2[] | null { return this.landmarks; }
-}
-
-function loadScript(src: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = src;
-    s.async = true;
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error(`Failed to load ${src}`));
-    document.head.appendChild(s);
-  });
 }

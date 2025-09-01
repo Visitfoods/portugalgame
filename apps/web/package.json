@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@mediapipe/face_mesh": "0.4.1633559619",
+    "@mediapipe/tasks-vision": "^0.10.15",
     "dayjs": "^1.11.11",
     "gsap": "^3.12.5",
     "mitt": "^3.0.1",
