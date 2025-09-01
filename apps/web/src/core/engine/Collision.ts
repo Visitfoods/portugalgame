@@ -5,9 +5,14 @@ export function collidesMouth(mouth: Vec2, obj: Vec2, mouthRadiusPx = 28): boole
   return dist(mouth, obj) <= mouthRadiusPx;
 }
 
-export function pointInEllipse(x: number, y: number, cx: number, cy: number, rx: number, ry: number): boolean {
+export function pointInRotEllipse(x: number, y: number, cx: number, cy: number, rx: number, ry: number, rot: number): boolean {
   if (rx <= 0 || ry <= 0) return false;
-  const dx = (x - cx) / rx;
-  const dy = (y - cy) / ry;
-  return (dx * dx + dy * dy) <= 1;
+  const cos = Math.cos(-rot), sin = Math.sin(-rot);
+  const dx = x - cx, dy = y - cy;
+  // rotate point into ellipse frame
+  const rxp = dx * cos - dy * sin;
+  const ryp = dx * sin + dy * cos;
+  const nx = rxp / rx;
+  const ny = ryp / ry;
+  return (nx * nx + ny * ny) <= 1;
 }

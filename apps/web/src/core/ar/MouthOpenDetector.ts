@@ -66,9 +66,11 @@ export class MouthOpenDetector {
     const cy = ((ul.y + ll.y) * 0.5) * heightPx;
     const widthNorm = dist(ml, mr); // normalized [0..1] width between mouth corners
     const openNorm = dist(ul, ll);  // normalized height between inner lips
-    // Convert to px and apply scale factors to approximate inner mouth opening (smaller than corner-to-corner)
-    const rx = Math.max(6, (widthNorm * widthPx) * 0.22);
-    const ry = Math.max(4, (openNorm * heightPx) * 0.60);
+    // Full opening: rx ~ half of corner-to-corner width; ry ~ half of vertical opening
+    const rx = Math.max(6, (widthNorm * widthPx) * 0.5);
+    const ry = Math.max(4, (openNorm * heightPx) * 0.5);
+    // rotation of the mouth line (ml -> mr)
+    const rot = Math.atan2((mr.y - ml.y), (mr.x - ml.x));
     // Simple smoothing
     const prev = this.lastEllipse;
     const k = 0.6; // heavier weight on new value for responsiveness
@@ -77,7 +79,8 @@ export class MouthOpenDetector {
       cy: prev.cy + (cy - prev.cy) * k,
       rx: prev.rx + (rx - prev.rx) * k,
       ry: prev.ry + (ry - prev.ry) * k,
-    } : { cx, cy, rx, ry };
+      rot: prev.rot + (rot - prev.rot) * k,
+    } : { cx, cy, rx, ry, rot };
     this.lastEllipse = next;
     return next;
   }

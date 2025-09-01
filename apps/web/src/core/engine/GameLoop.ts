@@ -1,6 +1,6 @@
 import type { GameState, SpawnedItem, MouthEllipse } from "../../utils/types";
 import type { Vec2 } from "../../utils/types";
-import { collidesMouth, pointInEllipse } from "./Collision";
+import { collidesMouth, pointInRotEllipse } from "./Collision";
 import { Spawner } from "./Spawner";
 import { Score, Timer60s } from "./Score";
 import { nowSec } from "../../utils/math";
@@ -27,7 +27,7 @@ export class GameLoop {
   private req = 0;
   private mouthPos: Vec2 = { x: 0, y: 0 };
   private mouthOpen = false;
-  private mouthEllipse: MouthEllipse = { cx: 0, cy: 0, rx: 10, ry: 6 };
+  private mouthEllipse: MouthEllipse = { cx: 0, cy: 0, rx: 10, ry: 6, rot: 0 };
 
   constructor(canvas: HTMLCanvasElement, hud: GameHUD) {
     this.canvas = canvas;
@@ -108,7 +108,7 @@ export class GameLoop {
       }
       // Collision decision uses pre-splice local vars
       const hitCircle = collidesMouth(this.mouthPos, { x: newX, y: newY }, 28);
-      const hitEllipse = pointInEllipse(newX, newY, this.mouthEllipse.cx, this.mouthEllipse.cy, this.mouthEllipse.rx, this.mouthEllipse.ry);
+      const hitEllipse = pointInRotEllipse(newX, newY, this.mouthEllipse.cx, this.mouthEllipse.cy, this.mouthEllipse.rx, this.mouthEllipse.ry, this.mouthEllipse.rot);
       const hit = this.mouthOpen && (hitEllipse || hitCircle);
       if (hit) {
         const kind = o.kind;
@@ -157,12 +157,12 @@ export class GameLoop {
     ctx.arc(this.mouthPos.x, this.mouthPos.y, 3, 0, Math.PI*2);
     ctx.fill();
 
-    // mouth capture ellipse mask
+    // mouth capture ellipse mask (rotated)
     ctx.save();
     ctx.globalAlpha = this.mouthOpen ? 0.18 : 0.10;
     ctx.fillStyle = this.mouthOpen ? '#22c55e' : '#ef4444';
     ctx.beginPath();
-    ctx.ellipse(this.mouthEllipse.cx, this.mouthEllipse.cy, this.mouthEllipse.rx, this.mouthEllipse.ry, 0, 0, Math.PI*2);
+    ctx.ellipse(this.mouthEllipse.cx, this.mouthEllipse.cy, this.mouthEllipse.rx, this.mouthEllipse.ry, this.mouthEllipse.rot, 0, Math.PI*2);
     ctx.fill();
     ctx.globalAlpha = 0.8;
     ctx.lineWidth = 2;

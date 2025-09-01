@@ -17,4 +17,5 @@ export interface MouthEllipse {
   cy: number; // px
   rx: number; // px (horizontal radius)
   ry: number; // px (vertical radius)
+  rot: number; // radians, rotation of major axis (mouth corner line)
 }
