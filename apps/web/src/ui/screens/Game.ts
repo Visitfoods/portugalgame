@@ -122,42 +122,16 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
         mouth.update(null);
       }
       hud.setMouth(open);
-      // penalties: INVERT controls — reflect mouth position and ellipse
-      const _win2 = window as any;
-      const hasP = _win2.__penalty?.has?.bind(_win2.__penalty);
-      if (hasP && _win2.__penalty.has('INVERT')) {
-        pos = { x: canvas.width - pos.x, y: pos.y };
-        // update ellipse via current one from loop is tricky; just recompute
-        const ell = mouth.geometry(lm || null, canvas.width, canvas.height);
-        if (ell) {
-          ell.cx = canvas.width - ell.cx; ell.rot = -ell.rot;
-          loop.setMouthMask(ell, open);
-        }
-      }
+      // standby: sem INVERT controls
       loop.setMouth(pos, open);
       // anti-cheat mouth trigger
       const t = performance.now();
       const firedAt = mouthTrigger(t, open);
       if (firedAt) loop.registerMouthTrigger(firedAt);
-      // update debuff badges (lazy import once)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const _win1 = window as any;
-      if (!_win1.__penalty) {
-        import('../../core/game/penalty').then(m => { _win1.__penalty = m.Penalty; hud.setDebuffs(m.Penalty.active); }).catch(()=>{});
-      } else {
-        hud.setDebuffs(_win1.__penalty.active);
-      }
-      // apply drunk filter to camera video when dizzy
-      const hasPenalty = _win2.__penalty?.has?.bind(_win2.__penalty);
-      const dizzy = hasPenalty && _win2.__penalty.has('DIZZY');
-      const invert = hasPenalty && _win2.__penalty.has('INVERT');
-      video.style.filter = dizzy ? 'blur(1.1px) saturate(0.7) hue-rotate(8deg) contrast(1.05)' : '';
-      // Flip camera image during INVERT to make world feel reversed
-      if (invert) video.classList.remove('-scale-x-100');
-      else video.classList.add('-scale-x-100');
-      // wave distortion for CURSE5X and/or DIZZY
-      const waveOn = hasPenalty && (_win2.__penalty.has('CURSE5X') || _win2.__penalty.has('DIZZY'));
-      if (waveOn) stage.classList.add('fx-wavy'); else stage.classList.remove('fx-wavy');
+      // standby: não mostrar badges nem filtros/efeitos visuais
+      video.style.filter = '';
+      video.classList.add('-scale-x-100');
+      stage.classList.remove('fx-wavy');
 
       if (!trackingActive) return;
       if (document.visibilityState === 'visible') requestAnimationFrame(step);

@@ -145,10 +145,10 @@ export class GameLoop {
       if (hit) {
         const kind = o.kind;
         this.items.splice(i, 1);
-        if (kind === 'good') { this.score.add(1); this.sfx.play('pop'); this.hitsThisFrame++; FX.onGoodCatch(); this.shake = Math.max(this.shake, 4); Penalty.onGood(); this.lastGoodAtMs = nowMs; }
+        if (kind === 'good') { this.score.add(1); this.sfx.play('pop'); this.hitsThisFrame++; FX.onGoodCatch(); /* shake disabled */ Penalty.onGood(); this.lastGoodAtMs = nowMs; }
         else {
-          const neg = Penalty.has('CURSE5X') ? -5 : -1;
-          this.score.add(neg); this.sfx.play('buzz'); this.missThisFrame++; FX.onBadCatch(); this.shake = Math.max(this.shake, 3);
+          const neg = -1; // standby: sem multiplicadores
+          this.score.add(neg); this.sfx.play('buzz'); this.missThisFrame++; FX.onBadCatch(); /* shake disabled */
           const res = Penalty.onBad(nowMs);
           if (res.timePenalty) this.timer.addMs(-res.timePenalty);
         }
@@ -161,12 +161,7 @@ export class GameLoop {
       o.pos.x = newX;
       o.pos.y = newY;
     }
-    // Curse trigger: if 5s sem bons -> 30s CURSE5X + 8s INVERT (controles ao contrário)
-    if ((nowMs - this.lastGoodAtMs) > 5000 && !Penalty.has('CURSE5X')) {
-      Penalty.add('CURSE5X', nowMs + 30000);
-      Penalty.add('INVERT', nowMs + 8000);
-      this.lastCurseAtMs = nowMs;
-    }
+    // standby: sem disparar CURSE/INVERT
 
     // DDA window (10s)
     this.hist.push({ t: nowMs, hit: this.hitsThisFrame, miss: this.missThisFrame });
@@ -189,33 +184,16 @@ export class GameLoop {
     ctx.clearRect(0, 0, W, H);
 
     // penalty FX state
-    const penaltyActive = Penalty.has('STUN') || Penalty.has('MOUTH_LAG') || Penalty.has('NARROW_WINDOW') || Penalty.has('LONG_COOLDOWN') || Penalty.has('DIZZY');
-    FX.setPenaltyActive(penaltyActive);
-    const dizzy = Penalty.has('DIZZY');
-    FX.setDizzy(dizzy);
-    FX.setSpeedLines(Penalty.has('WINDBURST'));
+    // standby: sem FX de penalização
+    const penaltyActive = false;
+    FX.setPenaltyActive(false);
+    const dizzy = false;
+    FX.setDizzy(false);
+    FX.setSpeedLines(false);
 
     // tiny screen shake
     // dizzy already computed above
-    if (this.shake > 0 || dizzy) {
-      const sx = (Math.random()*2-1) * this.shake;
-      const sy = (Math.random()*2-1) * this.shake;
-      ctx.save();
-      ctx.translate(sx, sy);
-      if (dizzy) {
-        const a = Math.sin(this.tAccum * 2.2) * 0.02; // ~1.1deg wobble
-        ctx.translate(W/2, H/2);
-        ctx.rotate(a);
-        const zoom = 1 + Math.sin(this.tAccum * 1.6) * 0.02;
-        ctx.scale(zoom, zoom);
-        ctx.translate(-W/2, -H/2);
-      }
-      this.drawWorld(ctx, W, H);
-      ctx.restore();
-      this.shake = Math.max(0, this.shake - 0.6);
-    } else {
-      this.drawWorld(ctx, W, H);
-    }
+    this.drawWorld(ctx, W, H);
 
     // overlays / post-process
     FX.draw(ctx, W, H, 16/1000);
