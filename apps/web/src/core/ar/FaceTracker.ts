@@ -14,19 +14,17 @@ export class FaceTracker {
   private onResultsBound = this.onResults.bind(this);
 
   async init(): Promise<void> {
-    // Dynamically import to avoid SSR/build issues
-    const mp = await import('@mediapipe/face_mesh');
-    const FaceMesh = (mp as any).FaceMesh;
+    // Dynamically import with named export to keep it in the bundle
+    const { FaceMesh } = await import('@mediapipe/face_mesh');
     const FACE_MESH = new FaceMesh({
-      locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+      locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/${file}`
     });
     FACE_MESH.setOptions({
       maxNumFaces: 1,
       selfieMode: true,
       refineLandmarks: true,
       minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5,
-      modelComplexity: 0
+      minTrackingConfidence: 0.5
     });
     FACE_MESH.onResults(this.onResultsBound);
     this.faceMesh = FACE_MESH;
@@ -60,4 +58,3 @@ export class FaceTracker {
 
   getLandmarks(): Vec2[] | null { return this.landmarks; }
 }
-
