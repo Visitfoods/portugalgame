@@ -4,6 +4,7 @@ export class HUD {
   private scoreEl: HTMLElement;
   private mouthEl: HTMLElement;
   private fxRoot: HTMLElement;
+  private badges: HTMLElement;
 
   constructor() {
     this.root = document.createElement('div');
@@ -14,7 +15,9 @@ export class HUD {
     this.timeEl.className = 'text-sm md:text-base bg-black/40 rounded px-3 py-2 backdrop-blur-sm';
     this.scoreEl.className = 'text-base md:text-2xl font-semibold bg-black/40 rounded px-4 py-2 backdrop-blur-sm';
     this.mouthEl.className = 'text-xs md:text-sm bg-black/30 rounded px-3 py-2 hidden md:block';
-    this.root.append(this.timeEl, this.mouthEl, this.scoreEl);
+    this.badges = document.createElement('div');
+    this.badges.className = 'flex gap-2';
+    this.root.append(this.timeEl, this.badges, this.scoreEl);
     document.body.appendChild(this.root);
 
     this.fxRoot = document.createElement('div');
@@ -58,6 +61,19 @@ export class HUD {
       el.style.opacity = '0';
     });
     setTimeout(() => el.remove(), 800);
+  }
+
+  setDebuffs(active: { type: string; until: number }[]) {
+    // Render simple chips with type and remaining seconds
+    const now = performance.now();
+    this.badges.innerHTML = '';
+    for (const d of active) {
+      const left = Math.max(0, Math.ceil((d.until - now)/1000));
+      const chip = document.createElement('div');
+      chip.className = 'px-2 py-1 rounded bg-black/40 text-xs';
+      chip.textContent = `${d.type}${left?` ${left}s`:''}`;
+      this.badges.appendChild(chip);
+    }
   }
 
   destroy() { this.root.remove(); this.fxRoot.remove(); }

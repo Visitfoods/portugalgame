@@ -7,6 +7,7 @@ import { nowSec } from "../../utils/math";
 import { Sfx } from "./Audio";
 import { getDiffAt } from "../game/difficulty";
 import { Penalty } from "../game/penalty";
+import { FX } from "../fx/FX";
 
 export interface GameHUD {
   onScoreUpdate(score: number): void;
@@ -37,6 +38,7 @@ export class GameLoop {
   private startMs = 0;
   private hitsThisFrame = 0;
   private missThisFrame = 0;
+  private shake = 0;
 
   constructor(canvas: HTMLCanvasElement, hud: GameHUD, sprites: ItemSprites) {
     this.canvas = canvas;
@@ -138,8 +140,8 @@ export class GameLoop {
       if (hit) {
         const kind = o.kind;
         this.items.splice(i, 1);
-        if (kind === 'good') { this.score.add(1); this.sfx.play('pop'); this.hitsThisFrame++; }
-        else { this.score.add(-1); this.sfx.play('buzz'); this.missThisFrame++; }
+        if (kind === 'good') { this.score.add(1); this.sfx.play('pop'); this.hitsThisFrame++; FX.onGoodCatch(); this.shake = Math.max(this.shake, 4); }
+        else { this.score.add(-1); this.sfx.play('buzz'); this.missThisFrame++; FX.onBadCatch(); this.shake = Math.max(this.shake, 3); }
         this.hud.onScoreUpdate(this.score.value);
         // popup effect in canvas coordinates
         this.hud.onPopup?.(newX, newY, kind === 'good' ? 1 : -1);
@@ -169,6 +171,29 @@ export class GameLoop {
     const W = this.canvas.width, H = this.canvas.height;
     ctx.clearRect(0, 0, W, H);
 
+    // penalty FX state
+    const penaltyActive = Penalty.has('STUN') || Penalty.has('MOUTH_LAG') || Penalty.has('NARROW_WINDOW') || Penalty.has('LONG_COOLDOWN');
+    FX.setPenaltyActive(penaltyActive);
+    FX.setSpeedLines(Penalty.has('WINDBURST'));
+
+    // tiny screen shake
+    if (this.shake > 0) {
+      const sx = (Math.random()*2-1) * this.shake;
+      const sy = (Math.random()*2-1) * this.shake;
+      ctx.save();
+      ctx.translate(sx, sy);
+      this.drawWorld(ctx, W, H);
+      ctx.restore();
+      this.shake = Math.max(0, this.shake - 0.6);
+    } else {
+      this.drawWorld(ctx, W, H);
+    }
+
+    // overlays / post-process
+    FX.draw(ctx, W, H, 16/1000);
+  }
+
+  private drawWorld(ctx: CanvasRenderingContext2D, W: number, H: number) {
     // subtle background grid for debug
     ctx.save();
     ctx.globalAlpha = 0.05;

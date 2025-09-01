@@ -126,6 +126,14 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       const t = performance.now();
       const firedAt = mouthTrigger(t, open);
       if (firedAt) loop.registerMouthTrigger(firedAt);
+      // update debuff badges (lazy import once)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const anyWin = window as any;
+      if (!anyWin.__penalty) {
+        import('../../core/game/penalty').then(m => { anyWin.__penalty = m.Penalty; hud.setDebuffs(m.Penalty.active); }).catch(()=>{});
+      } else {
+        hud.setDebuffs(anyWin.__penalty.active);
+      }
       if (!trackingActive) return;
       if (document.visibilityState === 'visible') requestAnimationFrame(step);
       else setTimeout(step, 250);
