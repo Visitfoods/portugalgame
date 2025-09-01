@@ -48,7 +48,8 @@ export function Game(onFinish: (score: number) => void) {
           video.classList.add('hidden');
           onFinish(loop.getScore());
         }
-      }
+      },
+      onPopup: (x, y, delta) => hud.popupCanvasPx(x, y, delta, canvas)
     });
     resize();
 

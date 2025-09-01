@@ -10,6 +10,7 @@ export interface GameHUD {
   onScoreUpdate(score: number): void;
   onTimeUpdate(secondsLeft: number): void;
   onStateChange(state: GameState): void;
+  onPopup?(x: number, y: number, delta: number): void;
 }
 
 export class GameLoop {
@@ -116,6 +117,8 @@ export class GameLoop {
         if (kind === 'good') { this.score.add(1); this.sfx.play('pop'); }
         else { this.score.add(-1); this.sfx.play('buzz'); }
         this.hud.onScoreUpdate(this.score.value);
+        // popup effect in canvas coordinates
+        this.hud.onPopup?.(newX, newY, kind === 'good' ? 1 : -1);
         continue;
       }
       // Commit motion after checks
