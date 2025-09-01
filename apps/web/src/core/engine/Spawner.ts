@@ -18,7 +18,7 @@ export class Spawner {
   resize(w: number, h: number) { this.w = w; this.h = h; }
 
   private scheduleNext() {
-    this.nextIn = rng(0.8, 1.2);
+    this.nextIn = rng(0.6, 1.1);
     this.acc = 0;
   }
 
@@ -28,16 +28,26 @@ export class Spawner {
       this.scheduleNext();
       const x = rng(24, this.w - 24);
       const y = -32; // above top
-      const speed = rng(80, 140); // px/s
-      const vx = rng(-20, 20);
+      const speed = rng(90, 160); // px/s
+      const vx = rng(-40, 40);
       // If there are no bad sprites yet, spawn only good
       const hasBad = this.sprites.bad.length > 0;
       const kind: ItemKind = (Math.random() < 0.75 || !hasBad) ? 'good' : 'bad';
-      const size = rngInt(48, 72);
-      const radius = Math.floor(size * 0.45);
+      const size = rngInt(96, 180);
+      const radius = Math.floor(size * 0.42);
       const pool = kind === 'good' ? this.sprites.good : this.sprites.bad;
       const img = pool.length ? pool[rngInt(0, pool.length - 1)] : undefined;
-      items.push({ id: NEXT_ID++, kind, pos: { x, y }, vel: { x: vx, y: speed }, radius, size, img });
+      items.push({
+        id: NEXT_ID++, kind,
+        pos: { x, y }, vel: { x: vx, y: speed },
+        radius, size, img,
+        baseX: x,
+        age: 0,
+        swayAmp: rng(10, 60),
+        swayFreq: rng(0.5, 1.5),
+        rot: rng(0, Math.PI * 2),
+        spin: rng(-1.2, 1.2)
+      });
     }
   }
 }

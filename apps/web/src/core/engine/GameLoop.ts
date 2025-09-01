@@ -99,9 +99,13 @@ export class GameLoop {
       const o = this.items[i];
       // Defensive guard (TS):
       if (!o) continue;
-      // Integrate motion first
-      const newX = o.pos.x + o.vel.x * dt;
+      // Integrate motion (with sway + spin)
+      o.age = (o.age ?? 0) + dt;
+      o.baseX = (o.baseX ?? o.pos.x) + o.vel.x * dt;
+      const sway = (o.swayAmp ?? 0) * Math.sin(2 * Math.PI * (o.swayFreq ?? 0) * (o.age ?? 0));
+      const newX = (o.baseX ?? o.pos.x) + sway;
       const newY = o.pos.y + o.vel.y * dt;
+      o.rot = (o.rot ?? 0) + (o.spin ?? 0) * dt;
       const outOfBounds = newY > H + 40 || newX < -40 || newX > W + 40;
       if (outOfBounds) {
         this.items.splice(i, 1);
@@ -144,7 +148,11 @@ export class GameLoop {
     for (const o of this.items) {
       if (o.img) {
         const s = o.size;
-        ctx.drawImage(o.img, o.pos.x - s/2, o.pos.y - s/2, s, s);
+        ctx.save();
+        ctx.translate(o.pos.x, o.pos.y);
+        ctx.rotate(o.rot ?? 0);
+        ctx.drawImage(o.img, -s/2, -s/2, s, s);
+        ctx.restore();
       } else {
         ctx.beginPath();
         ctx.fillStyle = o.kind === 'good' ? '#1c8aff' : '#ff8400';

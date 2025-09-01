@@ -12,6 +12,13 @@ export interface SpawnedItem {
   radius: number; // px (collision circle fallback)
   size: number;   // px (draw size for sprites)
   img?: HTMLImageElement; // optional sprite
+  // motion/anim
+  baseX?: number;      // for sway calculation
+  age?: number;        // seconds alive
+  swayAmp?: number;    // px
+  swayFreq?: number;   // Hz
+  rot?: number;        // radians
+  spin?: number;       // rad/s
 }
 
 export interface MouthEllipse {
