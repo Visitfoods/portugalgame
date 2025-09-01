@@ -4,6 +4,7 @@ import { FaceTracker } from "../../core/ar/FaceTracker";
 import { MouthOpenDetector } from "../../core/ar/MouthOpenDetector";
 import { GameLoop } from "../../core/engine/GameLoop";
 import { loadItemSprites } from "../../core/engine/Assets";
+import { mouthTrigger, resetMouthTrigger } from "../../core/game/mouthTrigger";
 import type { Vec2 } from "../../utils/types";
 
 export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
@@ -48,6 +49,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     video.classList.add('hidden');
     canvas.classList.add('hidden');
     try { loop?.stop(); } catch {}
+    resetMouthTrigger();
   };
 
   const start = async () => {
@@ -120,6 +122,10 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       }
       hud.setMouth(open);
       loop.setMouth(pos, open);
+      // anti-cheat mouth trigger
+      const t = performance.now();
+      const firedAt = mouthTrigger(t, open);
+      if (firedAt) loop.registerMouthTrigger(firedAt);
       if (!trackingActive) return;
       if (document.visibilityState === 'visible') requestAnimationFrame(step);
       else setTimeout(step, 250);

@@ -5,6 +5,8 @@ import { Spawner } from "./Spawner";
 import { Score, Timer60s } from "./Score";
 import { nowSec } from "../../utils/math";
 import { Sfx } from "./Audio";
+import { getDiffAt } from "../game/difficulty";
+import { Penalty } from "../game/penalty";
 
 export interface GameHUD {
   onScoreUpdate(score: number): void;
@@ -29,6 +31,12 @@ export class GameLoop {
   private mouthPos: Vec2 = { x: 0, y: 0 };
   private mouthOpen = false;
   private mouthEllipse: MouthEllipse = { cx: 0, cy: 0, rx: 10, ry: 6, rot: 0 };
+  private lastMouthTrigger = 0; // ms
+  private ddaBias = 0; // -0.2..0.2
+  private hist: { t: number; hit: number; miss: number }[] = [];
+  private startMs = 0;
+  private hitsThisFrame = 0;
+  private missThisFrame = 0;
 
   constructor(canvas: HTMLCanvasElement, hud: GameHUD, sprites: ItemSprites) {
     this.canvas = canvas;
@@ -65,6 +73,7 @@ export class GameLoop {
     this.timer.start(t);
     this.lastT = t;
     this.sfx.unlock();
+    this.startMs = performance.now();
     this.tick(t);
   }
 
@@ -95,7 +104,13 @@ export class GameLoop {
   }
 
   private update(dt: number) {
-    this.spawner.maybeSpawn(dt, this.items);
+    const nowMs = performance.now();
+    const elapsed = (nowMs - this.startMs) / 1000;
+    let diff = getDiffAt(elapsed, this.ddaBias);
+    diff = Penalty.applyToDiff(diff);
+    this.spawner.tick(nowMs, dt, this.items, diff);
+    this.hitsThisFrame = 0; this.missThisFrame = 0;
+    Penalty.update(nowMs);
     const W = this.canvas.width; const H = this.canvas.height;
     for (let i = this.items.length - 1; i >= 0; i--) {
       const o = this.items[i];
@@ -110,18 +125,20 @@ export class GameLoop {
       o.rot = (o.rot ?? 0) + (o.spin ?? 0) * dt;
       const outOfBounds = newY > H + 40 || newX < -40 || newX > W + 40;
       if (outOfBounds) {
-        this.items.splice(i, 1);
+        const removed = this.items.splice(i, 1)[0];
+        if (removed?.kind === 'good') this.missThisFrame++;
         continue;
       }
       // Collision decision uses pre-splice local vars
       const hitCircle = collidesMouth(this.mouthPos, { x: newX, y: newY }, 28);
       const hitEllipse = pointInRotEllipse(newX, newY, this.mouthEllipse.cx, this.mouthEllipse.cy, this.mouthEllipse.rx, this.mouthEllipse.ry, this.mouthEllipse.rot);
-      const hit = this.mouthOpen && (hitEllipse || hitCircle);
+      const withinTrigger = (nowMs - this.lastMouthTrigger) < Penalty.triggerWindowMs(250);
+      const hit = this.mouthOpen && (hitEllipse || hitCircle) && withinTrigger;
       if (hit) {
         const kind = o.kind;
         this.items.splice(i, 1);
-        if (kind === 'good') { this.score.add(1); this.sfx.play('pop'); }
-        else { this.score.add(-1); this.sfx.play('buzz'); }
+        if (kind === 'good') { this.score.add(1); this.sfx.play('pop'); this.hitsThisFrame++; }
+        else { this.score.add(-1); this.sfx.play('buzz'); this.missThisFrame++; }
         this.hud.onScoreUpdate(this.score.value);
         // popup effect in canvas coordinates
         this.hud.onPopup?.(newX, newY, kind === 'good' ? 1 : -1);
@@ -131,6 +148,19 @@ export class GameLoop {
       o.pos.x = newX;
       o.pos.y = newY;
     }
+    // DDA window (10s)
+    this.hist.push({ t: nowMs, hit: this.hitsThisFrame, miss: this.missThisFrame });
+    const windowMs = 10000;
+    while (this.hist.length > 0) {
+      const first = this.hist[0]!;
+      if (nowMs - first.t > windowMs) this.hist.shift(); else break;
+    }
+    const sumHits = this.hist.reduce((a, h) => a + h.hit, 0);
+    const sumAll  = this.hist.reduce((a, h) => a + h.hit + h.miss, 0);
+    const acc = sumAll ? sumHits / sumAll : 0.5;
+    if (acc > 0.75) this.ddaBias = Math.min(0.2, this.ddaBias + 0.02);
+    else if (acc < 0.40) this.ddaBias = Math.max(-0.2, this.ddaBias - 0.02);
+    else this.ddaBias *= 0.95;
   }
 
   private render() {
@@ -181,5 +211,9 @@ export class GameLoop {
     ctx.strokeStyle = this.mouthOpen ? '#22c55e' : '#ef4444';
     ctx.stroke();
     ctx.restore();
+  }
+
+  registerMouthTrigger(atMs: number) {
+    this.lastMouthTrigger = atMs;
   }
 }

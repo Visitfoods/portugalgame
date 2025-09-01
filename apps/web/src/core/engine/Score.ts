@@ -11,5 +11,6 @@ export class Timer60s {
   start(nowSec: number) { this.startAt = nowSec; }
   timeLeft(nowSec: number) { return Math.max(0, this.duration - (nowSec - this.startAt)); }
   done(nowSec: number) { return this.timeLeft(nowSec) <= 0; }
+  addSeconds(delta: number) { this.duration = Math.max(5, this.duration + delta); }
+  addMs(deltaMs: number) { this.addSeconds(deltaMs / 1000); }
 }
-
