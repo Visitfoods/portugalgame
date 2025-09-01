@@ -1,4 +1,4 @@
-import type { GameState, SpawnedItem, MouthEllipse } from "../../utils/types";
+import type { GameState, SpawnedItem, MouthEllipse, ItemSprites } from "../../utils/types";
 import type { Vec2 } from "../../utils/types";
 import { collidesMouth, pointInRotEllipse } from "./Collision";
 import { Spawner } from "./Spawner";
@@ -30,12 +30,12 @@ export class GameLoop {
   private mouthOpen = false;
   private mouthEllipse: MouthEllipse = { cx: 0, cy: 0, rx: 10, ry: 6, rot: 0 };
 
-  constructor(canvas: HTMLCanvasElement, hud: GameHUD) {
+  constructor(canvas: HTMLCanvasElement, hud: GameHUD, sprites: ItemSprites) {
     this.canvas = canvas;
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('Canvas 2D not supported');
     this.ctx = ctx;
-    this.spawner = new Spawner(canvas.width, canvas.height);
+    this.spawner = new Spawner(canvas.width, canvas.height, sprites);
     this.hud = hud;
   }
 
@@ -140,18 +140,17 @@ export class GameLoop {
     for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
     ctx.restore();
 
-    // items
+    // items (draw sprite if available)
     for (const o of this.items) {
-      ctx.beginPath();
-      ctx.fillStyle = o.kind === 'good' ? '#1c8aff' : '#ff8400';
-      ctx.arc(o.pos.x, o.pos.y, o.radius, 0, Math.PI * 2);
-      ctx.fill();
-      // marker
-      ctx.fillStyle = '#0b0f14';
-      ctx.font = `${Math.max(12, o.radius)}px Inter, system-ui`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(o.kind === 'good' ? '+1' : '-1', o.pos.x, o.pos.y);
+      if (o.img) {
+        const s = o.size;
+        ctx.drawImage(o.img, o.pos.x - s/2, o.pos.y - s/2, s, s);
+      } else {
+        ctx.beginPath();
+        ctx.fillStyle = o.kind === 'good' ? '#1c8aff' : '#ff8400';
+        ctx.arc(o.pos.x, o.pos.y, o.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
     // mouth debug point

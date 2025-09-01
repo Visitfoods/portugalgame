@@ -9,7 +9,9 @@ export interface SpawnedItem {
   kind: ItemKind;
   pos: Vec2; // in px (canvas coords)
   vel: Vec2; // px/s
-  radius: number; // px
+  radius: number; // px (collision circle fallback)
+  size: number;   // px (draw size for sprites)
+  img?: HTMLImageElement; // optional sprite
 }
 
 export interface MouthEllipse {
@@ -19,3 +21,5 @@ export interface MouthEllipse {
   ry: number; // px (vertical radius)
   rot: number; // radians, rotation of major axis (mouth corner line)
 }
+
+export type ItemSprites = { good: HTMLImageElement[]; bad: HTMLImageElement[] };

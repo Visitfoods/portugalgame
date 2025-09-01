@@ -3,6 +3,7 @@ import { CameraFeed } from "../../core/ar/CameraFeed";
 import { FaceTracker } from "../../core/ar/FaceTracker";
 import { MouthOpenDetector } from "../../core/ar/MouthOpenDetector";
 import { GameLoop } from "../../core/engine/GameLoop";
+import { loadItemSprites } from "../../core/engine/Assets";
 import type { Vec2 } from "../../utils/types";
 
 export function Game(onFinish: (score: number) => void) {
@@ -36,6 +37,9 @@ export function Game(onFinish: (score: number) => void) {
     video.classList.remove('hidden');
     video.classList.add('fixed','inset-0','w-full','h-full','object-cover','transform','-scale-x-100','z-[1]');
 
+    // Preload item sprites from manifest (gracefully handles empty arrays)
+    const sprites = await loadItemSprites();
+
     await feed.startFrontCamera();
     await tracker.start(video);
     loop = new GameLoop(canvas, {
@@ -50,7 +54,7 @@ export function Game(onFinish: (score: number) => void) {
         }
       },
       onPopup: (x, y, delta) => hud.popupCanvasPx(x, y, delta, canvas)
-    });
+    }, sprites);
     resize();
 
     // 3-2-1 countdown
