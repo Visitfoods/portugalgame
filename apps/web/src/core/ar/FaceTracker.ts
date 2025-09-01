@@ -32,11 +32,12 @@ export class FaceTracker {
     const loop = () => {
       if (!this.active) return;
       const ts = performance.now();
-      // Flip horizontally to match mirrored front-camera preview
-      const res = this.landmarker!.detectForVideo(video, ts, { flipHorizontal: true });
+      // Detect landmarks from the current video frame
+      const res = this.landmarker!.detectForVideo(video, ts);
       const lm = res?.faceLandmarks?.[0];
       if (lm && lm.length) {
-        this.landmarks = lm.map((p: any) => ({ x: p.x, y: p.y }));
+        // Mirror X to match the CSS-mirrored camera preview (-scale-x-100)
+        this.landmarks = lm.map((p: any) => ({ x: 1 - p.x, y: p.y }));
       } else {
         this.landmarks = null;
       }
