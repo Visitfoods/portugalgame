@@ -90,19 +90,29 @@ export class GameLoop {
     const W = this.canvas.width; const H = this.canvas.height;
     for (let i = this.items.length - 1; i >= 0; i--) {
       const o = this.items[i];
-      o.pos.x += o.vel.x * dt;
-      o.pos.y += o.vel.y * dt;
-      // bounds
-      if (o.pos.y > H + 40 || o.pos.x < -40 || o.pos.x > W + 40) {
+      // Defensive guard (TS):
+      if (!o) continue;
+      // Integrate motion first
+      const newX = o.pos.x + o.vel.x * dt;
+      const newY = o.pos.y + o.vel.y * dt;
+      const outOfBounds = newY > H + 40 || newX < -40 || newX > W + 40;
+      if (outOfBounds) {
         this.items.splice(i, 1);
         continue;
       }
-      if (collidesMouth(this.mouthPos, o.pos, 28) && this.mouthOpen) {
+      // Collision decision uses pre-splice local vars
+      const hit = this.mouthOpen && collidesMouth(this.mouthPos, { x: newX, y: newY }, 28);
+      if (hit) {
+        const kind = o.kind;
         this.items.splice(i, 1);
-        if (o.kind === 'good') { this.score.add(1); this.sfx.play('pop'); }
+        if (kind === 'good') { this.score.add(1); this.sfx.play('pop'); }
         else { this.score.add(-1); this.sfx.play('buzz'); }
         this.hud.onScoreUpdate(this.score.value);
+        continue;
       }
+      // Commit motion after checks
+      o.pos.x = newX;
+      o.pos.y = newY;
     }
   }
 
