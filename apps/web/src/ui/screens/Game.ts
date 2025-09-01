@@ -93,8 +93,10 @@ export function Game(onFinish: (score: number) => void) {
   };
 
   start().catch(err => {
-    console.error(err);
-    alert('Falha ao iniciar câmara/tracking. Verifica permissões e HTTPS.');
+    console.error('Start failed:', err);
+    const msg = (err && typeof err === 'object' && 'message' in (err as any)) ? (err as any).message : String(err);
+    const hint = location.protocol !== 'https:' ? ' Abre com HTTPS.' : '';
+    alert(`Falha ao iniciar câmara/tracking. ${msg || ''}${hint}`);
   });
 
   return el;

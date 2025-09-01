@@ -17,7 +17,8 @@ export class FaceTracker {
     // Dynamically import with named export to keep it in the bundle
     const { FaceMesh } = await import('@mediapipe/face_mesh');
     const FACE_MESH = new FaceMesh({
-      locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/${file}`
+      // Serve assets locally to avoid CDN/404/CORS issues on prod
+      locateFile: (file: string) => `/mediapipe/face_mesh/${file}`
     });
     FACE_MESH.setOptions({
       maxNumFaces: 1,

@@ -13,8 +13,18 @@ export function Permissions(onAllow: () => void, onBack: () => void) {
       <div class="text-xs text-white/60 mt-4">Usamos apenas a câmara frontal para detetar o rosto. Não guardamos dados no servidor.</div>
     </div>
   `;
-  el.querySelector<HTMLButtonElement>('#allow')!.onclick = () => onAllow();
+  el.querySelector<HTMLButtonElement>('#allow')!.onclick = async () => {
+    try {
+      // Pre-request camera on explicit user gesture to satisfy iOS
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+      // Immediately stop tracks; game screen will re-open it
+      stream.getTracks().forEach(t => t.stop());
+      onAllow();
+    } catch (e) {
+      console.error('Camera permission error:', e);
+      alert('Não foi possível aceder à câmara. Verifica permissões do browser.');
+    }
+  };
   el.querySelector<HTMLButtonElement>('#back')!.onclick = () => onBack();
   return el;
 }
-
