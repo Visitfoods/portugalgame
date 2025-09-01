@@ -180,10 +180,12 @@ export class GameLoop {
     // penalty FX state
     const penaltyActive = Penalty.has('STUN') || Penalty.has('MOUTH_LAG') || Penalty.has('NARROW_WINDOW') || Penalty.has('LONG_COOLDOWN') || Penalty.has('DIZZY');
     FX.setPenaltyActive(penaltyActive);
+    const dizzy = Penalty.has('DIZZY');
+    FX.setDizzy(dizzy);
     FX.setSpeedLines(Penalty.has('WINDBURST'));
 
     // tiny screen shake
-    const dizzy = Penalty.has('DIZZY');
+    // dizzy already computed above
     if (this.shake > 0 || dizzy) {
       const sx = (Math.random()*2-1) * this.shake;
       const sy = (Math.random()*2-1) * this.shake;
@@ -224,6 +226,15 @@ export class GameLoop {
         ctx.save();
         ctx.translate(o.pos.x, o.pos.y);
         ctx.rotate(o.rot ?? 0);
+        // ghost double-vision when dizzy
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const anyFX: any = FX as any;
+        if (anyFX._dizzy) {
+          ctx.globalAlpha = 0.18;
+          ctx.drawImage(o.img, -s/2 + 3, -s/2, s, s);
+          ctx.drawImage(o.img, -s/2 - 3, -s/2, s, s);
+          ctx.globalAlpha = 1;
+        }
         ctx.drawImage(o.img, -s/2, -s/2, s, s);
         ctx.restore();
       } else {

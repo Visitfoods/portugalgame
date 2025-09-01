@@ -15,6 +15,8 @@ const st: FXState = {
 };
 
 export const FX = {
+  _dizzy: false,
+  setDizzy(on: boolean){ this._dizzy = on; },
   onGoodCatch() {
     st.flashA = Math.min(0.18, st.flashA + 0.14);
     st.flashColor = '#ffffff';
@@ -80,6 +82,24 @@ export const FX = {
       ctx.globalAlpha = 0.08 * Math.min(1, st.badKernT * 4);
       ctx.fillStyle = '#ff2222';
       ctx.fillRect(0,0,W,H);
+      ctx.restore();
+    }
+
+    // DIZZY global blur + chromatic split
+    if (this._dizzy) {
+      ctx.save();
+      ctx.globalAlpha = 0.18;
+      ctx.filter = 'blur(1.2px)';
+      ctx.drawImage(ctx.canvas, 0, 0);
+      ctx.restore();
+      // CA
+      ctx.save();
+      ctx.globalCompositeOperation='lighter';
+      ctx.globalAlpha=0.18;
+      const dx = 2, dy = 1.4;
+      ctx.drawImage(ctx.canvas, dx, 0, W, H, 0, 0, W, H);
+      ctx.drawImage(ctx.canvas, -dx, 0, W, H, 0, 0, W, H);
+      ctx.drawImage(ctx.canvas, 0, dy, W, H, 0, 0, W, H);
       ctx.restore();
     }
 

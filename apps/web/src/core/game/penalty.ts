@@ -70,9 +70,13 @@ export const Penalty = {
   triggerWindowMs(base=350): number { return this.has('NARROW_WINDOW') ? Math.max(150, base - 150) : base; },
   cooldownMs(base=380): number { return this.has('LONG_COOLDOWN') ? base*2 : base; },
 
-  applyToDiff<T extends { drift:number; spawnMs:[number,number] }>(diff: T): T {
+  applyToDiff<T extends { drift:number; spawnMs:[number,number]; scale?: number }>(diff: T): T {
     if (this.has('WINDBURST')) {
       diff = { ...diff, drift: diff.drift * 1.8, spawnMs: [diff.spawnMs[0]*0.9, diff.spawnMs[1]*0.9] } as T;
+    }
+    if (this.has('DIZZY')) {
+      const scale = (diff as any).scale ?? 1;
+      diff = { ...(diff as any), drift: diff.drift * 2.2, scale: scale * 0.9 } as T;
     }
     return diff;
   }
