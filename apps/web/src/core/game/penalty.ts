@@ -1,4 +1,4 @@
-export type Debuff = 'STUN'|'MOUTH_LAG'|'NARROW_WINDOW'|'LONG_COOLDOWN'|'WINDBURST';
+export type Debuff = 'STUN'|'MOUTH_LAG'|'NARROW_WINDOW'|'LONG_COOLDOWN'|'WINDBURST'|'DIZZY';
 type ActiveDebuff = { type: Debuff; until: number };
 
 export const Penalty = {
@@ -7,6 +7,7 @@ export const Penalty = {
   history: [] as number[],
   active: [] as ActiveDebuff[],
   timePenaltyUsed: false,
+  consecBad: 0,
 
   addStrike(now: number) {
     this.strikes++;
@@ -34,6 +35,16 @@ export const Penalty = {
     }
     return { timePenalty: 0 };
   },
+
+  onBad(now: number) {
+    this.consecBad++;
+    const res = this.addStrike(now);
+    // 2 erros seguidos => DIZZY 15s
+    if (this.consecBad >= 2) this.add('DIZZY', now + 15000);
+    return res;
+  },
+
+  onGood() { this.consecBad = 0; },
 
   decay(now: number) {
     if (this.strikes > 0 && now - this.lastBadAt > 3000) {

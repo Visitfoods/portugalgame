@@ -39,6 +39,7 @@ export class GameLoop {
   private hitsThisFrame = 0;
   private missThisFrame = 0;
   private shake = 0;
+  private tAccum = 0;
 
   constructor(canvas: HTMLCanvasElement, hud: GameHUD, sprites: ItemSprites) {
     this.canvas = canvas;
@@ -93,6 +94,7 @@ export class GameLoop {
     const now = nowSec();
     const dt = Math.min(0.05, now - this.lastT);
     this.lastT = now;
+    this.tAccum += dt;
 
     if (this.state === 'running') {
       this.update(dt);
@@ -128,7 +130,7 @@ export class GameLoop {
       const outOfBounds = newY > H + 40 || newX < -40 || newX > W + 40;
       if (outOfBounds) {
         const removed = this.items.splice(i, 1)[0];
-        if (removed?.kind === 'good') this.missThisFrame++;
+        if (removed?.kind === 'good') { this.missThisFrame++; Penalty.onBad(nowMs); }
         continue;
       }
       // Collision decision uses pre-splice local vars
@@ -140,8 +142,12 @@ export class GameLoop {
       if (hit) {
         const kind = o.kind;
         this.items.splice(i, 1);
-        if (kind === 'good') { this.score.add(1); this.sfx.play('pop'); this.hitsThisFrame++; FX.onGoodCatch(); this.shake = Math.max(this.shake, 4); }
-        else { this.score.add(-1); this.sfx.play('buzz'); this.missThisFrame++; FX.onBadCatch(); this.shake = Math.max(this.shake, 3); }
+        if (kind === 'good') { this.score.add(1); this.sfx.play('pop'); this.hitsThisFrame++; FX.onGoodCatch(); this.shake = Math.max(this.shake, 4); Penalty.onGood(); }
+        else {
+          this.score.add(-1); this.sfx.play('buzz'); this.missThisFrame++; FX.onBadCatch(); this.shake = Math.max(this.shake, 3);
+          const res = Penalty.onBad(nowMs);
+          if (res.timePenalty) this.timer.addMs(-res.timePenalty);
+        }
         this.hud.onScoreUpdate(this.score.value);
         // popup effect in canvas coordinates
         this.hud.onPopup?.(newX, newY, kind === 'good' ? 1 : -1);
@@ -172,16 +178,25 @@ export class GameLoop {
     ctx.clearRect(0, 0, W, H);
 
     // penalty FX state
-    const penaltyActive = Penalty.has('STUN') || Penalty.has('MOUTH_LAG') || Penalty.has('NARROW_WINDOW') || Penalty.has('LONG_COOLDOWN');
+    const penaltyActive = Penalty.has('STUN') || Penalty.has('MOUTH_LAG') || Penalty.has('NARROW_WINDOW') || Penalty.has('LONG_COOLDOWN') || Penalty.has('DIZZY');
     FX.setPenaltyActive(penaltyActive);
     FX.setSpeedLines(Penalty.has('WINDBURST'));
 
     // tiny screen shake
-    if (this.shake > 0) {
+    const dizzy = Penalty.has('DIZZY');
+    if (this.shake > 0 || dizzy) {
       const sx = (Math.random()*2-1) * this.shake;
       const sy = (Math.random()*2-1) * this.shake;
       ctx.save();
       ctx.translate(sx, sy);
+      if (dizzy) {
+        const a = Math.sin(this.tAccum * 2.2) * 0.02; // ~1.1deg wobble
+        ctx.translate(W/2, H/2);
+        ctx.rotate(a);
+        const zoom = 1 + Math.sin(this.tAccum * 1.6) * 0.02;
+        ctx.scale(zoom, zoom);
+        ctx.translate(-W/2, -H/2);
+      }
       this.drawWorld(ctx, W, H);
       ctx.restore();
       this.shake = Math.max(0, this.shake - 0.6);
