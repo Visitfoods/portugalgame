@@ -37,8 +37,11 @@ export function Game(onFinish: (score: number) => void) {
     video.classList.remove('hidden');
     video.classList.add('fixed','inset-0','w-full','h-full','object-cover','transform','-scale-x-100','z-[1]');
 
-    // Preload item sprites from manifest (gracefully handles empty arrays)
-    const sprites = await loadItemSprites();
+    // Preload item sprites from manifest and warm up face landmarker in parallel
+    const [sprites] = await Promise.all([
+      loadItemSprites(),
+      tracker.init().catch(()=>{})
+    ]);
 
     await feed.startFrontCamera();
     await tracker.start(video);

@@ -32,7 +32,8 @@ export class FaceTracker {
     const loop = () => {
       if (!this.active) return;
       const ts = performance.now();
-      const res = this.landmarker!.detectForVideo(video, ts);
+      // Flip horizontally to match mirrored front-camera preview
+      const res = this.landmarker!.detectForVideo(video, ts, { flipHorizontal: true });
       const lm = res?.faceLandmarks?.[0];
       if (lm && lm.length) {
         this.landmarks = lm.map((p: any) => ({ x: p.x, y: p.y }));
