@@ -5,5 +5,10 @@
     "/assets/items/good/Sardinha-icon.webp",
     "/assets/items/good/GuitarraPortuguesa-icon.webp"
   ],
-  "bad": []
+  "bad": [
+    "/assets/items/bad/hamburguer-icon.webp",
+    "/assets/items/bad/pizza-icon.webp",
+    "/assets/items/bad/burrito-icon.webp",
+    "/assets/items/bad/sushi-icon.webp"
+  ]
 }
