@@ -19,3 +19,17 @@ Limitações
 - Sem backend (formulário apenas valida e faz `console.log`).
 - Necessário HTTPS em dispositivos reais para acesso à câmara.
 
+Assets (ícones dos objetos)
+
+- Coloque as imagens dos objetos em:
+  - `apps/web/public/assets/items/good/` — itens “portugueses” (valem +1)
+  - `apps/web/public/assets/items/bad/`  — itens “falsos” (valem −1)
+- Formatos: SVG preferível (ou PNG @2x). Tamanho sugerido: 96–128px.
+- Nomeação: kebab-case, p.ex. `galo.svg`, `guitarra.svg`, `pizza.svg`.
+- Referência no código: a partir da raiz do site, p.ex. `/assets/items/good/galo.svg`.
+
+Sugestão futura
+
+- Criar `apps/web/src/assets/items.manifest.ts` para listar os ficheiros disponíveis e pesos de spawn.
+- Trocar o render atual (círculos) por sprites carregados com `HTMLImageElement` e `drawImage` no `GameLoop`.
+
