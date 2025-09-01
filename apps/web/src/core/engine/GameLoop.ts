@@ -67,6 +67,8 @@ export class GameLoop {
     cancelAnimationFrame(this.req);
   }
 
+  getScore(): number { return this.score.value; }
+
   private tick = (t: number) => {
     const now = nowSec();
     const dt = Math.min(0.05, now - this.lastT);
@@ -138,4 +140,3 @@ export class GameLoop {
     ctx.fill();
   }
 }
-

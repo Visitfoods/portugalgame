@@ -39,8 +39,7 @@ export function Game(onFinish: (score: number) => void) {
       onTimeUpdate: (t) => hud.setTimeLeft(t),
       onStateChange: (state) => {
         if (state === 'finished') {
-          // score is tracked inside loop; we keep HUD only
-          const scoreText = hud ? (document.querySelector('.hud-score')?.textContent ?? '') : '';
+          onFinish(loop.getScore());
         }
       }
     });
@@ -97,4 +96,3 @@ export function Game(onFinish: (score: number) => void) {
 
   return el;
 }
-
