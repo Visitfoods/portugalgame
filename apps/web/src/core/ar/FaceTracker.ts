@@ -14,9 +14,19 @@ export class FaceTracker {
   private onResultsBound = this.onResults.bind(this);
 
   async init(): Promise<void> {
-    // Dynamically import with named export to keep it in the bundle
-    const { FaceMesh } = await import('@mediapipe/face_mesh');
-    const FACE_MESH = new FaceMesh({
+    // Try ESM import first
+    let FaceMeshCtor: any | null = null;
+    try {
+      const mod: any = await import('@mediapipe/face_mesh');
+      FaceMeshCtor = mod?.FaceMesh ?? null;
+      if (typeof FaceMeshCtor !== 'function') throw new Error('FaceMesh export not found');
+    } catch {
+      // Fallback to UMD script from public and grab global
+      await loadScript('/mediapipe/face_mesh/face_mesh.js');
+      const ns = (window as any).FaceMesh;
+      FaceMeshCtor = ns && (ns.FaceMesh || ns);
+    }
+    const FACE_MESH = new FaceMeshCtor({
       // Serve assets locally to avoid CDN/404/CORS issues on prod
       locateFile: (file: string) => `/mediapipe/face_mesh/${file}`
     });
@@ -58,4 +68,15 @@ export class FaceTracker {
   }
 
   getLandmarks(): Vec2[] | null { return this.landmarks; }
+}
+
+function loadScript(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.async = true;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error(`Failed to load ${src}`));
+    document.head.appendChild(s);
+  });
 }

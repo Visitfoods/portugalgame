@@ -7,8 +7,11 @@ const require = createRequire(import.meta.url)
 const entry = require.resolve('@mediapipe/face_mesh')
 const pkgDir = dirname(entry)
 
-const root = resolve(fileURLToPath(import.meta.url), '../../..')
-const outDir = join(root, 'public', 'mediapipe', 'face_mesh')
+// Script location: apps/web/scripts/copy-mp-assets.mjs
+// Target public dir: apps/web/public/mediapipe/face_mesh
+const here = dirname(fileURLToPath(import.meta.url))
+const webRoot = resolve(here, '..')
+const outDir = join(webRoot, 'public', 'mediapipe', 'face_mesh')
 
 if (existsSync(outDir)) rmSync(outDir, { recursive: true, force: true })
 mkdirSync(outDir, { recursive: true })
@@ -17,4 +20,3 @@ mkdirSync(outDir, { recursive: true })
 cpSync(pkgDir, outDir, { recursive: true })
 
 console.log('[copy-mp-assets] Copied MediaPipe FaceMesh assets to', outDir)
-
