@@ -150,7 +150,11 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       // apply drunk filter to camera video when dizzy
       const hasPenalty = _win2.__penalty?.has?.bind(_win2.__penalty);
       const dizzy = hasPenalty && _win2.__penalty.has('DIZZY');
+      const invert = hasPenalty && _win2.__penalty.has('INVERT');
       video.style.filter = dizzy ? 'blur(1.1px) saturate(0.7) hue-rotate(8deg) contrast(1.05)' : '';
+      // Flip camera image during INVERT to make world feel reversed
+      if (invert) video.classList.remove('-scale-x-100');
+      else video.classList.add('-scale-x-100');
       // wave distortion for CURSE5X and/or DIZZY
       const waveOn = hasPenalty && (_win2.__penalty.has('CURSE5X') || _win2.__penalty.has('DIZZY'));
       if (waveOn) stage.classList.add('fx-wavy'); else stage.classList.remove('fx-wavy');
