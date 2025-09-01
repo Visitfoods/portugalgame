@@ -32,6 +32,10 @@ export function Game(onFinish: (score: number) => void) {
   window.addEventListener('resize', resize);
 
   const start = async () => {
+    // Show camera background
+    video.classList.remove('hidden');
+    video.classList.add('fixed','inset-0','w-full','h-full','object-cover','transform','-scale-x-100','z-[1]');
+
     await feed.startFrontCamera();
     await tracker.start(video);
     loop = new GameLoop(canvas, {
@@ -39,6 +43,9 @@ export function Game(onFinish: (score: number) => void) {
       onTimeUpdate: (t) => hud.setTimeLeft(t),
       onStateChange: (state) => {
         if (state === 'finished') {
+          // Hide camera and stop stream on finish
+          try { feed.stop(); } catch {}
+          video.classList.add('hidden');
           onFinish(loop.getScore());
         }
       }
