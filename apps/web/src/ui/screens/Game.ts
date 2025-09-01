@@ -20,6 +20,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
 
   const video = document.getElementById('camera') as HTMLVideoElement;
   const canvas = document.getElementById('game') as HTMLCanvasElement;
+  const stage = document.getElementById('stage') as HTMLDivElement;
   const hud = new HUD();
   const feed = new CameraFeed(video);
   const tracker = new FaceTracker();
@@ -121,6 +122,18 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
         mouth.update(null);
       }
       hud.setMouth(open);
+      // penalties: INVERT controls — reflect mouth position and ellipse
+      const _win2 = window as any;
+      const hasP = _win2.__penalty?.has?.bind(_win2.__penalty);
+      if (hasP && _win2.__penalty.has('INVERT')) {
+        pos = { x: canvas.width - pos.x, y: pos.y };
+        // update ellipse via current one from loop is tricky; just recompute
+        const ell = mouth.geometry(lm || null, canvas.width, canvas.height);
+        if (ell) {
+          ell.cx = canvas.width - ell.cx; ell.rot = -ell.rot;
+          loop.setMouthMask(ell, open);
+        }
+      }
       loop.setMouth(pos, open);
       // anti-cheat mouth trigger
       const t = performance.now();
@@ -135,13 +148,12 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
         hud.setDebuffs(_win1.__penalty.active);
       }
       // apply drunk filter to camera video when dizzy
-      const _win2 = window as any;
       const hasPenalty = _win2.__penalty?.has?.bind(_win2.__penalty);
-      if (hasPenalty && _win2.__penalty.has('DIZZY')) {
-        video.style.filter = 'blur(1.1px) saturate(0.7) hue-rotate(8deg) contrast(1.05)';
-      } else {
-        video.style.filter = '';
-      }
+      const dizzy = hasPenalty && _win2.__penalty.has('DIZZY');
+      video.style.filter = dizzy ? 'blur(1.1px) saturate(0.7) hue-rotate(8deg) contrast(1.05)' : '';
+      // wave distortion for CURSE5X and/or DIZZY
+      const waveOn = hasPenalty && (_win2.__penalty.has('CURSE5X') || _win2.__penalty.has('DIZZY'));
+      if (waveOn) stage.classList.add('fx-wavy'); else stage.classList.remove('fx-wavy');
 
       if (!trackingActive) return;
       if (document.visibilityState === 'visible') requestAnimationFrame(step);

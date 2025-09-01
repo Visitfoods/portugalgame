@@ -40,6 +40,8 @@ export class GameLoop {
   private missThisFrame = 0;
   private shake = 0;
   private tAccum = 0;
+  private lastGoodAtMs = 0;
+  private lastCurseAtMs = 0;
 
   constructor(canvas: HTMLCanvasElement, hud: GameHUD, sprites: ItemSprites) {
     this.canvas = canvas;
@@ -77,6 +79,7 @@ export class GameLoop {
     this.lastT = t;
     this.sfx.unlock();
     this.startMs = performance.now();
+    this.lastGoodAtMs = this.startMs;
     this.tick(t);
   }
 
@@ -142,9 +145,10 @@ export class GameLoop {
       if (hit) {
         const kind = o.kind;
         this.items.splice(i, 1);
-        if (kind === 'good') { this.score.add(1); this.sfx.play('pop'); this.hitsThisFrame++; FX.onGoodCatch(); this.shake = Math.max(this.shake, 4); Penalty.onGood(); }
+        if (kind === 'good') { this.score.add(1); this.sfx.play('pop'); this.hitsThisFrame++; FX.onGoodCatch(); this.shake = Math.max(this.shake, 4); Penalty.onGood(); this.lastGoodAtMs = nowMs; }
         else {
-          this.score.add(-1); this.sfx.play('buzz'); this.missThisFrame++; FX.onBadCatch(); this.shake = Math.max(this.shake, 3);
+          const neg = Penalty.has('CURSE5X') ? -5 : -1;
+          this.score.add(neg); this.sfx.play('buzz'); this.missThisFrame++; FX.onBadCatch(); this.shake = Math.max(this.shake, 3);
           const res = Penalty.onBad(nowMs);
           if (res.timePenalty) this.timer.addMs(-res.timePenalty);
         }
@@ -157,6 +161,13 @@ export class GameLoop {
       o.pos.x = newX;
       o.pos.y = newY;
     }
+    // Curse trigger: if 5s sem bons -> 30s CURSE5X + 8s INVERT (controles ao contrário)
+    if ((nowMs - this.lastGoodAtMs) > 5000 && !Penalty.has('CURSE5X')) {
+      Penalty.add('CURSE5X', nowMs + 30000);
+      Penalty.add('INVERT', nowMs + 8000);
+      this.lastCurseAtMs = nowMs;
+    }
+
     // DDA window (10s)
     this.hist.push({ t: nowMs, hit: this.hitsThisFrame, miss: this.missThisFrame });
     const windowMs = 10000;

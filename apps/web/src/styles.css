@@ -15,3 +15,5 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 .btn { @apply inline-flex items-center justify-center px-5 py-3 rounded-lg bg-aborange-500 text-white font-medium shadow active:scale-[.98] transition; }
 .btn-outline { @apply border border-white/20 bg-white/5 hover:bg-white/10; }
 
+/* Stage-wide filters toggled at runtime */
+#stage.fx-wavy { filter: url(#wavy); }

@@ -1,4 +1,4 @@
-export type Debuff = 'STUN'|'MOUTH_LAG'|'NARROW_WINDOW'|'LONG_COOLDOWN'|'WINDBURST'|'DIZZY';
+export type Debuff = 'STUN'|'MOUTH_LAG'|'NARROW_WINDOW'|'LONG_COOLDOWN'|'WINDBURST'|'DIZZY'|'CURSE5X'|'INVERT';
 type ActiveDebuff = { type: Debuff; until: number };
 
 export const Penalty = {
