@@ -21,6 +21,7 @@ export function Game(onFinish: (score: number) => void) {
   const tracker = new FaceTracker();
   const mouth = new MouthOpenDetector();
   let loop: GameLoop;
+  let trackingActive = true;
 
   const resize = () => {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -52,7 +53,13 @@ export function Game(onFinish: (score: number) => void) {
         if (state === 'finished') {
           // Hide camera and stop stream on finish
           try { feed.stop(); } catch {}
+          trackingActive = false;
+          window.removeEventListener('resize', resize);
+          hud.destroy();
+          // Clear and hide canvas & video
+          try { const ctx = canvas.getContext('2d'); ctx && ctx.clearRect(0,0,canvas.width,canvas.height); } catch {}
           video.classList.add('hidden');
+          canvas.classList.add('hidden');
           onFinish(loop.getScore());
         }
       },
@@ -104,6 +111,7 @@ export function Game(onFinish: (score: number) => void) {
       }
       hud.setMouth(open);
       loop.setMouth(pos, open);
+      if (!trackingActive) return;
       if (document.visibilityState === 'visible') requestAnimationFrame(step);
       else setTimeout(step, 250);
     };

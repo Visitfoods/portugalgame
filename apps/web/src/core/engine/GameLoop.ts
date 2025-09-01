@@ -72,6 +72,8 @@ export class GameLoop {
     this.state = 'finished';
     this.hud.onStateChange(this.state);
     cancelAnimationFrame(this.req);
+    // Clear items so nothing remains drawn on last frame
+    this.items = [];
   }
 
   getScore(): number { return this.score.value; }
