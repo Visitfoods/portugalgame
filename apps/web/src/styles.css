@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #app { height: 100%; }
+
+:root {
+  --ab-bg: #0b0f14;
+  --ab-fg: #ffffff;
+}
+
+body { background: var(--ab-bg); color: var(--ab-fg); }
+
+.screen { @apply fixed inset-0 flex flex-col items-center justify-center p-6; }
+.btn { @apply inline-flex items-center justify-center px-5 py-3 rounded-lg bg-aborange-500 text-white font-medium shadow active:scale-[.98] transition; }
+.btn-outline { @apply border border-white/20 bg-white/5 hover:bg-white/10; }
+
