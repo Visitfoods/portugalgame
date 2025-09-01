@@ -1,9 +1,9 @@
 {
   "good": [
-    
+    "/assets/items/good/galobarcelos-icon.webp",
+    "/assets/items/good/coracaovianda-icon.webp",
+    "/assets/items/good/Sardinha-icon.webp",
+    "/assets/items/good/GuitarraPortuguesa-icon.webp"
   ],
-  "bad": [
-    
-  ]
+  "bad": []
 }
-
