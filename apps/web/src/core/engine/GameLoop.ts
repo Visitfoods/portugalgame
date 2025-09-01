@@ -132,7 +132,8 @@ export class GameLoop {
       // Collision decision uses pre-splice local vars
       const hitCircle = collidesMouth(this.mouthPos, { x: newX, y: newY }, 28);
       const hitEllipse = pointInRotEllipse(newX, newY, this.mouthEllipse.cx, this.mouthEllipse.cy, this.mouthEllipse.rx, this.mouthEllipse.ry, this.mouthEllipse.rot);
-      const withinTrigger = (nowMs - this.lastMouthTrigger) < Penalty.triggerWindowMs(250);
+      const windowMs = Penalty.triggerWindowMs(350);
+      const withinTrigger = (nowMs >= this.lastMouthTrigger) && ((nowMs - this.lastMouthTrigger) < windowMs);
       const hit = this.mouthOpen && (hitEllipse || hitCircle) && withinTrigger;
       if (hit) {
         const kind = o.kind;

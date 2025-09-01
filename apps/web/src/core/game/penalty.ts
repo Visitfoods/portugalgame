@@ -56,7 +56,7 @@ export const Penalty = {
 
   canTrigger(): boolean { return !this.has('STUN'); },
   inputDelayMs(): number { return this.has('MOUTH_LAG') ? 200 : 0; },
-  triggerWindowMs(base=250): number { return this.has('NARROW_WINDOW') ? 150 : base; },
+  triggerWindowMs(base=350): number { return this.has('NARROW_WINDOW') ? Math.max(150, base - 150) : base; },
   cooldownMs(base=380): number { return this.has('LONG_COOLDOWN') ? base*2 : base; },
 
   applyToDiff<T extends { drift:number; spawnMs:[number,number] }>(diff: T): T {
@@ -66,4 +66,3 @@ export const Penalty = {
     return diff;
   }
 };
-
