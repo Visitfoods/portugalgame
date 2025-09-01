@@ -20,7 +20,7 @@ function askPermissions() {
   const perms = Permissions(async () => {
     try {
       // Permissions are requested when Game screen starts the camera
-      mount(Game((score) => mount(Result(score, () => startFlow()))));
+      mount(Game((score) => mount(Result(score, () => startFlow())), () => startFlow()));
     } catch (e) {
       alert('Não foi possível aceder à câmara.');
       startFlow();
@@ -30,4 +30,3 @@ function askPermissions() {
 }
 
 startFlow();
-

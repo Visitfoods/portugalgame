@@ -6,12 +6,15 @@ import { GameLoop } from "../../core/engine/GameLoop";
 import { loadItemSprites } from "../../core/engine/Assets";
 import type { Vec2 } from "../../utils/types";
 
-export function Game(onFinish: (score: number) => void) {
+export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   const el = document.createElement('div');
   el.className = 'screen text-center gap-6';
   el.innerHTML = `
     <div class="text-2xl font-semibold">Preparar...</div>
     <div class="text-white/80">Coloca o teu rosto visível e centrado. O jogo começa já!</div>
+    <div id="controls" class="fixed top-3 left-3 z-40">
+      <button id="btn-exit" class="px-3 py-2 rounded bg-black/50 text-white border border-white/20">Sair</button>
+    </div>
   `;
 
   const video = document.getElementById('camera') as HTMLVideoElement;
@@ -33,6 +36,20 @@ export function Game(onFinish: (score: number) => void) {
   };
   window.addEventListener('resize', resize);
 
+  const cleanup = (clearCanvas = true) => {
+    trackingActive = false;
+    try { tracker.stop(); } catch {}
+    try { feed.stop(); } catch {}
+    window.removeEventListener('resize', resize);
+    try { hud.destroy(); } catch {}
+    if (clearCanvas) {
+      try { const ctx = canvas.getContext('2d'); ctx && ctx.clearRect(0,0,canvas.width,canvas.height); } catch {}
+    }
+    video.classList.add('hidden');
+    canvas.classList.add('hidden');
+    try { loop?.stop(); } catch {}
+  };
+
   const start = async () => {
     // Show camera background
     video.classList.remove('hidden');
@@ -51,15 +68,7 @@ export function Game(onFinish: (score: number) => void) {
       onTimeUpdate: (t) => hud.setTimeLeft(t),
       onStateChange: (state) => {
         if (state === 'finished') {
-          // Hide camera and stop stream on finish
-          try { feed.stop(); } catch {}
-          trackingActive = false;
-          window.removeEventListener('resize', resize);
-          hud.destroy();
-          // Clear and hide canvas & video
-          try { const ctx = canvas.getContext('2d'); ctx && ctx.clearRect(0,0,canvas.width,canvas.height); } catch {}
-          video.classList.add('hidden');
-          canvas.classList.add('hidden');
+          cleanup(true);
           onFinish(loop.getScore());
         }
       },
@@ -116,6 +125,12 @@ export function Game(onFinish: (score: number) => void) {
       else setTimeout(step, 250);
     };
     step();
+  };
+
+  // Exit button handler
+  el.querySelector<HTMLButtonElement>('#btn-exit')!.onclick = () => {
+    cleanup(true);
+    onCancel?.();
   };
 
   start().catch(err => {
