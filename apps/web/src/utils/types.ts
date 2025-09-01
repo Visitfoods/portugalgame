@@ -12,3 +12,9 @@ export interface SpawnedItem {
   radius: number; // px
 }
 
+export interface MouthEllipse {
+  cx: number; // px
+  cy: number; // px
+  rx: number; // px (horizontal radius)
+  ry: number; // px (vertical radius)
+}

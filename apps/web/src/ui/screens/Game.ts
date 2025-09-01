@@ -80,7 +80,7 @@ export function Game(onFinish: (score: number) => void) {
       let pos: Vec2 = { x: canvas.width * 0.5, y: canvas.height * 0.6 };
       if (lm && lm.length > 0) {
         open = mouth.update(lm);
-        // use inner mouth center approx average of UPPER_LIP/LOWER_LIP (guarded)
+        // Position
         const ul = lm[13];
         const ll = lm[14];
         if (ul && ll) {
@@ -88,6 +88,9 @@ export function Game(onFinish: (score: number) => void) {
           const cy = (ul.y + ll.y) * 0.5;
           pos = { x: cx * canvas.width, y: cy * canvas.height };
         }
+        // Ellipse capture region (smoothed inside detector)
+        const ell = mouth.geometry(lm, canvas.width, canvas.height);
+        if (ell) loop.setMouthMask(ell, open);
       } else {
         mouth.update(null);
       }

@@ -1,6 +1,6 @@
-import type { GameState, SpawnedItem } from "../../utils/types";
+import type { GameState, SpawnedItem, MouthEllipse } from "../../utils/types";
 import type { Vec2 } from "../../utils/types";
-import { collidesMouth } from "./Collision";
+import { collidesMouth, pointInEllipse } from "./Collision";
 import { Spawner } from "./Spawner";
 import { Score, Timer60s } from "./Score";
 import { nowSec } from "../../utils/math";
@@ -27,6 +27,7 @@ export class GameLoop {
   private req = 0;
   private mouthPos: Vec2 = { x: 0, y: 0 };
   private mouthOpen = false;
+  private mouthEllipse: MouthEllipse = { cx: 0, cy: 0, rx: 10, ry: 6 };
 
   constructor(canvas: HTMLCanvasElement, hud: GameHUD) {
     this.canvas = canvas;
@@ -45,6 +46,11 @@ export class GameLoop {
 
   setMouth(pos: Vec2, open: boolean) {
     this.mouthPos = pos;
+    this.mouthOpen = open;
+  }
+
+  setMouthMask(ellipse: MouthEllipse, open: boolean) {
+    this.mouthEllipse = ellipse;
     this.mouthOpen = open;
   }
 
@@ -101,7 +107,9 @@ export class GameLoop {
         continue;
       }
       // Collision decision uses pre-splice local vars
-      const hit = this.mouthOpen && collidesMouth(this.mouthPos, { x: newX, y: newY }, 28);
+      const hitCircle = collidesMouth(this.mouthPos, { x: newX, y: newY }, 28);
+      const hitEllipse = pointInEllipse(newX, newY, this.mouthEllipse.cx, this.mouthEllipse.cy, this.mouthEllipse.rx, this.mouthEllipse.ry);
+      const hit = this.mouthOpen && (hitEllipse || hitCircle);
       if (hit) {
         const kind = o.kind;
         this.items.splice(i, 1);
@@ -143,10 +151,23 @@ export class GameLoop {
       ctx.fillText(o.kind === 'good' ? '+1' : '-1', o.pos.x, o.pos.y);
     }
 
-    // mouth debug
+    // mouth debug point
     ctx.beginPath();
     ctx.fillStyle = this.mouthOpen ? '#22c55e' : '#ef4444';
-    ctx.arc(this.mouthPos.x, this.mouthPos.y, 10, 0, Math.PI*2);
+    ctx.arc(this.mouthPos.x, this.mouthPos.y, 3, 0, Math.PI*2);
     ctx.fill();
+
+    // mouth capture ellipse mask
+    ctx.save();
+    ctx.globalAlpha = this.mouthOpen ? 0.18 : 0.10;
+    ctx.fillStyle = this.mouthOpen ? '#22c55e' : '#ef4444';
+    ctx.beginPath();
+    ctx.ellipse(this.mouthEllipse.cx, this.mouthEllipse.cy, this.mouthEllipse.rx, this.mouthEllipse.ry, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha = 0.8;
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = this.mouthOpen ? '#22c55e' : '#ef4444';
+    ctx.stroke();
+    ctx.restore();
   }
 }
