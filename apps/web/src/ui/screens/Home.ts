@@ -9,8 +9,8 @@ export function Home(onPlay: () => void) {
     <!-- Nuvens topo (marquee infinito com instâncias desfasadas) -->
     <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-14 left-0 w-[34%] max-w-[260px] -z-10 opacity-90 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 46s; --ab-delay: -18s;"/>
     <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-24 left-0 w-[28%] max-w-[220px] -z-10 opacity-70 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 54s; --ab-delay: -41s;"/>
-    <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-20 right-0 w-[36%] max-w-[280px] -z-10 opacity-85 ab-cloud-marquee-left"  style="--ab-cloud-scroll-dur: 52s; --ab-delay: -9s;"/>
-    <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-10 right-0 w-[30%] max-w-[230px] -z-10 opacity-60 ab-cloud-marquee-left"  style="--ab-cloud-scroll-dur: 40s; --ab-delay: -27s;"/>
+    <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-20 right-0 w-[36%] max-w-[280px] -z-10 opacity-85 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 52s; --ab-delay: -9s;"/>
+    <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-10 right-0 w-[30%] max-w-[230px] -z-10 opacity-60 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 40s; --ab-delay: -27s;"/>
 
     <!-- Conteúdo principal -->
     <div class="relative z-10 w-full flex flex-col items-center">
@@ -21,7 +21,7 @@ export function Home(onPlay: () => void) {
         <!-- Logotipo -->
         <img id="ab-logo" src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[170px] md:w-[200px] h-auto ab-logo-white"/>
         <!-- Nuvem à frente do logotipo -->
-        <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-10 right-0 w-[26%] max-w-[220px] opacity-80 z-[20] ab-cloud-marquee-left" style="--ab-cloud-scroll-dur: 50s; --ab-delay: -32s;"/>
+        <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-10 right-0 w-[26%] max-w-[220px] opacity-80 z-[20] ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 50s; --ab-delay: -32s;"/>
       </div>
 
       <!-- Título + nuvens de revelação (01/02 clonadas, muito maiores e com animações diferentes) -->
@@ -35,7 +35,7 @@ export function Home(onPlay: () => void) {
       <!-- Nuvens 05/06 pequenas por baixo do título (marquee lento) -->
       <div class="relative mt-2 w-10/12 max-w-[720px] h-8 overflow-visible">
         <img src="/assets/graphics/Nuvem-05.svg" alt="" class="absolute top-0 left-0 w-[18%] opacity-90 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 60s; --ab-delay: -12s;"/>
-        <img src="/assets/graphics/Nuvem-06.svg" alt="" class="absolute top-1 right-0 w-[16%] opacity-90 ab-cloud-marquee-left"  style="--ab-cloud-scroll-dur: 58s; --ab-delay: -33s;"/>
+        <img src="/assets/graphics/Nuvem-06.svg" alt="" class="absolute top-1 right-0 w-[16%] opacity-90 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 58s; --ab-delay: -33s;"/>
       </div>
 
       <!-- Botões principais -->
@@ -54,8 +54,8 @@ export function Home(onPlay: () => void) {
     <!-- Nuvens base com marquee e clones desfasados para loop contínuo -->
     <img src="/assets/graphics/Nuvem-03.svg" alt="" class="absolute bottom-[40px] left-[-120px] w-[85%] max-w-[820px] z-0 opacity-20 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 70s; --ab-delay: -25s;"/>
     <img src="/assets/graphics/Nuvem-03.svg" alt="" class="absolute bottom-[28px] left-[-140px] w-[70%] max-w-[700px] z-0 opacity-20 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 62s; --ab-delay: -59s;"/>
-    <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute bottom-[36px] right-[-120px] w-[95%] max-w-[920px] z-0 opacity-20 ab-cloud-marquee-left"  style="--ab-cloud-scroll-dur: 64s; --ab-delay: -31s;"/>
-    <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute bottom-[22px] right-[-140px] w-[72%] max-w-[720px] z-0 opacity-20 ab-cloud-marquee-left"  style="--ab-cloud-scroll-dur: 76s; --ab-delay: -11s;"/>
+    <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute bottom-[36px] right-[-120px] w-[95%] max-w-[920px] z-0 opacity-20 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 64s; --ab-delay: -31s;"/>
+    <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute bottom-[22px] right-[-140px] w-[72%] max-w-[720px] z-0 opacity-20 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 76s; --ab-delay: -11s;"/>
     <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-0 w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
 
     <!-- Nota de compatibilidade -->
