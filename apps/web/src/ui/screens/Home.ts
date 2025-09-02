@@ -16,17 +16,17 @@ export function Home(onPlay: () => void) {
       <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="mt-8 w-[120px] md:w-[140px] h-auto"/>
 
       <!-- Título do jogo -->
-      <img src="/assets/graphics/Titulo-Jogo.svg" alt="Apanha os Sabores de Portugal" class="mt-6 w-10/12 max-w-[720px] h-auto"/>
+      <img id="title" src="/assets/graphics/Titulo-Jogo.svg" alt="Apanha os Sabores de Portugal" class="mt-6 w-10/12 max-w-[720px] h-auto ab-anim-fade-zoom-in"/>
 
       <!-- Botões principais -->
-      <img id="play" src="/assets/graphics/Botao-Jogar.svg" alt="Jogar" class="mt-10 w-8/12 max-w-[360px] h-auto cursor-pointer active:scale-[.98] transition"/>
+      <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="mt-10 w-8/12 max-w-[360px] h-auto cursor-pointer active:scale-[.98] transition"/>
       <img id="how" src="/assets/graphics/Botao-ComoJogar.svg" alt="Como Jogar" class="mt-4 w-7/12 max-w-[320px] h-auto cursor-pointer active:scale-[.98] transition"/>
 
       <!-- Ícones inferiores -->
-      <div class="mt-6 flex items-center justify-center gap-6 md:gap-8 mb-[120px]">
-        <img id="settings" src="/assets/graphics/Botao-Settings.svg" alt="Definições" class="w-[64px] h-auto cursor-pointer"/>
-        <img id="ranking" src="/assets/graphics/Botao-Ranking.svg" alt="Ranking" class="w-[64px] h-auto cursor-pointer"/>
-        <img id="info" src="/assets/graphics/Botao-Info.svg" alt="Informação" class="w-[64px] h-auto cursor-pointer"/>
+      <div class="mt-6 flex items-center justify-center gap-6 md:gap-8 mb-[72px] md:mb-[84px]">
+        <img id="settings" src="/assets/graphics/Botao-Settings.svg" alt="Definições" class="w-[52px] md:w-[56px] h-auto cursor-pointer"/>
+        <img id="ranking" src="/assets/graphics/Botao-Ranking.svg" alt="Ranking" class="w-[52px] md:w-[56px] h-auto cursor-pointer"/>
+        <img id="info" src="/assets/graphics/Botao-Info.svg" alt="Informação" class="w-[52px] md:w-[56px] h-auto cursor-pointer"/>
       </div>
     </div>
 
@@ -42,7 +42,18 @@ export function Home(onPlay: () => void) {
   `;
 
   // Ligações
-  el.querySelector<HTMLImageElement>('#play')!.onclick = () => onPlay();
+  // Estado pressed do botão JOGAR
+  const playBtn = el.querySelector<HTMLImageElement>('#play')!;
+  const playSrcNormal = '/assets/graphics/Botao-Jogar_Normal.svg';
+  const playSrcPressed = '/assets/graphics/Botao-Jogar_Pressed.svg';
+  const setPressed = (pressed: boolean) => {
+    playBtn.src = pressed ? playSrcPressed : playSrcNormal;
+  };
+  playBtn.onpointerdown = () => setPressed(true);
+  playBtn.onpointerup = () => setPressed(false);
+  playBtn.onpointerleave = () => setPressed(false);
+  playBtn.onpointercancel = () => setPressed(false);
+  playBtn.onclick = () => onPlay();
   el.querySelector<HTMLImageElement>('#how')!.onclick = () => alert('Mantém o rosto visível e centrado. Os ícones caem — abre a boca para os apanhar! Atenção aos “falsos”: tiram pontos.');
   el.querySelector<HTMLImageElement>('#settings')!.onclick = () => alert('Definições: em breve.');
   el.querySelector<HTMLImageElement>('#ranking')!.onclick = () => alert('Ranking: em breve.');
