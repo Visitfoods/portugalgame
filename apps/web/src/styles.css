@@ -25,7 +25,7 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   0% { opacity: 0; transform: scale(0.94); }
   100% { opacity: 1; transform: scale(1); }
 }
-.ab-anim-fade-zoom-in { animation: ab-fade-zoom-in 1200ms cubic-bezier(.2,.7,.2,1) both; }
+.ab-anim-fade-zoom-in { animation: ab-fade-zoom-in 2000ms cubic-bezier(.2,.7,.2,1) both; }
 
 /* Animação de vento nas nuvens */
 @keyframes ab-cloud-drift {
@@ -46,5 +46,5 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   100% { transform: translateX(160px) translateY(10px) scale(1.1) rotate(3deg); opacity: 0; }
 }
 .ab-reveal-cloud-left, .ab-reveal-cloud-right { pointer-events: none; }
-.ab-reveal-cloud-left { animation: ab-cloud-reveal-left 1200ms cubic-bezier(.2,.8,.2,1) forwards; }
-.ab-reveal-cloud-right { animation: ab-cloud-reveal-right 1200ms cubic-bezier(.2,.8,.2,1) forwards; }
+.ab-reveal-cloud-left { animation: ab-cloud-reveal-left 2200ms cubic-bezier(.2,.8,.2,1) forwards; }
+.ab-reveal-cloud-right { animation: ab-cloud-reveal-right 2400ms cubic-bezier(.2,.8,.2,1) forwards; }
