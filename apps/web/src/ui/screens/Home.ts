@@ -15,11 +15,12 @@ export function Home(onPlay: () => void) {
       <!-- Logo -->
       <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="mt-2 w-[140px] md:w-[170px] h-auto"/>
 
-      <!-- Título + nuvens de revelação (01/02 duplicadas, desaparecem após animar) -->
-      <div class="relative mt-4 w-10/12 max-w-[720px]">
+      <!-- Título + nuvens de revelação (01/02 clonadas, muito maiores e com animações diferentes) -->
+      <div class="relative mt-4 w-10/12 max-w-[720px] overflow-visible">
         <img id="title" src="/assets/graphics/Titulo-Jogo.svg" alt="Apanha os Sabores de Portugal" class="relative z-[2] w-full h-auto ab-anim-fade-zoom-in"/>
-        <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute left-[22%] top-[10%] w-[40%] max-w-[320px] z-[3] ab-reveal-cloud-left"/>
-        <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute right-[22%] top-[12%] w-[38%] max-w-[310px] z-[3] ab-reveal-cloud-right"/>
+        <!-- Clones enormes para o efeito de revelar -->
+        <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute left-[-10%] top-[-6%] w-[120%] z-[3] ab-reveal-cloud-left" style="animation-duration: 1300ms;"/>
+        <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute right-[-10%] top-[-8%] w-[126%] z-[3] ab-reveal-cloud-right" style="animation-duration: 1500ms;"/>
       </div>
 
       <!-- Nuvens 05/06 pequenas por baixo do título (apenas drift) -->

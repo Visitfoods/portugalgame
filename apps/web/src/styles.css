@@ -36,14 +36,14 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 
 /* Revelar título: nuvens afastam-se do centro */
 @keyframes ab-cloud-reveal-left {
-  0% { transform: translateX(0); opacity: 1; }
-  70% { opacity: 0.9; }
-  100% { transform: translateX(-100px); opacity: 0; }
+  0% { transform: translateX(0) translateY(0) scale(1.05) rotate(0deg); opacity: 1; }
+  60% { opacity: 0.92; }
+  100% { transform: translateX(-140px) translateY(-8px) scale(1.12) rotate(-2.5deg); opacity: 0; }
 }
 @keyframes ab-cloud-reveal-right {
-  0% { transform: translateX(0); opacity: 1; }
-  70% { opacity: 0.9; }
-  100% { transform: translateX(100px); opacity: 0; }
+  0% { transform: translateX(0) translateY(0) scale(1.06) rotate(0deg); opacity: 1; }
+  60% { opacity: 0.92; }
+  100% { transform: translateX(160px) translateY(10px) scale(1.1) rotate(3deg); opacity: 0; }
 }
 .ab-reveal-cloud-left, .ab-reveal-cloud-right { pointer-events: none; }
 .ab-reveal-cloud-left { animation: ab-cloud-reveal-left 1200ms cubic-bezier(.2,.8,.2,1) forwards; }
