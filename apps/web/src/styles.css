@@ -25,7 +25,7 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   0% { opacity: 0; transform: scale(0.94); }
   100% { opacity: 1; transform: scale(1); }
 }
-.ab-anim-fade-zoom-in { animation: ab-fade-zoom-in 600ms cubic-bezier(.2,.7,.2,1) both; }
+.ab-anim-fade-zoom-in { animation: ab-fade-zoom-in 1200ms cubic-bezier(.2,.7,.2,1) both; }
 
 /* Animação de vento nas nuvens */
 @keyframes ab-cloud-drift {
@@ -33,3 +33,17 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   50% { transform: translateX(var(--ab-cloud-dx, 10px)); }
 }
 .ab-cloud { animation: ab-cloud-drift var(--ab-cloud-dur, 12s) ease-in-out infinite; will-change: transform; }
+
+/* Revelar título: nuvens afastam-se do centro */
+@keyframes ab-cloud-reveal-left {
+  0% { transform: translateX(0); opacity: 1; }
+  60% { opacity: 0.9; }
+  100% { transform: translateX(-80px); opacity: 0.4; }
+}
+@keyframes ab-cloud-reveal-right {
+  0% { transform: translateX(0); opacity: 1; }
+  60% { opacity: 0.9; }
+  100% { transform: translateX(80px); opacity: 0.4; }
+}
+.ab-reveal-cloud-left { animation: ab-cloud-reveal-left 1100ms cubic-bezier(.2,.8,.2,1) forwards, ab-cloud-drift var(--ab-cloud-dur, 8s) ease-in-out infinite 1200ms; }
+.ab-reveal-cloud-right { animation: ab-cloud-reveal-right 1100ms cubic-bezier(.2,.8,.2,1) forwards, ab-cloud-drift var(--ab-cloud-dur, 8s) ease-in-out infinite 1200ms; }

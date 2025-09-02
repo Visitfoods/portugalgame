@@ -12,8 +12,21 @@ function mount(el: HTMLElement) {
 }
 
 function startFlow() {
-  const home = Home(() => askPermissions());
+  const home = Home(() => startGameDirect());
   mount(home);
+}
+
+async function startGameDirect() {
+  try {
+    // Solicitar permissão diretamente no clique do botão JOGAR
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+    // Fecha imediatamente; o ecrã do jogo reabre a câmara
+    stream.getTracks().forEach(t => t.stop());
+    mount(Game((score) => mount(Result(score, () => startFlow())), () => startFlow()));
+  } catch (e) {
+    // Fallback para o ecrã de permissões, caso falhe ou seja negado
+    askPermissions();
+  }
 }
 
 function askPermissions() {

@@ -7,16 +7,20 @@ export function Home(onPlay: () => void) {
     <img src="/assets/graphics/Background.svg" alt="" class="absolute inset-0 -z-20 w-full h-full object-cover"/>
 
     <!-- Nuvens topo -->
-    <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute left-2 top-16 w-[34%] max-w-[260px] -z-10 opacity-90 ab-cloud" style="--ab-cloud-dur: 12s; --ab-cloud-dx: 10px;"/>
-    <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute right-0 top-20 w-[36%] max-w-[280px] -z-10 ab-cloud" style="--ab-cloud-dur: 10s; --ab-cloud-dx: 12px;"/>
+    <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute left-2 top-16 w-[34%] max-w-[260px] -z-10 opacity-90 ab-cloud" style="--ab-cloud-dur: 10s; --ab-cloud-dx: 22px;"/>
+    <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute right-0 top-20 w-[36%] max-w-[280px] -z-10 ab-cloud" style="--ab-cloud-dur: 11s; --ab-cloud-dx: 26px;"/>
 
     <!-- Conteúdo principal -->
     <div class="relative z-10 w-full flex flex-col items-center">
       <!-- Logo -->
-      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="mt-8 w-[120px] md:w-[140px] h-auto"/>
+      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="mt-2 w-[140px] md:w-[170px] h-auto"/>
 
-      <!-- Título do jogo -->
-      <img id="title" src="/assets/graphics/Titulo-Jogo.svg" alt="Apanha os Sabores de Portugal" class="mt-6 w-10/12 max-w-[720px] h-auto ab-anim-fade-zoom-in"/>
+      <!-- Título + nuvens pequenas -->
+      <div class="relative mt-4 w-10/12 max-w-[720px]">
+        <img id="title" src="/assets/graphics/Titulo-Jogo.svg" alt="Apanha os Sabores de Portugal" class="w-full h-auto ab-anim-fade-zoom-in"/>
+        <img src="/assets/graphics/Nuvem-05.svg" alt="" class="absolute left-[10%] top-[68%] w-[18%] opacity-90 ab-reveal-cloud-left"/>
+        <img src="/assets/graphics/Nuvem-06.svg" alt="" class="absolute right-[10%] top-[72%] w-[16%] opacity-90 ab-reveal-cloud-right"/>
+      </div>
 
       <!-- Botões principais -->
       <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="mt-10 w-8/12 max-w-[360px] h-auto cursor-pointer active:scale-[.98] transition"/>
@@ -31,8 +35,8 @@ export function Home(onPlay: () => void) {
     </div>
 
     <!-- Nuvens base + elemento gráfico -->
-    <img src="/assets/graphics/Nuvem-03.svg" alt="" class="absolute left-[-120px] bottom-[44px] w-[62%] max-w-[520px] z-0 opacity-20 ab-cloud" style="--ab-cloud-dur: 14s; --ab-cloud-dx: 14px;"/>
-    <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute right-[-120px] bottom-[40px] w-[68%] max-w-[600px] z-0 opacity-20 ab-cloud" style="--ab-cloud-dur: 16s; --ab-cloud-dx: 16px;"/>
+    <img src="/assets/graphics/Nuvem-03.svg" alt="" class="absolute left-[-120px] bottom-[40px] w-[78%] max-w-[700px] z-0 opacity-20 ab-cloud" style="--ab-cloud-dur: 13s; --ab-cloud-dx: 30px;"/>
+    <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute right-[-120px] bottom-[36px] w-[86%] max-w-[820px] z-0 opacity-20 ab-cloud" style="--ab-cloud-dur: 14s; --ab-cloud-dx: 34px;"/>
     <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-0 w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
 
     <!-- Nota de compatibilidade -->
