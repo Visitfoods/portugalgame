@@ -26,3 +26,10 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   100% { opacity: 1; transform: scale(1); }
 }
 .ab-anim-fade-zoom-in { animation: ab-fade-zoom-in 600ms cubic-bezier(.2,.7,.2,1) both; }
+
+/* Animação de vento nas nuvens */
+@keyframes ab-cloud-drift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(var(--ab-cloud-dx, 10px)); }
+}
+.ab-cloud { animation: ab-cloud-drift var(--ab-cloud-dur, 12s) ease-in-out infinite; will-change: transform; }

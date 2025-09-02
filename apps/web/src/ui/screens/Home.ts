@@ -7,8 +7,8 @@ export function Home(onPlay: () => void) {
     <img src="/assets/graphics/Background.svg" alt="" class="absolute inset-0 -z-20 w-full h-full object-cover"/>
 
     <!-- Nuvens topo -->
-    <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute left-2 top-16 w-[34%] max-w-[260px] -z-10 opacity-90"/>
-    <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute right-0 top-20 w-[36%] max-w-[280px] -z-10"/>
+    <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute left-2 top-16 w-[34%] max-w-[260px] -z-10 opacity-90 ab-cloud" style="--ab-cloud-dur: 12s; --ab-cloud-dx: 10px;"/>
+    <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute right-0 top-20 w-[36%] max-w-[280px] -z-10 ab-cloud" style="--ab-cloud-dur: 10s; --ab-cloud-dx: 12px;"/>
 
     <!-- Conteúdo principal -->
     <div class="relative z-10 w-full flex flex-col items-center">
@@ -31,8 +31,8 @@ export function Home(onPlay: () => void) {
     </div>
 
     <!-- Nuvens base + elemento gráfico -->
-    <img src="/assets/graphics/Nuvem-03.svg" alt="" class="absolute left-0 bottom-[92px] w-[50%] max-w-[420px] -z-0"/>
-    <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute right-0 bottom-[88px] w-[58%] max-w-[520px] -z-0"/>
+    <img src="/assets/graphics/Nuvem-03.svg" alt="" class="absolute left-[-12px] bottom-[44px] w-[62%] max-w-[520px] z-0 opacity-20 ab-cloud" style="--ab-cloud-dur: 14s; --ab-cloud-dx: 14px;"/>
+    <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute right-[-12px] bottom-[40px] w-[68%] max-w-[600px] z-0 opacity-20 ab-cloud" style="--ab-cloud-dur: 16s; --ab-cloud-dx: 16px;"/>
     <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-0 w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
 
     <!-- Nota de compatibilidade -->
