@@ -1,23 +1,36 @@
 export class HUD {
   private root: HTMLElement;
   private timeEl: HTMLElement;
-  private scoreEl: HTMLElement;
+  private scoreWrap: HTMLElement;
+  private scoreLabel: HTMLElement;
+  private scoreNum: HTMLElement;
   private mouthEl: HTMLElement;
   private fxRoot: HTMLElement;
   private badges: HTMLElement;
 
   constructor() {
     this.root = document.createElement('div');
-    this.root.className = 'fixed top-0 left-0 right-0 p-4 flex items-center justify-between pointer-events-none z-30';
+    this.root.className = 'fixed inset-x-0 top-0 p-3 pointer-events-none z-30';
     this.timeEl = document.createElement('div');
-    this.scoreEl = document.createElement('div');
     this.mouthEl = document.createElement('div');
-    this.timeEl.className = 'text-sm md:text-base bg-black/40 rounded px-3 py-2 backdrop-blur-sm';
-    this.scoreEl.className = 'text-base md:text-2xl font-semibold bg-black/40 rounded px-4 py-2 backdrop-blur-sm';
-    this.mouthEl.className = 'text-xs md:text-sm bg-black/30 rounded px-3 py-2 hidden md:block';
+    this.timeEl.className = 'absolute left-3 top-3 text-xs md:text-sm bg-black/30 rounded px-2 py-1 backdrop-blur-sm';
+    this.mouthEl.className = 'absolute right-3 top-3 text-xs md:text-sm bg-black/30 rounded px-2 py-1 hidden md:block';
+
+    // Centered SCORE card
+    this.scoreWrap = document.createElement('div');
+    this.scoreWrap.className = 'mx-auto mt-3 flex flex-col items-center justify-center rounded-2xl px-4 py-2 bg-white/90 text-[#0a2960] shadow-[0_6px_20px_rgba(0,0,0,0.18)] w-max pointer-events-none';
+    this.scoreLabel = document.createElement('div');
+    this.scoreLabel.className = 'text-[10px] tracking-[0.2em] font-semibold opacity-80';
+    this.scoreLabel.textContent = 'SCORE';
+    this.scoreNum = document.createElement('div');
+    this.scoreNum.className = 'text-2xl md:text-4xl font-extrabold leading-none';
+    this.scoreNum.textContent = '0';
+    this.scoreWrap.append(this.scoreLabel, this.scoreNum);
+
     this.badges = document.createElement('div');
-    this.badges.className = 'flex gap-2';
-    this.root.append(this.timeEl, this.badges, this.scoreEl);
+    this.badges.className = 'hidden';
+
+    this.root.append(this.scoreWrap, this.timeEl, this.mouthEl);
     document.body.appendChild(this.root);
 
     this.fxRoot = document.createElement('div');
@@ -29,11 +42,11 @@ export class HUD {
     const s = Math.ceil(seconds);
     const mm = String(Math.floor(s / 60)).padStart(2,'0');
     const ss = String(s % 60).padStart(2,'0');
-    this.timeEl.textContent = `Tempo: ${mm}:${ss}`;
+    this.timeEl.textContent = `Tempo ${mm}:${ss}`;
   }
 
   setScore(score: number) {
-    this.scoreEl.textContent = `Pontuação: ${score}`;
+    this.scoreNum.textContent = String(score);
   }
 
   setMouth(open: boolean) {
@@ -64,16 +77,7 @@ export class HUD {
   }
 
   setDebuffs(active: { type: string; until: number }[]) {
-    // Render simple chips with type and remaining seconds
-    const now = performance.now();
-    this.badges.innerHTML = '';
-    for (const d of active) {
-      const left = Math.max(0, Math.ceil((d.until - now)/1000));
-      const chip = document.createElement('div');
-      chip.className = 'px-2 py-1 rounded bg-black/40 text-xs';
-      chip.textContent = `${d.type}${left?` ${left}s`:''}`;
-      this.badges.appendChild(chip);
-    }
+    // standby: hidden
   }
 
   destroy() { this.root.remove(); this.fxRoot.remove(); }
