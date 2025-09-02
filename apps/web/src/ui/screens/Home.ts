@@ -31,8 +31,8 @@ export function Home(onPlay: () => void) {
     </div>
 
     <!-- Nuvens base + elemento gráfico -->
-    <img src="/assets/graphics/Nuvem-03.svg" alt="" class="absolute left-[-12px] bottom-[44px] w-[62%] max-w-[520px] z-0 opacity-20 ab-cloud" style="--ab-cloud-dur: 14s; --ab-cloud-dx: 14px;"/>
-    <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute right-[-12px] bottom-[40px] w-[68%] max-w-[600px] z-0 opacity-20 ab-cloud" style="--ab-cloud-dur: 16s; --ab-cloud-dx: 16px;"/>
+    <img src="/assets/graphics/Nuvem-03.svg" alt="" class="absolute left-[-120px] bottom-[44px] w-[62%] max-w-[520px] z-0 opacity-20 ab-cloud" style="--ab-cloud-dur: 14s; --ab-cloud-dx: 14px;"/>
+    <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute right-[-120px] bottom-[40px] w-[68%] max-w-[600px] z-0 opacity-20 ab-cloud" style="--ab-cloud-dur: 16s; --ab-cloud-dx: 16px;"/>
     <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-0 w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
 
     <!-- Nota de compatibilidade -->
