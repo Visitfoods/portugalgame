@@ -19,7 +19,7 @@ export function Home(onPlay: () => void) {
         <!-- Nuvem atrás do logotipo -->
         <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-8 left-0 w-[28%] max-w-[240px] opacity-70 z-[5] ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 56s; --ab-delay: -18s;"/>
         <!-- Logotipo -->
-        <img id="ab-logo" src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[170px] md:w-[200px] h-auto"/>
+        <img id="ab-logo" src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[170px] md:w-[200px] h-auto ab-logo-white"/>
         <!-- Nuvem à frente do logotipo -->
         <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-10 right-0 w-[26%] max-w-[220px] opacity-80 z-[20] ab-cloud-marquee-left" style="--ab-cloud-scroll-dur: 50s; --ab-delay: -32s;"/>
       </div>
