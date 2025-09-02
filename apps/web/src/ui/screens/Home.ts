@@ -58,6 +58,9 @@ export function Home(onPlay: () => void) {
     <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute bottom-[22px] right-[-140px] w-[72%] max-w-[720px] z-0 opacity-20 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 76s; --ab-delay: -11s;"/>
     <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-0 w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
 
+    <!-- Camada para "chuva" de ícones -->
+    <div id="icon-rain" class="pointer-events-none absolute inset-0 z-[1] overflow-visible"></div>
+
     <!-- Nota de compatibilidade -->
     <div class="absolute left-0 right-0 bottom-2 text-center text-[11px] text-white/85 z-[2] px-4">
       Requer ligação HTTPS. Compatível com Safari (iOS) e Chrome (Android).
@@ -81,6 +84,91 @@ export function Home(onPlay: () => void) {
   el.querySelector<HTMLImageElement>('#settings')!.onclick = () => alert('Definições: em breve.');
   el.querySelector<HTMLImageElement>('#ranking')!.onclick = () => alert('Ranking: em breve.');
   el.querySelector<HTMLImageElement>('#info')!.onclick = () => alert('Projeto Alves Bandeira — WebAR jogo promocional.');
+
+  // Chuva de ícones "good" após a animação do título
+  const rainLayer = el.querySelector<HTMLDivElement>('#icon-rain')!;
+  const titleEl = el.querySelector<HTMLImageElement>('#title')!;
+  const revealClouds = el.querySelectorAll<HTMLElement>('.ab-reveal-cloud-left, .ab-reveal-cloud-right');
+
+  let started = false;
+  let spawnTimer: number | undefined;
+
+  function startIconRain() {
+    if (started) return; started = true;
+    // Carregar apenas os ícones bons do manifest
+    fetch('/assets/items/manifest.json').then(r => r.json()).then((m: {good?: unknown[]}) => {
+      const goods = (Array.isArray(m?.good) ? m!.good : []).filter((s): s is string => typeof s === 'string');
+      if (!goods.length) return;
+
+      const target = () => {
+        const btn = playBtn.getBoundingClientRect();
+        return { x: btn.left + btn.width/2, y: btn.top + btn.height*0.45 };
+      };
+
+      const titleBox = () => {
+        // zona larga em torno do título para parecer "por trás"
+        const wrap = titleEl.getBoundingClientRect();
+        return { left: wrap.left - 40, right: wrap.right + 40, top: wrap.top - 10, bottom: wrap.bottom + 10 };
+      };
+
+      function spawnOnce() {
+        if (!el.isConnected) { if (spawnTimer) { clearInterval(spawnTimer); } return; }
+        const g = goods[Math.floor(Math.random()*goods.length)] as string;
+        const img = document.createElement('img');
+        img.src = g;
+        img.alt = '';
+        img.draggable = false;
+        img.className = 'absolute will-change-transform select-none drop-shadow-[0_6px_8px_rgba(0,0,0,0.25)]';
+        const tBox = titleBox();
+        const startX = tBox.left + Math.random() * (tBox.right - tBox.left);
+        const startY = tBox.top + Math.random() * (tBox.bottom - tBox.top);
+        const startScale = 0.9 + Math.random()*0.3; // perto do título
+        const end = target();
+        const jitter0 = (Math.random()*60 - 30); // embudo com ligeiro desvio que morre ao longo do tempo
+        const rot = (Math.random()*20 - 10);
+        const dur = 2200 + Math.random()*2200; // 2.2s a 4.4s
+
+        const size = 40 + Math.random()*22; // 40-62px
+        img.style.width = `${size}px`;
+        img.style.height = 'auto';
+        img.style.zIndex = '1'; // atrás do título (que está a z [2])
+
+        rainLayer.appendChild(img);
+
+        const t0 = performance.now();
+        function tick(now: number) {
+          if (!img.isConnected) return;
+          const p = Math.min(1, (now - t0) / dur);
+          // easing para funil
+          const ease = p*p*(3-2*p);
+          const x = startX + (end.x + jitter0*(1-ease) - startX) * ease;
+          const y = startY + (end.y - startY) * Math.pow(ease, 0.85);
+          const scale = startScale * (0.85 + 0.15*(1-ease));
+          img.style.transform = `translate(${x}px, ${y}px) rotate(${rot*(1-ease)}deg) scale(${scale})`;
+          if (p < 1 && el.isConnected) {
+            requestAnimationFrame(tick);
+          } else {
+            img.remove();
+          }
+        }
+        requestAnimationFrame(tick);
+      }
+
+      // spawn contínuo em loop, desfasado
+      spawnTimer = window.setInterval(spawnOnce, 380);
+      // lança alguns de arranque
+      for (let i=0;i<4;i++) setTimeout(spawnOnce, i*180);
+    }).catch(() => {});
+  }
+
+  // Iniciar quando as nuvens de revelação terminarem (usar a mais longa)
+  let ended = 0;
+  revealClouds.forEach(c => c.addEventListener('animationend', () => {
+    ended++;
+    if (ended >= revealClouds.length) startIconRain();
+  }, { once: true }));
+  // Fallback de segurança
+  setTimeout(startIconRain, 2600);
 
   return el;
 }
