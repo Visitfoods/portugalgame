@@ -17,3 +17,5 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 
 /* Stage-wide filters toggled at runtime */
 #stage.fx-wavy { filter: url(#wavy); }
+
+.ab-home-gradient { background: linear-gradient(180deg, #0a2b66 0%, #0d3e91 45%, #107fd2 100%); }

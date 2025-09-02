@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 557.5 185.03">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        font-family: Nexa-Heavy, Nexa;
+        font-size: 95px;
+        font-weight: 800;
+      }
+
+      .cls-2 {
+        fill: #165480;
+      }
+
+      .cls-3 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-4 {
+        fill: #2472ba;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <rect class="cls-2" x="0" y="8" width="557.5" height="177.03" rx="88.51" ry="88.51"/>
+      <rect class="cls-4" x="0" y="0" width="557.5" height="177.03" rx="88.51" ry="88.51"/>
+      <text class="cls-1" transform="translate(98.92 118.5)"><tspan x="0" y="0">JO</tspan><tspan class="cls-3" x="145.73" y="0">G</tspan><tspan x="216.12" y="0">AR</tspan></text>
+    </g>
+  </g>
+</svg>
