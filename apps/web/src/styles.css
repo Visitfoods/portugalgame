@@ -34,6 +34,18 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 }
 .ab-cloud { animation: ab-cloud-drift var(--ab-cloud-dur, 12s) ease-in-out infinite; will-change: transform; }
 
+/* Marquee horizontal contínuo (infinito) */
+@keyframes ab-cloud-marquee-right {
+  0% { transform: translateX(-120vw); }
+  100% { transform: translateX(120vw); }
+}
+@keyframes ab-cloud-marquee-left {
+  0% { transform: translateX(120vw); }
+  100% { transform: translateX(-120vw); }
+}
+.ab-cloud-marquee-right { animation: ab-cloud-marquee-right var(--ab-cloud-scroll-dur, 40s) linear infinite; animation-delay: var(--ab-delay, 0s); will-change: transform; }
+.ab-cloud-marquee-left  { animation: ab-cloud-marquee-left  var(--ab-cloud-scroll-dur, 40s) linear infinite; animation-delay: var(--ab-delay, 0s); will-change: transform; }
+
 /* Revelar título: nuvens afastam-se do centro */
 @keyframes ab-cloud-reveal-left {
   0% { transform: translateX(0) translateY(0) scale(1.05) rotate(0deg); opacity: 1; }
