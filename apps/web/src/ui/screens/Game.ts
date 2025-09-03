@@ -138,7 +138,8 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
           ['mascote_Frame_1','mascote_Frame_2','mascote_Frame_3'],
           ['masctoe_Frame_1','masctoe_Frame_2','masctoe_Frame_3']
         ];
-        const exts = ['.webp', '.svg', '.png'];
+        // Evitar tentar .png para não gerar 404 no console em produção
+        const exts = ['.webp', '.svg'];
         outer: for (const names of frameNameSets) {
           for (const ext of exts) {
             const set = names.map(n => basePath + n + ext);
