@@ -14,7 +14,7 @@ export function Result(score: number, onRetry: () => void) {
 
     <div class="relative z-10 w-full flex flex-col items-center">
       <!-- Logo -->
-      <div class="relative mt-0 w-full h-[130px] flex items-start justify-center overflow-visible">
+      <div class="relative mt-0 w-full h-[130px] flex items-start justify-center overflow-visible pt-3 md:pt-4">
         <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[150px] md:w-[180px] h-auto ab-logo-white"/>
       </div>
 
@@ -88,4 +88,3 @@ export function Result(score: number, onRetry: () => void) {
 
   return el;
 }
-
