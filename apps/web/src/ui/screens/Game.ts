@@ -38,12 +38,15 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   };
   window.addEventListener('resize', resize);
 
+  let mascotCtl: { destroy(): void } | null = null;
+
   const cleanup = (clearCanvas = true) => {
     trackingActive = false;
     try { tracker.stop(); } catch {}
     try { feed.stop(); } catch {}
     window.removeEventListener('resize', resize);
     try { hud.destroy(); } catch {}
+    try { mascotCtl?.destroy(); mascotCtl = null; } catch {}
     if (clearCanvas) {
       try { const ctx = canvas.getContext('2d'); ctx && ctx.clearRect(0,0,canvas.width,canvas.height); } catch {}
     }
@@ -102,6 +105,67 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     });
 
     loop.start();
+
+    // Mascote animada (3 frames: 1-2-3-2-1 em loop)
+    mascotCtl = await (async function mountMascot() {
+      const stageEl = document.body; // acima do canvas mas fora do fluxo
+      const wrap = document.createElement('div');
+      wrap.className = 'fixed bottom-3 left-1/2 -translate-x-1/2 z-[3] pointer-events-none';
+      const img = document.createElement('img');
+      img.alt = '';
+      img.className = 'w-[110px] h-auto opacity-95 drop-shadow';
+
+      // Ajuste responsivo para ecrãs maiores
+      const w = Math.min(140, Math.max(90, Math.floor(window.innerWidth * 0.25)));
+      img.style.width = `${w}px`;
+
+      wrap.appendChild(img);
+      stageEl.appendChild(wrap);
+
+      const candidates = [
+        ['/assets/graphics/Mascote-01.svg','/assets/graphics/Mascote-02.svg','/assets/graphics/Mascote-03.svg'],
+        ['/assets/graphics/Mascote-01.png','/assets/graphics/Mascote-02.png','/assets/graphics/Mascote-03.png']
+      ];
+
+      function preload(src: string) { return new Promise<HTMLImageElement>((res, rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=src; }); }
+      let frames: string[] = [];
+      for (const set of candidates) {
+        try {
+          const imgs = await Promise.all(set.map(preload));
+          frames = imgs.map(i => i.src);
+          break;
+        } catch { /* tenta próximo formato */ }
+      }
+      if (frames.length === 0) {
+        // Se não houver assets, não mostrar mascote
+        wrap.remove();
+        return { destroy() { /* noop */ } };
+      }
+
+      const seq: number[] = [0,1,2,1];
+      let idx = 0;
+      let raf = 0; let last = 0; const stepMs = 220;
+      const firstIdx = seq[idx] ?? 0; img.src = frames[firstIdx]!;
+
+      const tick = (t: number) => {
+        if (!wrap.isConnected) return; // já limpo
+        if (!last) last = t;
+        if (t - last >= stepMs) {
+          last = t;
+          idx = (idx + 1) % seq.length;
+          const fi = seq[idx] ?? 0; img.src = frames[fi]!;
+        }
+        raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+
+      return {
+        destroy() {
+          if (raf) cancelAnimationFrame(raf);
+          wrap.remove();
+        }
+      };
+    })();
 
     // tracking bridge → mouth position in canvas px
     const step = () => {
