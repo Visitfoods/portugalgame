@@ -57,6 +57,9 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     // Show camera background
     video.classList.remove('hidden');
     video.classList.add('fixed','inset-0','w-full','h-full','object-cover','transform','-scale-x-100','z-[1]');
+    // Ensure canvas is visible for a replay
+    canvas.classList.remove('hidden');
+    canvas.classList.add('z-[2]');
 
     // Preload item sprites from manifest and warm up face landmarker in parallel
     const [sprites] = await Promise.all([
