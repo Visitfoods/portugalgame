@@ -30,7 +30,6 @@ export function Result(score: number, onRetry: () => void) {
           <input id="name" type="text" placeholder="Nome" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-white/60" required/>
           <input id="email" type="email" placeholder="E-mail" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-white/60" required/>
           <input id="phone" type="tel" placeholder="Telemóvel" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-white/60" required/>
-          <input id="code" type="text" placeholder="Código (opcional)" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-white/60"/>
 
           <!-- Consentimento compacto com toggle para ver mais -->
           <div class="mt-1">
@@ -77,16 +76,16 @@ export function Result(score: number, onRetry: () => void) {
     const name = (el.querySelector('#name') as HTMLInputElement).value.trim();
     const email = (el.querySelector('#email') as HTMLInputElement).value.trim();
     const phone = (el.querySelector('#phone') as HTMLInputElement).value.trim();
-    const code = (el.querySelector('#code') as HTMLInputElement).value.trim();
     const consent = (el.querySelector('#consent') as HTMLInputElement).checked;
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (name.length < 2 || name.length > 50) return alert('Nome inválido');
     if (!emailRe.test(email)) return alert('E-mail inválido');
     if (!/^\+?\d{9,15}$/.test(phone)) return alert('Telemóvel inválido');
     if (!consent) return alert('Necessário consentimento para registar.');
-    console.log('Registo (MVP):', { name, email, phone, code, score });
+    console.log('Registo (MVP):', { name, email, phone, score });
     alert('Registo guardado (local).');
   };
 
   return el;
 }
+
