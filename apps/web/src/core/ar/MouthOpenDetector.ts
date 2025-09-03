@@ -17,11 +17,12 @@ export class MouthOpenDetector {
   private state = false;
   private readonly cfg: MouthConfig;
   private lastChange = 0;
-  private debounceMs = 80; // avoid flicker on rapid changes
+  private debounceMs = 110; // avoid flicker on rapid changes; longer keeps state stable
   private lastEllipse: MouthEllipse | null = null;
 
   constructor(cfg: Partial<MouthConfig> = {}) {
-    this.cfg = { thOn: 0.40, thOff: 0.32, ...cfg };
+    // Soften thresholds slightly to detect abertura mais cedo
+    this.cfg = { thOn: 0.36, thOff: 0.30, ...cfg };
   }
 
   update(landmarks: Vec2[] | null): boolean {
@@ -67,8 +68,11 @@ export class MouthOpenDetector {
     const widthNorm = dist(ml, mr); // normalized [0..1] width between mouth corners
     const openNorm = dist(ul, ll);  // normalized height between inner lips
     // Full opening: rx ~ half of corner-to-corner width; ry ~ half of vertical opening
-    const rx = Math.max(6, (widthNorm * widthPx) * 0.5);
-    const ry = Math.max(4, (openNorm * heightPx) * 0.5);
+    // Expand capture ellipse to facilitar apanhar objetos
+    const RX_BOOST = 1.25; // 25% mais largo
+    const RY_BOOST = 1.60; // 60% mais alto
+    const rx = Math.max(8, (widthNorm * widthPx) * 0.5 * RX_BOOST);
+    const ry = Math.max(6, (openNorm * heightPx) * 0.5 * RY_BOOST);
     // rotation of the mouth line (ml -> mr)
     const rot = Math.atan2((mr.y - ml.y), (mr.x - ml.x));
     // Simple smoothing
