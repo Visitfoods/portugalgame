@@ -122,19 +122,27 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       wrap.appendChild(img);
       stageEl.appendChild(wrap);
 
-      const candidates = [
-        ['/assets/graphics/Mascote-01.svg','/assets/graphics/Mascote-02.svg','/assets/graphics/Mascote-03.svg'],
-        ['/assets/graphics/Mascote-01.png','/assets/graphics/Mascote-02.png','/assets/graphics/Mascote-03.png']
+      // Suporta múltiplas convenções de nome
+      const basePath = '/assets/graphics/';
+      const frameNameSets: string[][] = [
+        ['Mascote-01','Mascote-02','Mascote-03'],
+        ['Mascote_01','Mascote_02','Mascote_03'],
+        ['mascote_Frame_1','mascote_Frame_2','mascote_Frame_3'],
+        ['masctoe_Frame_1','masctoe_Frame_2','masctoe_Frame_3'] // conforme ficheiros fornecidos
       ];
+      const exts = ['.svg', '.png', '.webp'];
 
       function preload(src: string) { return new Promise<HTMLImageElement>((res, rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=src; }); }
       let frames: string[] = [];
-      for (const set of candidates) {
-        try {
-          const imgs = await Promise.all(set.map(preload));
-          frames = imgs.map(i => i.src);
-          break;
-        } catch { /* tenta próximo formato */ }
+      outer: for (const names of frameNameSets) {
+        for (const ext of exts) {
+          const set = names.map(n => basePath + n + ext);
+          try {
+            const imgs = await Promise.all(set.map(preload));
+            frames = imgs.map(i => i.src);
+            break outer;
+          } catch { /* tenta próximo formato/conjunto */ }
+        }
       }
       if (frames.length === 0) {
         // Se não houver assets, não mostrar mascote
