@@ -108,9 +108,9 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
 
     // Mascote animada (3 frames: 1-2-3-2-1 em loop)
     mascotCtl = await (async function mountMascot() {
-      const stageEl = document.body; // acima do canvas mas fora do fluxo
+      const stageEl = document.getElementById('stage') || document.body; // sobre o canvas
       const wrap = document.createElement('div');
-      wrap.className = 'fixed bottom-3 left-1/2 -translate-x-1/2 z-[3] pointer-events-none';
+      wrap.className = 'absolute bottom-3 left-1/2 -translate-x-1/2 z-[3] pointer-events-none';
       const img = document.createElement('img');
       img.alt = '';
       img.className = 'w-[110px] h-auto opacity-95 drop-shadow';
@@ -122,27 +122,36 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       wrap.appendChild(img);
       stageEl.appendChild(wrap);
 
-      // Suporta múltiplas convenções de nome
-      const basePath = '/assets/graphics/';
-      const frameNameSets: string[][] = [
-        ['Mascote-01','Mascote-02','Mascote-03'],
-        ['Mascote_01','Mascote_02','Mascote_03'],
-        ['mascote_Frame_1','mascote_Frame_2','mascote_Frame_3'],
-        ['masctoe_Frame_1','masctoe_Frame_2','masctoe_Frame_3'] // conforme ficheiros fornecidos
-      ];
-      const exts = ['.svg', '.png', '.webp'];
-
+      // Primeiro tenta exatamente os .webp fornecidos (masctoe_Frame_1/2/3.webp)
+      const directWebp = ['/assets/graphics/masctoe_Frame_1.webp','/assets/graphics/masctoe_Frame_2.webp','/assets/graphics/masctoe_Frame_3.webp'];
       function preload(src: string) { return new Promise<HTMLImageElement>((res, rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=src; }); }
       let frames: string[] = [];
-      outer: for (const names of frameNameSets) {
-        for (const ext of exts) {
-          const set = names.map(n => basePath + n + ext);
-          try {
-            const imgs = await Promise.all(set.map(preload));
-            frames = imgs.map(i => i.src);
-            break outer;
-          } catch { /* tenta próximo formato/conjunto */ }
+      try {
+        const imgs = await Promise.all(directWebp.map(preload));
+        frames = imgs.map(i => i.src);
+      } catch {
+        // Suporta múltiplas convenções de nome (fallback)
+        const basePath = '/assets/graphics/';
+        const frameNameSets: string[][] = [
+          ['Mascote-01','Mascote-02','Mascote-03'],
+          ['Mascote_01','Mascote_02','Mascote_03'],
+          ['mascote_Frame_1','mascote_Frame_2','mascote_Frame_3'],
+          ['masctoe_Frame_1','masctoe_Frame_2','masctoe_Frame_3']
+        ];
+        const exts = ['.webp', '.svg', '.png'];
+        outer: for (const names of frameNameSets) {
+          for (const ext of exts) {
+            const set = names.map(n => basePath + n + ext);
+            try {
+              const imgs = await Promise.all(set.map(preload));
+              frames = imgs.map(i => i.src);
+              break outer;
+            } catch { /* tenta próximo formato/conjunto */ }
+          }
         }
+      }
+      if (frames.length === 0) {
+        console.warn('[Mascote] Frames não encontrados nas paths esperadas (*.webp/svg/png).');
       }
       if (frames.length === 0) {
         // Se não houver assets, não mostrar mascote
