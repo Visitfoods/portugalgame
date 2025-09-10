@@ -27,6 +27,8 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   const mouth = new MouthOpenDetector();
   let loop: GameLoop;
   let trackingActive = true;
+  let bottomDecor: HTMLImageElement | null = null;
+  let topLogoWrap: HTMLDivElement | null = null;
 
   const resize = () => {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -35,6 +37,14 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     canvas.style.width = `${window.innerWidth}px`;
     canvas.style.height = `${window.innerHeight}px`;
     loop?.resize(w, h);
+    // adjust top logo size responsively
+    if (topLogoWrap) {
+      const img = topLogoWrap.querySelector('img');
+      if (img) {
+        const computeW = () => Math.min(220, Math.max(120, Math.floor(window.innerWidth * 0.33)));
+        (img as HTMLImageElement).style.width = computeW() + 'px';
+      }
+    }
   };
   window.addEventListener('resize', resize);
 
@@ -47,6 +57,8 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     window.removeEventListener('resize', resize);
     try { hud.destroy(); } catch {}
     try { mascotCtl?.destroy(); mascotCtl = null; } catch {}
+    try { bottomDecor?.remove(); bottomDecor = null; } catch {}
+    try { topLogoWrap?.remove(); topLogoWrap = null; } catch {}
     if (clearCanvas) {
       try { const ctx = canvas.getContext('2d'); ctx && ctx.clearRect(0,0,canvas.width,canvas.height); } catch {}
     }
@@ -63,6 +75,34 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     // Ensure canvas is visible for a replay
     canvas.classList.remove('hidden');
     canvas.classList.add('z-[2]');
+
+    // Bottom decorative element (same as other pages), positioned under mascot
+    if (!bottomDecor) {
+      bottomDecor = document.createElement('img');
+      bottomDecor.src = '/assets/graphics/Graphic-Element01.svg';
+      bottomDecor.alt = '';
+      // z-[2] so it sits above the canvas (also z-[2]) due to DOM order,
+      // and below the mascot (z-[3]) to avoid covering it
+      bottomDecor.className = 'absolute left-0 right-0 bottom-0 w-full h-[140px] md:h-[180px] object-cover pointer-events-none z-[2]';
+      (stage || document.body).appendChild(bottomDecor);
+    }
+
+    // Top centered Alves Bandeira logo, persistent during gameplay
+    if (!topLogoWrap) {
+      const wrap = document.createElement('div');
+      wrap.className = 'absolute top-3 left-1/2 -translate-x-1/2 z-[4] pointer-events-none';
+      const img = document.createElement('img');
+      img.src = '/assets/graphics/Alves_Bandeira_logo.svg';
+      img.alt = 'Alves Bandeira';
+      // Responsive width between 120–220px
+      const computeW = () => Math.min(220, Math.max(120, Math.floor(window.innerWidth * 0.33)));
+      img.style.width = computeW() + 'px';
+      // Width will also update via the existing resize() handler
+      // keep a simple destroy hook tied to wrap removal
+      wrap.appendChild(img);
+      (stage || document.body).appendChild(wrap);
+      topLogoWrap = wrap;
+    }
 
     // Preload item sprites from manifest and warm up face landmarker in parallel
     const [sprites] = await Promise.all([
