@@ -1,12 +1,9 @@
 export class HUD {
   private root: HTMLElement;
   private timeEl: HTMLElement;
-  private scoreWrap: HTMLElement;
-  private scoreLabel: HTMLElement;
   private scoreNum: HTMLElement;
   private mouthEl: HTMLElement;
   private fxRoot: HTMLElement;
-  private badges: HTMLElement;
 
   constructor() {
     this.root = document.createElement('div');
