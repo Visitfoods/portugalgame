@@ -1,5 +1,5 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getAuth, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithEmailLink, onAuthStateChanged, User, Auth } from 'firebase/auth';
+import { getAuth, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithEmailLink, onAuthStateChanged, User, Auth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
 let app: FirebaseApp | undefined;
@@ -36,14 +36,11 @@ export const EmailLink = {
   isLink(url?: string) {
     return isSignInWithEmailLink(getFirebaseAuth(), url ?? window.location.href);
   },
-  async send(email: string, url: string) {
-    const actionCodeSettings = {
-      url,
+  async send(email: string, url?: string) {
+    const actionCodeSettings: any = {\n      url: (url || `${window.location.origin}/`),
       handleCodeInApp: true,
-    };
-    await sendSignInLinkToEmail(getFirebaseAuth(), email, actionCodeSettings);
-    try { localStorage.setItem('ab-login-email', email); } catch {}
-  },
+    };\n    const dyn = (import.meta as any)?.env?.VITE_FIREBASE_DYNAMIC_LINK_DOMAIN as string | undefined;\n    if (dyn) (actionCodeSettings as any).dynamicLinkDomain = dyn;\n    await sendSignInLinkToEmail(getFirebaseAuth(), email, actionCodeSettings);
+    try { localStorage.setItem('ab-login-email', email); } catch {}}\n  },
   async complete(url?: string) {
     const auth = getFirebaseAuth();
     const href = url ?? window.location.href;
@@ -62,3 +59,16 @@ export const EmailLink = {
 };
 
 
+
+
+
+
+
+
+
+
+export async function signInWithGooglePopup(): Promise<User> {
+  const provider = new GoogleAuthProvider();
+  const cred = await signInWithPopup(getFirebaseAuth(), provider);
+  return cred.user;
+}
