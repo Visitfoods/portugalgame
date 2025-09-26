@@ -1,0 +1,17 @@
+{
+  "name": "alvesbandeira-game-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspace=apps/web",
+    "preview": "npm run preview --workspace=apps/web",
+    "install:web": "npm install --workspace=apps/web"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
+

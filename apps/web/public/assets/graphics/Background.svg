@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1090.6 1920">
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1093.31 1948.94">
   <defs>
     <style>
       .cls-1 {
         fill: url(#linear-gradient);
       }
     </style>
-    <linearGradient id="linear-gradient" x1="545.3" y1="0" x2="545.3" y2="1854.26" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#57a5db"/>
-      <stop offset="1" stop-color="#98cbee"/>
+    <linearGradient id="linear-gradient" x1="546.65" y1="-327.21" x2="546.65" y2="1555" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#243b78"/>
+      <stop offset="1" stop-color="#87c0e8"/>
     </linearGradient>
   </defs>
   <g id="Layer_1-2" data-name="Layer 1">
-    <rect class="cls-1" width="1090.6" height="1920"/>
+    <polygon class="cls-1" points="1093.31 1948.94 0 1932.3 0 0 1090.6 0 1093.31 1948.94"/>
   </g>
 </svg>

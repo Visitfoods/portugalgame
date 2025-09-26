@@ -10,27 +10,36 @@ export class HUD {
 
   constructor() {
     this.root = document.createElement('div');
-    this.root.className = 'fixed inset-x-0 top-0 p-3 pointer-events-none z-30';
+    this.root.className = 'fixed inset-0 pointer-events-none z-30';
     this.timeEl = document.createElement('div');
     this.mouthEl = document.createElement('div');
-    this.timeEl.className = 'absolute left-3 top-3 text-xs md:text-sm bg-black/30 rounded px-2 py-1 backdrop-blur-sm';
-    this.mouthEl.className = 'absolute right-3 top-3 text-xs md:text-sm bg-black/30 rounded px-2 py-1 hidden md:block';
+    this.mouthEl.className = 'hidden';
 
-    // Centered SCORE card
-    this.scoreWrap = document.createElement('div');
-    this.scoreWrap.className = 'mx-auto mt-3 flex flex-col items-center justify-center rounded-2xl px-4 py-2 bg-white/90 text-[#0a2960] shadow-[0_6px_20px_rgba(0,0,0,0.18)] w-max pointer-events-none';
-    this.scoreLabel = document.createElement('div');
-    this.scoreLabel.className = 'text-[10px] tracking-[0.2em] font-semibold opacity-80';
-    this.scoreLabel.textContent = 'SCORE';
+    // New timer circle (center/top)
+    const tWrap = document.createElement('div');
+    tWrap.className = 'absolute left-1/2 -translate-x-1/2 w-[150px] h-[150px] md:w-[170px] md:h-[170px] rounded-full bg-white/95 text-[#0a2960] shadow-[0_12px_28px_rgba(2,20,60,0.25)] flex flex-col items-center justify-center';
+    // position lower, near bottom center (above mascot)
+    (tWrap.style as any).bottom = 'calc(env(safe-area-inset-bottom, 0px) + 50px)';
+    const tLbl = document.createElement('div');
+    tLbl.className = 'text-[14px] md:text-lg font-[800] tracking-[0.12em]';
+    tLbl.textContent = 'TEMPO';
+    this.timeEl.className = 'text-3xl md:text-4xl font-[800] leading-none mt-1';
+    this.timeEl.textContent = '00:00';
+    tWrap.append(tLbl, this.timeEl);
+
+    // New score circle (bottom-right)
+    const sWrap = document.createElement('div');
+    sWrap.className = 'absolute right-3 md:right-4 w-[110px] h-[110px] md:w-[126px] md:h-[126px] rounded-full bg-white text-[#0a2960] shadow-[0_10px_24px_rgba(2,20,60,0.25)] flex flex-col items-center justify-center';
+    (sWrap.style as any).bottom = 'calc(env(safe-area-inset-bottom, 0px) + 24px)';
+    const sLbl = document.createElement('div');
+    sLbl.className = 'text-[10px] md:text-[11px] tracking-[0.22em] font-bold uppercase opacity-90';
+    sLbl.textContent = 'PONTOS';
     this.scoreNum = document.createElement('div');
-    this.scoreNum.className = 'text-2xl md:text-4xl font-extrabold leading-none';
+    this.scoreNum.className = 'text-3xl md:text-4xl font-[800] leading-none';
     this.scoreNum.textContent = '0';
-    this.scoreWrap.append(this.scoreLabel, this.scoreNum);
+    sWrap.append(sLbl, this.scoreNum);
 
-    this.badges = document.createElement('div');
-    this.badges.className = 'hidden';
-
-    this.root.append(this.scoreWrap, this.timeEl, this.mouthEl);
+    this.root.append(tWrap, sWrap, this.mouthEl);
     document.body.appendChild(this.root);
 
     this.fxRoot = document.createElement('div');
@@ -39,14 +48,18 @@ export class HUD {
   }
 
   setTimeLeft(seconds: number) {
-    const s = Math.ceil(seconds);
+    const s = Math.max(0, Math.ceil(seconds));
     const mm = String(Math.floor(s / 60)).padStart(2,'0');
     const ss = String(s % 60).padStart(2,'0');
-    this.timeEl.textContent = `Tempo ${mm}:${ss}`;
+    this.timeEl.textContent = `${mm}:${ss}`;
   }
 
   setScore(score: number) {
+    const prev = Number(this.scoreNum.textContent || '0');
     this.scoreNum.textContent = String(score);
+    if (score !== prev) {
+      try { this.scoreNum.classList.remove('ab-pop'); (this.scoreNum as any).offsetWidth; this.scoreNum.classList.add('ab-pop'); } catch {}
+    }
   }
 
   setMouth(open: boolean) {

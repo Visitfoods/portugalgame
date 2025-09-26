@@ -1,7 +1,8 @@
-export function Home(onPlay: () => void) {
+export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => void) {
   const el = document.createElement('div');
-  // Full-screen stage, we control layers manually
-  el.className = 'screen p-0 overflow-hidden';
+  // Full-screen stage; on Home we want content aligned to the top
+  // Use explicit utilities instead of the shared `.screen` (which centers vertically)
+  el.className = 'home-screen fixed inset-0 flex flex-col items-center justify-start p-0 overflow-hidden';
   el.innerHTML = `
     <!-- Fundo -->
     <img src="/assets/graphics/Background.svg" alt="" class="absolute inset-0 -z-20 w-full h-full object-cover"/>
@@ -15,21 +16,32 @@ export function Home(onPlay: () => void) {
     <!-- Conteúdo principal -->
     <div class="relative z-10 w-full flex flex-col items-center">
       <!-- Logo com parallax de nuvens (algumas atrás e outras à frente) -->
-      <div class="relative mt-0 w-full h-[150px] flex items-start justify-center overflow-visible">
+      <div class="relative mt-6 w-full h-[70px] flex items-start justify-center overflow-visible">
         <!-- Nuvem atrás do logotipo -->
-        <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-8 left-0 w-[28%] max-w-[240px] opacity-70 z-[5] ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 56s; --ab-delay: -18s;"/>
+        <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-2 left-0 w-[28%] max-w-[240px] opacity-70 z-[5] ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 56s; --ab-delay: -18s;"/>
         <!-- Logotipo -->
-        <img id="ab-logo" src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[170px] md:w-[200px] h-auto ab-logo-white"/>
+        <img id="ab-logo" src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[110px] md:w-[130px] h-auto ab-logo-white"/>
         <!-- Nuvem à frente do logotipo -->
-        <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-10 right-0 w-[26%] max-w-[220px] opacity-80 z-[20] ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 50s; --ab-delay: -32s;"/>
+        <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-4 right-0 w-[26%] max-w-[220px] opacity-80 z-[20] ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 50s; --ab-delay: -32s;"/>
       </div>
 
-      <!-- Título + nuvens de revelação (01/02 clonadas, muito maiores e com animações diferentes) -->
-      <div class="relative mt-4 w-10/12 max-w-[720px] overflow-visible">
-        <img id="title" src="/assets/graphics/Titulo-Jogo.svg" alt="Apanha os Sabores de Portugal" class="relative z-[2] w-full h-auto ab-anim-fade-zoom-in"/>
-        <!-- Clones enormes para o efeito de revelar -->
-        <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute left-[-10%] top-[-6%] w-[120%] z-[3] ab-reveal-cloud-left"/>
-        <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute right-[-10%] top-[-8%] w-[126%] z-[3] ab-reveal-cloud-right"/>
+      <!-- Container único para ambas as animações (mesmo espaço) -->
+      <div class="home-title-slot relative mt-4 w-10/12 max-w-[720px] h-[260px] md:h-[320px] overflow-visible">
+        <!-- Primeira animação: Título do jogo -->
+        <div id="title-container" class="absolute inset-0 flex items-center justify-center ab-anim-fade-out">
+          <img id="title" src="/assets/graphics/Titulo-Jogo.svg" alt="Apanha os Sabores de Portugal" class="relative z-[2] w-full h-auto ab-anim-fade-zoom-in"/>
+          <!-- Clones enormes para o efeito de revelar -->
+          <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute left-[-10%] top-[12%] w-[120%] z-[3] ab-reveal-cloud-left"/>
+          <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute right-[-10%] top-[10%] w-[126%] z-[3] ab-reveal-cloud-right"/>
+        </div>
+
+        <!-- Segunda animação: 50 anos 50 prémios (mesmo espaço) -->
+        <div id="title-50anos-container" class="absolute inset-0 flex items-center justify-center">
+          <img id="title-50anos" src="/assets/graphics/50anos-50premios.svg" alt="50 Anos 50 Prémios" class="relative z-[2] w-full h-auto ab-anim-fade-zoom-in-delayed"/>
+          <!-- Clones enormes para o efeito de revelar (segunda animação) -->
+          <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute left-[-10%] top-[12%] w-[120%] z-[3] ab-reveal-cloud-left-delayed"/>
+          <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute right-[-10%] top-[10%] w-[126%] z-[3] ab-reveal-cloud-right-delayed"/>
+        </div>
       </div>
 
       <!-- Nuvens 05/06 pequenas por baixo do título (marquee lento) -->
@@ -39,14 +51,26 @@ export function Home(onPlay: () => void) {
       </div>
 
       <!-- Botões principais -->
-      <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="mt-10 w-8/12 max-w-[360px] h-auto cursor-pointer active:scale-[.98] transition"/>
-      <img id="how" src="/assets/graphics/Botao-ComoJogar.svg" alt="Como Jogar" class="mt-4 w-7/12 max-w-[320px] h-auto cursor-pointer active:scale-[.98] transition"/>
+      <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play mt-20 w-7/12 max-w-[320px] h-auto cursor-pointer active:scale-[.98] transition"/>
+      <button id="how" class="home-glass-btn btn-how mt-7 w-5/12 max-w-[240px] px-4 py-2 rounded-full text-white font-semibold text-[17px] md:text-lg border border-white/60 bg-white/15 backdrop-blur-sm shadow-[0_6px_16px_rgba(2,20,60,0.25)] active:scale-[.98] transition">COMO JOGAR</button>
 
       <!-- Ícones inferiores -->
-      <div class="mt-6 flex items-center justify-center gap-6 md:gap-8 mb-[72px] md:mb-[84px]">
-        <img id="settings" src="/assets/graphics/Botao-Settings.svg" alt="Definições" class="w-[52px] md:w-[56px] h-auto cursor-pointer"/>
-        <img id="ranking" src="/assets/graphics/Botao-Ranking.svg" alt="Ranking" class="w-[52px] md:w-[56px] h-auto cursor-pointer"/>
-        <img id="info" src="/assets/graphics/Botao-Info.svg" alt="Informação" class="w-[52px] md:w-[56px] h-auto cursor-pointer"/>
+            <div class="bottom-icons mt-12 flex items-center justify-center gap-6 md:gap-8 mb-[72px] md:mb-[84px]">
+        <button id="account" class="ab-icon-btn" aria-label="Conta">
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="26" cy="26" r="25" fill="white" fill-opacity="0.15" stroke="white" stroke-opacity="0.6"/>
+            <g fill="#ffffff">
+              <circle cx="26" cy="20.5" r="6.5"/>
+              <path d="M12 39c0-6.627 6.268-10 14-10s14 3.373 14 10v1H12v-1z"/>
+            </g>
+          </svg>
+        </button>
+        <button id="ranking" class="ab-icon-btn" aria-label="Ranking">
+          <img src="/assets/graphics/Botao-Ranking.svg" alt=""/>
+        </button>
+        <button id="info" class="ab-icon-btn" aria-label="Informa��o">
+          <img src="/assets/graphics/Botao-Info.svg" alt=""/>
+        </button>
       </div>
     </div>
 
@@ -60,6 +84,10 @@ export function Home(onPlay: () => void) {
 
     <!-- Camada para "chuva" de ícones -->
     <div id="icon-rain" class="pointer-events-none absolute inset-0 z-[1] overflow-visible"></div>
+    <!-- Bot�o de som (canto inferior esquerdo) -->
+    <button id="sound" class="ab-icon-btn fixed left-5 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px)" aria-label="Som">
+      <img id="sound-icon" src="/assets/graphics/icon_Volume-On.svg" alt=""/>
+    </button>
 
     <!-- Nota de compatibilidade -->
     <div class="absolute left-0 right-0 bottom-2 text-center text-[11px] text-white/85 z-[2] px-4">
@@ -80,12 +108,100 @@ export function Home(onPlay: () => void) {
   playBtn.onpointerleave = () => setPressed(false);
   playBtn.onpointercancel = () => setPressed(false);
   playBtn.onclick = () => onPlay();
-  el.querySelector<HTMLImageElement>('#how')!.onclick = () => alert('Mantém o rosto visível e centrado. Os ícones caem — abre a boca para os apanhar! Atenção aos “falsos”: tiram pontos.');
-  el.querySelector<HTMLImageElement>('#settings')!.onclick = () => alert('Definições: em breve.');
-  el.querySelector<HTMLImageElement>('#ranking')!.onclick = () => alert('Ranking: em breve.');
-  el.querySelector<HTMLImageElement>('#info')!.onclick = () => alert('Projeto Alves Bandeira — WebAR jogo promocional.');
+  el.querySelector<HTMLButtonElement>('#how')!.onclick = () => { if (onHow) onHow(); else alert('Como jogar: manter o rosto visivel e centrado. Abre a boca para apanhar os icones. Evita os falsos!'); };
+  el.querySelector<HTMLButtonElement>('#account')!.onclick = () => { const fn = (onHow as any)?.gotoAccount; if (typeof fn === 'function') fn(); else alert('Conta: em breve.'); };
+  el.querySelector<HTMLButtonElement>('#ranking')!.onclick = () => { if (onRanking) onRanking(); else alert('Ranking: em breve.'); };
+  el.querySelector<HTMLButtonElement>('#info')!.onclick = () => alert('Projeto Alves Bandeira — WebAR jogo promocional.');
+  // Som on/off com persistência
+  const soundBtn = el.querySelector<HTMLButtonElement>('#sound')!;
+  const soundIcon = el.querySelector<HTMLImageElement>('#sound-icon')!;
+    const updateSoundIcon = () => {
+    const muted = (localStorage.getItem('ab-muted') === '1');
+    soundIcon.src = muted ? '/assets/graphics/Icon_Volume-Muted.svg' : '/assets/graphics/icon_Volume-On.svg';
+    try {
+      soundBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
+      soundBtn.title = muted ? 'Som desligado' : 'Som ligado';
+      soundIcon.classList.remove('ab-icon-swap');
+      // force reflow to retrigger animation
+      void (soundIcon as any).offsetWidth;
+      soundIcon.classList.add('ab-icon-swap');
+    } catch {}
+  };
+    updateSoundIcon();
+  const toggleMute = () => {
+    const current = (localStorage.getItem('ab-muted') === '1');
+    try { localStorage.setItem('ab-muted', current ? '0' : '1'); } catch {}
+    updateSoundIcon();
+  };
+  soundBtn.onclick = () => toggleMute();
+  // iOS Safari: garantir toggle no toque sem click duplicado
+  soundBtn.addEventListener('touchstart', (e) => { try { e.preventDefault(); } catch {} toggleMute(); }, { passive: false });
+  soundBtn.onkeydown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMute(); }
+  };
 
+  // Press feedback for icon buttons (iOS-friendly)
+  el.querySelectorAll<HTMLButtonElement>('.ab-icon-btn, .home-glass-btn').forEach(btn => {
+    const set = (on: boolean) => btn.classList.toggle('is-pressing', on);
+    btn.addEventListener('pointerdown', () => set(true));
+    ['pointerup','pointerleave','pointercancel'].forEach(evt => btn.addEventListener(evt, () => set(false)));
+  });
   // Chuva de ícones "good" após a animação do título
+  // Sequência: garantir que o segundo título só aparece depois do primeiro
+  try {
+    const title50 = el.querySelector<HTMLImageElement>('#title-50anos')!;
+    const revealCloudsDelayed = el.querySelectorAll<HTMLElement>('.ab-reveal-cloud-left-delayed, .ab-reveal-cloud-right-delayed');
+    title50.style.visibility = 'hidden';
+    revealCloudsDelayed.forEach(c => (c.style.visibility = 'hidden'));
+    setTimeout(() => {
+      title50.style.visibility = 'visible';
+      revealCloudsDelayed.forEach(c => (c.style.visibility = 'visible'));
+    }, 2950);
+  } catch {}
+
+  // Loop das animações do título: reinicia a cada ~6s
+  function restartAnimation(n: HTMLElement) {
+    n.style.animation = 'none';
+    // force reflow
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    (n as any).offsetHeight;
+    n.style.animation = '';
+  }
+
+  function startSequenceOnce() {
+    const tContainer = el.querySelector<HTMLElement>('#title-container');
+    const t1 = el.querySelector<HTMLImageElement>('#title');
+    const clouds1 = el.querySelectorAll<HTMLElement>('.ab-reveal-cloud-left, .ab-reveal-cloud-right');
+    const t2 = el.querySelector<HTMLImageElement>('#title-50anos');
+    const clouds2 = el.querySelectorAll<HTMLElement>('.ab-reveal-cloud-left-delayed, .ab-reveal-cloud-right-delayed');
+    if (!tContainer || !t1 || !t2) return;
+
+    // Esconder fase 2 durante a fase 1
+    t2.style.visibility = 'hidden';
+    clouds2.forEach(c => (c.style.visibility = 'hidden'));
+
+    // Reiniciar ambas as fases
+    restartAnimation(t1);
+    restartAnimation(tContainer);
+    clouds1.forEach(c => restartAnimation(c));
+    restartAnimation(t2);
+    clouds2.forEach(c => restartAnimation(c));
+
+    // Mostrar fase 2 no momento do seu delay (3s)
+    setTimeout(() => {
+      if (!el.isConnected) return;
+      t2.style.visibility = 'visible';
+      clouds2.forEach(c => (c.style.visibility = 'visible'));
+    }, 3000);
+  }
+
+  // Arranque imediato e loop contínuo
+  startSequenceOnce();
+  const seqInterval = window.setInterval(() => {
+    if (!el.isConnected) { clearInterval(seqInterval); return; }
+    startSequenceOnce();
+  }, 6000);
+
   const rainLayer = el.querySelector<HTMLDivElement>('#icon-rain')!;
   const titleEl = el.querySelector<HTMLImageElement>('#title')!;
   const revealClouds = el.querySelectorAll<HTMLElement>('.ab-reveal-cloud-left, .ab-reveal-cloud-right');
@@ -172,3 +288,17 @@ export function Home(onPlay: () => void) {
 
   return el;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

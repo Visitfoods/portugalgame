@@ -1,4 +1,10 @@
 export class Sfx {
+  // Global mute state shared across instances
+  private static muted = ((): boolean => {
+    try { return localStorage.getItem('ab-muted') === '1'; } catch { return false; }
+  })();
+  static setMuted(v: boolean) { Sfx.muted = v; try { localStorage.setItem('ab-muted', v ? '1' : '0'); } catch {} }
+  static isMuted() { return Sfx.muted; }
   private pop = new Audio();
   private buzz = new Audio();
   private tick = new Audio();
@@ -19,9 +25,10 @@ export class Sfx {
   }
 
   play(name: 'pop' | 'buzz' | 'tick') {
+    try { if (localStorage.getItem('ab-muted') === '1') return; } catch {}
+    if (Sfx.muted) return;
     const a = name === 'pop' ? this.pop : name === 'buzz' ? this.buzz : this.tick;
     a.currentTime = 0;
     a.play().catch(() => {});
   }
 }
-

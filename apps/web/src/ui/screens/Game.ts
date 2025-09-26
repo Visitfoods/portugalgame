@@ -13,7 +13,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   el.innerHTML = `
     <div class="text-2xl font-semibold">Preparar...</div>
     <div class="text-white/80">Coloca o teu rosto visível e centrado. O jogo começa já!</div>
-    <div id="controls" class="fixed top-3 left-3 z-40">
+        <div id="controls" class="fixed top-3 left-3 z-40">
       <button id="btn-exit" class="px-3 py-2 rounded bg-black/50 text-white border border-white/20">Sair</button>
     </div>
   `;
@@ -29,6 +29,8 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   let trackingActive = true;
   let bottomDecor: HTMLImageElement | null = null;
   let topLogoWrap: HTMLDivElement | null = null;
+  let soundBtnEl: HTMLButtonElement | null = null;
+  let devFinishBtn: HTMLButtonElement | null = null;
 
   const resize = () => {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -59,6 +61,8 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     try { mascotCtl?.destroy(); mascotCtl = null; } catch {}
     try { bottomDecor?.remove(); bottomDecor = null; } catch {}
     try { topLogoWrap?.remove(); topLogoWrap = null; } catch {}
+    try { soundBtnEl?.remove(); soundBtnEl = null; } catch {}
+    try { devFinishBtn?.remove(); devFinishBtn = null; } catch {}
     if (clearCanvas) {
       try { const ctx = canvas.getContext('2d'); ctx && ctx.clearRect(0,0,canvas.width,canvas.height); } catch {}
     }
@@ -145,6 +149,36 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     });
 
     loop.start();
+    // Developer helper: finish button visible during countdown/gameplay
+    if (!devFinishBtn) {
+      const btn = document.createElement('button');
+      btn.id = 'btn-finish-dev';
+      btn.textContent = 'Terminar (dev)';
+      btn.className = 'fixed top-3 right-3 z-[50] px-3 py-2 rounded bg-white/20 text-white border border-white/40 backdrop-blur-sm';
+      btn.onclick = () => { try { cleanup(true); } catch {} try { onFinish(loop?.getScore() ?? 0); } catch { onFinish(0); } };
+      document.body.appendChild(btn);
+      devFinishBtn = btn;
+    }
+
+    // Sound toggle button (bottom-left)
+    if (!soundBtnEl) {
+      const b = document.createElement('button');
+      b.className = 'ab-icon-btn fixed left-5 z-[40] pointer-events-auto';
+      (b.style as any).bottom = 'calc(env(safe-area-inset-bottom, 0px) + 20px)';
+      const img = document.createElement('img');
+      img.alt = '';
+      b.appendChild(img);
+      const updateIcon = () => {
+        const muted = (localStorage.getItem('ab-muted') === '1');
+        img.src = muted ? '/assets/graphics/Icon_Volume-Muted.svg' : '/assets/graphics/icon_Volume-On.svg';
+      };
+      const toggle = () => { const cur = (localStorage.getItem('ab-muted') === '1'); try { localStorage.setItem('ab-muted', cur ? '0' : '1'); } catch {} updateIcon(); };
+      updateIcon();
+      b.onclick = () => toggle();
+      b.addEventListener('touchstart', (e) => { try { e.preventDefault(); } catch {} toggle(); }, { passive: false });
+      document.body.appendChild(b);
+      soundBtnEl = b;
+    }
 
     // Mascote animada (3 frames: 1-2-3-2-1 em loop)
     mascotCtl = await (async function mountMascot() {
@@ -280,3 +314,14 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
 
   return el;
 }
+
+
+
+
+
+
+
+
+
+
+

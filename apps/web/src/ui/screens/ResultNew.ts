@@ -16,13 +16,13 @@ export function Result(score: number, onRetry: () => void) {
         <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[150px] md:w-[180px] h-auto ab-logo-white"/>
       </div>
 
-      <!-- TÌtulo -->
+      <!-- T√≠tulo -->
       <img src="/assets/graphics/Titulo-Jogo.svg" alt="Apanha os Sabores de Portugal" class="mt-4 w-10/12 max-w-[720px] h-auto"/>
 
-      <!-- Cart„o de pontuaÁ„o e formul·rio -->
+      <!-- Cart√£o de pontua√ß√£o e formul√°rio -->
       <div class="mt-4 w-11/12 max-w-[680px] bg-white/10 backdrop-blur-sm rounded-[22px] border border-white/25 text-white p-4 sm:p-5">
         <div class="flex items-center justify-center gap-3 sm:gap-4">
-          <img src="/assets/graphics/trophy.svg" alt="TrofÈu" class="w-14 h-14 sm:w-16 sm:h-16 select-none"/>
+          <img src="/assets/graphics/trophy.svg" alt="Trof√©u" class="w-14 h-14 sm:w-16 sm:h-16 select-none"/>
           <div class="flex flex-col items-start leading-none">
             <div id="score-num" class="text-5xl sm:text-6xl font-[800]">0</div>
             <div class="mt-1 text-[10px] sm:text-xs tracking-[0.22em] font-bold uppercase opacity-90">PONTOS</div>
@@ -32,19 +32,19 @@ export function Result(score: number, onRetry: () => void) {
         <form id="form" class="mt-3 space-y-2.5">
           <input id="name" type="text" placeholder="Nome" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-white/60" required/>
           <input id="email" type="email" placeholder="E-mail" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-white/60" required/>
-          <input id="phone" type="tel" placeholder="TelemÛvel (opcional)" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-white/60"/>
+          <input id="phone" type="tel" placeholder="Telem√≥vel (opcional)" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-white/60"/>
 
           <!-- Consentimento compacto com toggle para ver mais -->
           <div class="mt-1">
             <label class="flex items-start gap-3 text-[11px] text-white/80">
               <input id="consent" type="checkbox" class="mt-0.5 accent-[#1c8aff]"/>
               <span>
-                Autorizo o tratamento dos meus dados para participaÁ„o e contacto.
+                Autorizo o tratamento dos meus dados para participa√ß√£o e contacto.
                 <button type="button" id="consent-toggle" class="underline underline-offset-2 text-white/90">Ver termos</button>
               </span>
             </label>
             <div id="consent-more" class="hidden text-[11px] text-white/70 mt-2 leading-snug">
-              Autorizo a recolha e tratamento dos meus dados pessoais exclusivamente para participaÁ„o no jogo, apuramento e entrega de prÈmios e comunicaÁ„o associada ‡ campanha. Os dados n„o ser„o partilhados com terceiros para outros fins e ser„o eliminados apÛs o tÈrmino da iniciativa, salvo obrigaÁ„o legal.
+              Autorizo a recolha e tratamento dos meus dados pessoais exclusivamente para participa√ß√£o no jogo, apuramento e entrega de pr√©mios e comunica√ß√£o associada √† campanha. Os dados n√£o ser√£o partilhados com terceiros para outros fins e ser√£o eliminados ap√≥s o t√©rmino da iniciativa, salvo obriga√ß√£o legal.
             </div>
           </div>
 
@@ -54,9 +54,14 @@ export function Result(score: number, onRetry: () => void) {
           </div>
         </form>
       </div>
-    </div>
+    <!-- Bot„o de som (canto inferior esquerdo) -->
+    <button id="sound" class="ab-icon-btn fixed left-5 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px)" aria-label="Som">
+      <img id="sound-icon" src="/assets/graphics/icon_Volume-On.svg" alt=""/>
+    </button>
 
-    <!-- Nuvens base + elemento gr·fico -->
+</div>
+
+    <!-- Nuvens base + elemento gr√°fico -->
     <img src="/assets/graphics/Nuvem-03.svg" alt="" class="absolute left-[-120px] bottom-[40px] w-[85%] max-w-[820px] z-0 opacity-20 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 70s; --ab-delay: -25s;"/>
     <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute right-[-120px] bottom-[36px] w-[95%] max-w-[920px] z-0 opacity-20 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 64s; --ab-delay: -31s;"/>
     <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-0 w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
@@ -98,14 +103,47 @@ export function Result(score: number, onRetry: () => void) {
     const phone = (el.querySelector('#phone') as HTMLInputElement).value.trim();
     const consent = (el.querySelector('#consent') as HTMLInputElement).checked;
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (name.length < 2 || name.length > 50) return alert('Nome inv·lido');
-    if (!emailRe.test(email)) return alert('E-mail inv·lido');
-    if (phone && !/^\+?\d{9,15}$/.test(phone)) return alert('TelemÛvel inv·lido');
-    if (!consent) return alert('Necess·rio consentimento para registar.');
+    if (name.length < 2 || name.length > 50) return alert('Nome inv√°lido');
+    if (!emailRe.test(email)) return alert('E-mail inv√°lido');
+    if (phone && !/^\+?\d{9,15}$/.test(phone)) return alert('Telem√≥vel inv√°lido');
+    if (!consent) return alert('Necess√°rio consentimento para registar.');
     console.log('Registo (MVP):', { name, email, phone, score });
     alert('Registo guardado (local).');
   };
 
+  // Som on/off com persistÍncia
+  const soundBtn = el.querySelector<HTMLButtonElement>("#sound");
+  const soundIcon = el.querySelector<HTMLImageElement>("#sound-icon");
+  if (soundBtn && soundIcon) {
+    const updateSoundIcon = () => {
+      const muted = (localStorage.getItem("ab-muted") === "1");
+      soundIcon.src = muted ? "/assets/graphics/Icon_Volume-Muted.svg" : "/assets/graphics/icon_Volume-On.svg";
+      try {
+        soundBtn.setAttribute("aria-pressed", muted ? "true" : "false");
+        soundBtn.title = muted ? "Som desligado" : "Som ligado";
+        soundIcon.classList.remove("ab-icon-swap");
+        void (soundIcon as any).offsetWidth;
+        soundIcon.classList.add("ab-icon-swap");
+      } catch {}
+    };
+    const toggleMute = () => {
+      const current = (localStorage.getItem("ab-muted") === "1");
+      try { localStorage.setItem("ab-muted", current ? "0" : "1"); } catch {}
+      updateSoundIcon();
+    };
+    updateSoundIcon();
+    soundBtn.onclick = () => toggleMute();
+    soundBtn.addEventListener("touchstart", (e) => { try { e.preventDefault(); } catch {} toggleMute(); }, { passive: false });
+    soundBtn.onkeydown = (e: KeyboardEvent) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleMute(); } };
+  }
+  // Press feedback para Ìcones e glass buttons
+  el.querySelectorAll<HTMLButtonElement>(".ab-icon-btn, .home-glass-btn").forEach(btn => {
+    const set = (on: boolean) => btn.classList.toggle("is-pressing", on);
+    btn.addEventListener("pointerdown", () => set(true));
+    ["pointerup","pointerleave","pointercancel"].forEach(evt => btn.addEventListener(evt, () => set(false)));
+  });
   return el;
 }
+
+
 
