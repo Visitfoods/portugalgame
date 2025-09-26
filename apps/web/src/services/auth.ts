@@ -45,5 +45,9 @@ export const AuthService = {
   },
   signOut() {
     return getFirebaseAuth().signOut();
+  },
+  async signInWithGoogle() {
+    const user = await signInWithGooglePopup();
+    return user;
   }
-,\n  async signInWithGoogle() {\n    const user = await signInWithGooglePopup();\n    return user;\n  }\n};\n
+};
