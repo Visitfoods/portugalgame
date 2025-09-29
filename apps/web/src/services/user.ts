@@ -6,6 +6,8 @@ export interface UserProfile {
   email?: string;
   username: string;
   displayName?: string;
+  phone?: string;
+  consent?: boolean;
   createdAt?: unknown;
   totalGames?: number;
   bestScore?: number;
@@ -58,6 +60,7 @@ export async function claimUsername(uid: string, email: string | undefined, user
     email,
     username,
     displayName,
+    // optional fields like phone/consent may already exist and will be preserved by merge below if present
     createdAt: serverTimestamp(),
     totalGames: 0,
     bestScore: 0,
@@ -65,6 +68,30 @@ export async function claimUsername(uid: string, email: string | undefined, user
   batch.set(userRef, profile);
   await batch.commit();
   return profile;
+}
+
+export async function upsertBasicProfile(
+  uid: string,
+  email: string | undefined,
+  displayName: string,
+  extras?: { phone?: string; consent?: boolean }
+): Promise<void> {
+  const db = getDb();
+  const userRef = doc(db, 'users', uid);
+  // Merge to avoid overwriting username or stats
+  await setDoc(
+    userRef,
+    {
+      uid,
+      email,
+      displayName,
+      ...(extras?.phone ? { phone: extras.phone } : {}),
+      ...(typeof extras?.consent === 'boolean' ? { consent: extras.consent } : {}),
+      // If the document is new, ensure base counters exist
+      createdAt: serverTimestamp(),
+    },
+    { merge: true }
+  );
 }
 
 

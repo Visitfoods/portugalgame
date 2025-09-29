@@ -5,6 +5,7 @@ import { Ranking } from './ui/screens/Ranking'
 import { Permissions } from './ui/screens/Permissions'
 import { Game } from './ui/screens/Game'
 import { Result as ResultForm } from './ui/screens/ResultNew'
+import { Register } from './ui/screens/Register'
 import { ResultSummary } from './ui/screens/ResultSummary'
 import { EmailLogin } from './ui/components/EmailLogin'
 import { AuthComplete } from './ui/screens/AuthComplete'
@@ -119,18 +120,19 @@ AuthService.onAuth(async (u) => {
 window.addEventListener('load', () => {
   const path = new URL(location.href).pathname;
   if (path === '/auth-complete') {
-    const goNeedsProfile = () => mount(UsernamePicker(() => {
-      const pending = Number(localStorage.getItem('ab-pending-score') || '');
-      try { localStorage.removeItem('ab-pending-score'); } catch {}
-      if (!isNaN(pending)) {
-        // After creating profile, go back to game summary route to submit
-        handleSubmitScoreFlow(pending, () => startFlow());
-      } else {
-        startFlow();
-
-// Redirect consumption é tratado na userStore.init()
-      }
-    }, () => startFlow()));
+    const goNeedsProfile = () => {
+      mount(Register(() => {
+        mount(UsernamePicker(() => {
+          const pending = Number(localStorage.getItem('ab-pending-score') || '');
+          try { localStorage.removeItem('ab-pending-score'); } catch {}
+          if (!isNaN(pending)) {
+            handleSubmitScoreFlow(pending, () => startFlow());
+          } else {
+            startFlow();
+          }
+        }, () => startFlow()));
+      }, () => startFlow()));
+    };
     const done = (score?: number) => {
       if (typeof score === 'number') {
         handleSubmitScoreFlow(score, () => startFlow());
@@ -149,6 +151,14 @@ function handleSubmitScoreFlow(score: number, onAfter: () => void) {
   // Se não autenticado → modal email
   if (!cached?.uid) {
     document.body.appendChild(EmailLogin(() => {}, () => {}, () => score));
+    return;
+  }
+  // Se autenticado mas sem dados básicos (email/displayName) → registo primeiro
+  if (!cached.displayName || !cached.email) {
+    mount(Register(() => {
+      // Depois de registar, voltar a esta rotina
+      handleSubmitScoreFlow(score, onAfter);
+    }, () => onAfter()));
     return;
   }
   // Se autenticado mas sem username → picker
