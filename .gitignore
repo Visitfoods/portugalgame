@@ -19,3 +19,5 @@ apps/web/.vercel/
 apps/web/.env
 apps/web/.env.*
 
+
+.vercel

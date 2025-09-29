@@ -13,6 +13,12 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
           <button id="cancel" class="home-glass-btn flex-1 px-4 py-2 rounded-full text-[#0a2960] border border-[#0a2960]/30 bg-white/70">Cancelar</button>
           <button id="send" class="flex-1 px-4 py-2 rounded-full bg-[#1f4590] text-white font-semibold">Enviar Link Mágico</button>
         </div>
+        <div class="flex items-center gap-3">
+          <div class="h-px bg-[#0a2960]/20 flex-1"></div>
+          <div class="text-xs opacity-70">ou</div>
+          <div class="h-px bg-[#0a2960]/20 flex-1"></div>
+        </div>
+        <button id="google" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] font-semibold border border-[#0a2960]/30 shadow-[0_6px_16px_rgba(2,20,60,0.18)]">Entrar com Google</button>
         <div id="msg" class="text-xs opacity-80"></div>
       </div>
     </div>
@@ -21,11 +27,22 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
   const input = wrap.querySelector<HTMLInputElement>('#email')!;
   const btnSend = wrap.querySelector<HTMLButtonElement>('#send')!;
   const btnCancel = wrap.querySelector<HTMLButtonElement>('#cancel')!;
+  const btnGoogle = wrap.querySelector<HTMLButtonElement>('#google')!;
   const msg = wrap.querySelector<HTMLDivElement>('#msg')!;
 
   const setBusy = (busy: boolean) => {
-    btnSend.disabled = busy; btnCancel.disabled = busy; input.disabled = busy;
+    [btnSend, btnCancel, btnGoogle, input].forEach((el: any) => { if (el) el.disabled = busy; });
     btnSend.style.opacity = busy ? '0.7' : '1';
+    btnGoogle.style.opacity = busy ? '0.7' : '1';
+  };
+
+  const mapError = (code: string) => {
+    if (!code) return 'Ocorreu um erro.';
+    if (code.includes('operation-not-allowed')) return 'Método desativado no projeto Firebase.';
+    if (code.includes('unauthorized-continue-uri')) return 'Domínio/URL de retorno não autorizado nas definições Firebase.';
+    if (code.includes('invalid-email')) return 'E‑mail inválido.';
+    if (code.includes('too-many-requests')) return 'Muitas tentativas. Tenta novamente mais tarde.';
+    return code;
   };
 
   btnCancel.onclick = () => { onCancel(); wrap.remove(); };
@@ -38,20 +55,28 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
       if (score != null) {
         try { localStorage.setItem('ab-pending-score', String(score)); } catch {}
       }
-      const completeUrl = `${location.origin}/auth-complete`;
+      const completeUrl = `${(import.meta as any).env?.VITE_AUTH_CONTINUE_URL || location.origin + "/auth-complete"}`;
       await AuthService.sendMagicLink(email, completeUrl);
       msg.textContent = 'Link enviado! Verifica o teu e‑mail.';
       setTimeout(() => { onSent(); wrap.remove(); }, 900);
     } catch (e: any) {
       const code = e?.code || e?.message || String(e);
-      msg.textContent = `Falha ao enviar link. ${code}`;
-    } finally {
-      setBusy(false);
-    }
+      msg.textContent = `Falha ao enviar link. ${mapError(code)}`;
+    } finally { setBusy(false); }
+  };
+
+  btnGoogle.onclick = async () => {
+    setBusy(true); msg.textContent = 'A abrir Google…';
+    try {
+      await AuthService.signInWithGoogle();
+      onSent(); wrap.remove();
+    } catch (e: any) {
+      const code = e?.code || e?.message || String(e);
+      msg.textContent = `Falha no Google Sign‑In. ${mapError(code)}`;
+    } finally { setBusy(false); }
   };
 
   return wrap;
 }
-
 
 

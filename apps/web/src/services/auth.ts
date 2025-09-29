@@ -1,4 +1,4 @@
-import { EmailLink, getFirebaseAuth, signInWithGooglePopup } from '../lib/firebase';
+import { EmailLink, getFirebaseAuth, signInWithGooglePopup, signInWithGoogleSmart } from '../lib/firebase';
 import type { User } from 'firebase/auth';
 
 export type AuthState = 'loading' | 'unauthenticated' | 'needsProfile' | 'authenticated';
@@ -47,7 +47,8 @@ export const AuthService = {
     return getFirebaseAuth().signOut();
   },
   async signInWithGoogle() {
-    const user = await signInWithGooglePopup();
+    const user = await signInWithGoogleSmart();
     return user;
   }
 };
+
