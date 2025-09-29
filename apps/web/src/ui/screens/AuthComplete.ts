@@ -12,6 +12,10 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
   `;
 
   (async () => {
+    // Se o URL atual não é um link válido de login por e‑mail, sair sem pedir nada
+    try {
+      if (!AuthService.isEmailLink()) { onDone(); return; }
+    } catch {}
     try {
       const user = await AuthService.completeMagicLink();
       const profile = await getUserProfile(user.uid);
@@ -23,8 +27,13 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
       } catch {}
       if (!profile?.username) { onNeedsProfile(); return; }
       onDone(pending);
-    } catch (e) {
-      alert('Falha a concluir o login. Volta a abrir o link.');
+    } catch (e: any) {
+      // Se não for um fluxo válido ou faltar email em cache, ignora sem bloquear o jogo
+      const code = e?.code || e?.message || '';
+      if (String(code).includes('missing-email-for-magic-link')) {
+        onDone();
+        return;
+      }
       onDone();
     }
   })();

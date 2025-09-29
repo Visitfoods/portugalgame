@@ -77,9 +77,8 @@ export const EmailLink = {
     const href = url ?? window.location.href;
     let email = '';
     try { email = localStorage.getItem('ab-login-email') || ''; } catch {}
-    if (!email) {
-      email = window.prompt('Confirma o teu e‑mail para concluir login:') || '';
-    }
+    // Não pedir email se não existir; falhar de forma silenciosa para não bloquear jogo
+    if (!email) throw new Error('missing-email-for-magic-link');
     const cred = await signInWithEmailLink(auth, email, href);
     try { localStorage.removeItem('ab-login-email'); } catch {}
     return cred.user;
