@@ -62,7 +62,7 @@ export function Account(onBack: () => void) {
       new Promise<null>(resolve => setTimeout(() => resolve(null), 1500))
     ] as const) as any;
     if (!profile?.username) {
-      const needsBasic = !cached.email || !profile?.displayName;
+      const needsBasic = true; // agora o Register trata do username também
       content.innerHTML = `
         <div class="space-y-3">
           <div>Estás autenticado mas falta completar o perfil.</div>
@@ -85,8 +85,8 @@ export function Account(onBack: () => void) {
       const completeBtn = content.querySelector<HTMLButtonElement>('#complete');
       if (completeBtn) {
         completeBtn.onclick = () => {
-          const picker = UsernamePicker(() => { picker.remove(); render(); }, () => { picker.remove(); });
-          document.body.appendChild(picker);
+          const reg = Register(() => { reg.remove(); render(); }, () => { reg.remove(); });
+          document.body.appendChild(reg);
         };
       }
       return;

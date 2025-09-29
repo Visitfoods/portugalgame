@@ -16,8 +16,7 @@ export function Register(onSaved: () => void, onCancel: () => void) {
             <img src="/assets/graphics/trophy.svg" alt="Troféu" class="w-12 h-12 select-none"/>
             <div class="text-xs tracking-[0.22em] font-bold uppercase opacity-60">REGISTO</div>
           </div>
-          <input id="name" type="text" placeholder="Nome" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#1f4590]/30"/>
-          <input id="email" type="email" placeholder="E-mail" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#1f4590]/30"/>
+          <input id="username" type="text" placeholder="Nome de utilizador" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#1f4590]/30"/>
           <input id="phone" type="tel" placeholder="Telemóvel (opcional)" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#1f4590]/30"/>
 
           <div class="text-[11px] opacity-80">
@@ -52,29 +51,29 @@ export function Register(onSaved: () => void, onCancel: () => void) {
 
   form.onsubmit = async (e) => {
     e.preventDefault();
-    const name = (el.querySelector('#name') as HTMLInputElement).value.trim();
-    const email = (el.querySelector('#email') as HTMLInputElement).value.trim();
+    const username = (el.querySelector('#username') as HTMLInputElement).value.trim();
     const phone = (el.querySelector('#phone') as HTMLInputElement).value.trim();
     const consent = (el.querySelector('#consent') as HTMLInputElement).checked;
 
-    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (name.length < 2 || name.length > 50) { msg.textContent = 'Nome inválido.'; msg.style.color = '#a11'; return; }
-    if (!emailRe.test(email)) { msg.textContent = 'E-mail inválido.'; msg.style.color = '#a11'; return; }
+    // Validar username
     if (phone && !/^\+?\d{9,15}$/.test(phone)) { msg.textContent = 'Telemóvel inválido.'; msg.style.color = '#a11'; return; }
     if (!consent) { msg.textContent = 'Necessário consentimento.'; msg.style.color = '#a11'; return; }
 
     try {
       msg.textContent = 'A guardar…'; msg.style.color = '#555';
-      const { getCachedUser } = await import('../../services/auth');
-      const { upsertBasicProfile } = await import('../../services/user');
+      const { getCachedUser, setCachedUser } = await import('../../services/auth');
       const { ensureFirestoreOnline } = await import('../../lib/firebase');
+      const { validateUsername, isUsernameAvailable, claimUsername, upsertBasicProfile } = await import('../../services/user');
       const cached = getCachedUser();
       if (!cached?.uid) { msg.textContent = 'Sessão inválida. Volta a iniciar sessão.'; msg.style.color = '#a11'; return; }
+      const v = validateUsername(username);
+      if (!v.ok) { msg.textContent = `Username inválido (${v.reason}).`; msg.style.color = '#a11'; return; }
       try { await ensureFirestoreOnline(); } catch {}
-      await upsertBasicProfile(cached.uid, email, name, { phone, consent: true });
-      // atualizar cache local
-      const { setCachedUser } = await import('../../services/auth');
-      setCachedUser({ uid: cached.uid, email, displayName: name, username: cached.username });
+      const free = await isUsernameAvailable(username);
+      if (!free) { msg.textContent = 'Username indisponível.'; msg.style.color = '#a11'; return; }
+      const prof = await claimUsername(cached.uid, cached.email, username, undefined);
+      await upsertBasicProfile(cached.uid, cached.email, username, { phone, consent: true });
+      setCachedUser({ uid: prof.uid, email: prof.email, username: prof.username, displayName: prof.displayName || username });
       msg.textContent = 'Registo guardado!'; msg.style.color = '#1f7a2f';
       setTimeout(() => onSaved(), 300);
     } catch {

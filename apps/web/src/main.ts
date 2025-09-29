@@ -153,42 +153,23 @@ function handleSubmitScoreFlow(score: number, onAfter: () => void) {
     document.body.appendChild(EmailLogin(() => {}, () => {}, () => score));
     return;
   }
-  // Se autenticado mas sem dados básicos (email/displayName) → registo primeiro
-  if (!cached.displayName || !cached.email) {
+  // Se autenticado mas sem username → usar o novo ecrã Register (que já cria username)
+  if (!cached.username) {
     mount(Register(() => {
       // Depois de registar, voltar a esta rotina
       handleSubmitScoreFlow(score, onAfter);
     }, () => onAfter()));
     return;
   }
-  // Se autenticado mas sem username → picker
-  if (!cached.username) {
-    // Antes de abrir o picker, tentar obter perfil do Firestore
-    (async () => {
-      try {
-        const prof = await getUserProfile(cached.uid);
-        if (prof?.username) {
-          setCachedUser({ uid: cached.uid, email: cached.email, username: prof.username, displayName: prof.displayName || cached.displayName });
-          await submitScore({ uid: cached.uid, username: prof.username, displayName: prof.displayName || cached.displayName, score });
-          alert('Pontuação submetida!');
-          onAfter();
-          return;
-        }
-      } catch {}
-      // Caso continue sem username, abrir picker
-      mount(UsernamePicker(async () => {
-        const latest = getCachedUser();
-        if (latest?.uid && latest.username) {
-          await submitScore({ uid: latest.uid, username: latest.username, displayName: latest.displayName, score });
-          alert('Pontuação submetida!');
-          onAfter();
-        } else {
-          alert('Perfil incompleto.');
-        }
-      }, () => onAfter()));
-    })();
-    return;
-  }
+  // (mantemos a tentativa de obter perfil para garantir dados atualizados)
+  (async () => {
+    try {
+      const prof = await getUserProfile(cached.uid);
+      if (prof?.username) {
+        setCachedUser({ uid: cached.uid, email: cached.email, username: prof.username, displayName: prof.displayName || cached.displayName });
+      }
+    } catch {}
+  })();
   // Já autenticado com username → submeter
   (async () => {
     try {
