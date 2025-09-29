@@ -1,5 +1,6 @@
 import { validateUsername, claimUsername, isUsernameAvailable } from '../../services/user';
 import { getCachedUser, setCachedUser } from '../../services/auth';
+import { userStore } from '../../services/userStore';
 
 import { ensureFirestoreOnline } from '../../lib/firebase';
 
@@ -62,12 +63,13 @@ export function UsernamePicker(onCreated: () => void, onCancel?: () => void) {
   btnCancel.onclick = () => { onCancel && onCancel(); };
   btnCreate.onclick = async () => {
     if (!ok) { msg.textContent = 'Corrige o username.'; msg.style.color = '#a11'; return; }
-    const cached = getCachedUser();
+    const cached = userStore.getUser() || getCachedUser();
     if (!cached?.uid) { msg.textContent = 'Sessão inválida. Reentra pelo link.'; return; }
     try {
       await ensureFirestoreOnline();
       const profile = await claimUsername(cached.uid, cached.email, u.value.trim(), d.value.trim() || undefined);
       setCachedUser({ uid: profile.uid, email: profile.email, username: profile.username, displayName: profile.displayName });
+      try { await userStore.setProfile(profile); } catch {}
       onCreated();
     } catch (e) {
       msg.textContent = 'Username indisponível ou erro de rede.';

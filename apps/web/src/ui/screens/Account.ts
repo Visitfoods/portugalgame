@@ -3,6 +3,7 @@ import { getUserProfile } from '../../services/user';
 import { UsernamePicker } from './UsernamePicker';
 import { EmailLogin } from '../components/EmailLogin';
 import { listUserScores } from '../../services/score';
+import { userStore } from '../../services/userStore';
 
 export function Account(onBack: () => void) {
   const el = document.createElement('div');
@@ -30,7 +31,7 @@ export function Account(onBack: () => void) {
   back.onclick = () => onBack();
 
   async function render() {
-    const cached = getCachedUser();
+    const cached = userStore.getUser() || getCachedUser();
     if (!cached?.uid) {
       content.innerHTML = `
         <div class="space-y-3">

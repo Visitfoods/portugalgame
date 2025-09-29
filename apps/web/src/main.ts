@@ -10,7 +10,9 @@ import { EmailLogin } from './ui/components/EmailLogin'
 import { AuthComplete } from './ui/screens/AuthComplete'
 import { UsernamePicker } from './ui/screens/UsernamePicker'
 import { AuthService, getCachedUser, setCachedUser } from './services/auth'
+import { getUserProfile } from './services/user'
 import { ensureFirestoreOnline } from './lib/firebase'
+import { userStore } from './services/userStore'
 import { submitScore } from './services/score'
 import { Account } from './ui/screens/Account'
 
@@ -80,25 +82,38 @@ AuthService.consumeGoogleRedirect().then(u => {
   mount(perms);
 }
 
+// Initialize central user store (auth + profile sync)
+userStore.init().catch(() => {});
 startFlow();
 
 // Ensure Firestore network is enabled (avoids transient offline state)
 ensureFirestoreOnline().catch(() => {});
 
 // Keep local cache in sync with Firebase auth state (handles popup sign-in)
-AuthService.onAuth((u) => {
+AuthService.onAuth(async (u) => {
   try {
-    if (u) setCachedUser({ uid: u.uid, email: u.email || undefined, displayName: (u as any).displayName || undefined });
-    else setCachedUser(null);
+    if (u) {
+      // Preserve existing username if present; otherwise try to fetch profile
+      const existing = getCachedUser();
+      let username = existing?.username;
+      let displayName = (u as any).displayName || existing?.displayName || undefined;
+      if (!username) {
+        try {
+          const prof = await getUserProfile(u.uid);
+          if (prof?.username) {
+            username = prof.username;
+            displayName = prof.displayName || displayName;
+          }
+        } catch {}
+      }
+      setCachedUser({ uid: u.uid, email: u.email || undefined, username, displayName });
+    } else {
+      setCachedUser(null);
+    }
   } catch {}
 });
 
-// Try to consume Google redirect results on any route
-AuthService.consumeGoogleRedirect().then(u => {
-  if (u) {
-    try { setCachedUser({ uid: u.uid, email: u.email || undefined, displayName: (u as any).displayName || undefined }); } catch {}
-  }
-});
+// Redirect consumption é tratado na userStore.init()
 
 // Auth route handling for email link completion
 window.addEventListener('load', () => {
@@ -113,12 +128,7 @@ window.addEventListener('load', () => {
       } else {
         startFlow();
 
-// Try to consume Google redirect results on any route
-AuthService.consumeGoogleRedirect().then(u => {
-  if (u) {
-    try { setCachedUser({ uid: u.uid, email: u.email || undefined, displayName: (u as any).displayName || undefined }); } catch {}
-  }
-});
+// Redirect consumption é tratado na userStore.init()
       }
     }, () => startFlow()));
     const done = (score?: number) => {
@@ -127,12 +137,7 @@ AuthService.consumeGoogleRedirect().then(u => {
       } else {
         startFlow();
 
-// Try to consume Google redirect results on any route
-AuthService.consumeGoogleRedirect().then(u => {
-  if (u) {
-    try { setCachedUser({ uid: u.uid, email: u.email || undefined, displayName: (u as any).displayName || undefined }); } catch {}
-  }
-});
+// Redirect consumo tratado na userStore.init()
       }
     };
     mount(AuthComplete(goNeedsProfile, done));
@@ -148,17 +153,30 @@ function handleSubmitScoreFlow(score: number, onAfter: () => void) {
   }
   // Se autenticado mas sem username → picker
   if (!cached.username) {
-    mount(UsernamePicker(async () => {
-      // depois de criar, tentar submeter
-      const latest = getCachedUser();
-      if (latest?.uid && latest.username) {
-        await submitScore({ uid: latest.uid, username: latest.username, displayName: latest.displayName, score });
-        alert('Pontuação submetida!');
-        onAfter();
-      } else {
-        alert('Perfil incompleto.');
-      }
-    }, () => onAfter()));
+    // Antes de abrir o picker, tentar obter perfil do Firestore
+    (async () => {
+      try {
+        const prof = await getUserProfile(cached.uid);
+        if (prof?.username) {
+          setCachedUser({ uid: cached.uid, email: cached.email, username: prof.username, displayName: prof.displayName || cached.displayName });
+          await submitScore({ uid: cached.uid, username: prof.username, displayName: prof.displayName || cached.displayName, score });
+          alert('Pontuação submetida!');
+          onAfter();
+          return;
+        }
+      } catch {}
+      // Caso continue sem username, abrir picker
+      mount(UsernamePicker(async () => {
+        const latest = getCachedUser();
+        if (latest?.uid && latest.username) {
+          await submitScore({ uid: latest.uid, username: latest.username, displayName: latest.displayName, score });
+          alert('Pontuação submetida!');
+          onAfter();
+        } else {
+          alert('Perfil incompleto.');
+        }
+      }, () => onAfter()));
+    })();
     return;
   }
   // Já autenticado com username → submeter
