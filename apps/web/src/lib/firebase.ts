@@ -44,7 +44,6 @@ export function getDb(): Firestore {
     // Improve compatibility in restrictive networks/proxies during dev
     db = initializeFirestore(getFirebaseApp(), {
       experimentalForceLongPolling: true,
-      useFetchStreams: false,
     });
     // Reduce noisy SDK logs in console
     try { setLogLevel('error'); } catch {}
