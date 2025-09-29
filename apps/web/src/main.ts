@@ -10,6 +10,7 @@ import { EmailLogin } from './ui/components/EmailLogin'
 import { AuthComplete } from './ui/screens/AuthComplete'
 import { UsernamePicker } from './ui/screens/UsernamePicker'
 import { AuthService, getCachedUser, setCachedUser } from './services/auth'
+import { ensureFirestoreOnline } from './lib/firebase'
 import { submitScore } from './services/score'
 import { Account } from './ui/screens/Account'
 
@@ -67,12 +68,37 @@ function askPermissions() {
     } catch (e) {
       alert('Não foi possível aceder à câmara.');
       startFlow();
+
+// Try to consume Google redirect results on any route
+AuthService.consumeGoogleRedirect().then(u => {
+  if (u) {
+    try { setCachedUser({ uid: u.uid, email: u.email || undefined, displayName: (u as any).displayName || undefined }); } catch {}
+  }
+});
     }
   }, () => startFlow());
   mount(perms);
 }
 
 startFlow();
+
+// Ensure Firestore network is enabled (avoids transient offline state)
+ensureFirestoreOnline().catch(() => {});
+
+// Keep local cache in sync with Firebase auth state (handles popup sign-in)
+AuthService.onAuth((u) => {
+  try {
+    if (u) setCachedUser({ uid: u.uid, email: u.email || undefined, displayName: (u as any).displayName || undefined });
+    else setCachedUser(null);
+  } catch {}
+});
+
+// Try to consume Google redirect results on any route
+AuthService.consumeGoogleRedirect().then(u => {
+  if (u) {
+    try { setCachedUser({ uid: u.uid, email: u.email || undefined, displayName: (u as any).displayName || undefined }); } catch {}
+  }
+});
 
 // Auth route handling for email link completion
 window.addEventListener('load', () => {
@@ -86,6 +112,13 @@ window.addEventListener('load', () => {
         handleSubmitScoreFlow(pending, () => startFlow());
       } else {
         startFlow();
+
+// Try to consume Google redirect results on any route
+AuthService.consumeGoogleRedirect().then(u => {
+  if (u) {
+    try { setCachedUser({ uid: u.uid, email: u.email || undefined, displayName: (u as any).displayName || undefined }); } catch {}
+  }
+});
       }
     }, () => startFlow()));
     const done = (score?: number) => {
@@ -93,6 +126,13 @@ window.addEventListener('load', () => {
         handleSubmitScoreFlow(score, () => startFlow());
       } else {
         startFlow();
+
+// Try to consume Google redirect results on any route
+AuthService.consumeGoogleRedirect().then(u => {
+  if (u) {
+    try { setCachedUser({ uid: u.uid, email: u.email || undefined, displayName: (u as any).displayName || undefined }); } catch {}
+  }
+});
       }
     };
     mount(AuthComplete(goNeedsProfile, done));
@@ -132,3 +172,4 @@ function handleSubmitScoreFlow(score: number, onAfter: () => void) {
     }
   })();
 }
+

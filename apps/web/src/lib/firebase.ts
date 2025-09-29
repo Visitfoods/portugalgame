@@ -12,7 +12,7 @@ import {
   signInWithRedirect,
   getRedirectResult,
 } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { getFirestore, Firestore, initializeFirestore, enableNetwork, setLogLevel } from 'firebase/firestore';
 
 let app: FirebaseApp | undefined;
 let auth: Auth | undefined;
@@ -40,8 +40,22 @@ export function getFirebaseAuth(): Auth {
 }
 
 export function getDb(): Firestore {
-  if (!db) db = getFirestore(getFirebaseApp());
+  if (!db) {
+    // Improve compatibility in restrictive networks/proxies during dev
+    db = initializeFirestore(getFirebaseApp(), {
+      experimentalForceLongPolling: true,
+      useFetchStreams: false,
+    });
+    // Reduce noisy SDK logs in console
+    try { setLogLevel('error'); } catch {}
+  }
   return db!;
+}
+
+export async function ensureFirestoreOnline(): Promise<void> {
+  try {
+    await enableNetwork(getDb());
+  } catch {}
 }
 
 export const EmailLink = {
@@ -82,6 +96,17 @@ export async function signInWithGooglePopup(): Promise<User> {
   return cred.user;
 }
 
+export async function consumeGoogleRedirect(): Promise<User | null> {
+  try {
+    const auth = getFirebaseAuth();
+    const res = await getRedirectResult(auth);
+    return res?.user ?? null;
+  } catch {
+    return null;
+  }
+}
+
+
 // Tries popup, falls back to redirect in environments where popups/cookies are blocked
 export async function signInWithGoogleSmart(): Promise<User | null> {
   const auth = getFirebaseAuth();
@@ -108,3 +133,5 @@ export async function signInWithGoogleSmart(): Promise<User | null> {
     throw e;
   }
 }
+
+

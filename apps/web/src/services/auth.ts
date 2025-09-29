@@ -1,4 +1,4 @@
-import { EmailLink, getFirebaseAuth, signInWithGooglePopup, signInWithGoogleSmart } from '../lib/firebase';
+import { EmailLink, getFirebaseAuth, signInWithGooglePopup, signInWithGoogleSmart, consumeGoogleRedirect } from '../lib/firebase';
 import type { User } from 'firebase/auth';
 
 export type AuthState = 'loading' | 'unauthenticated' | 'needsProfile' | 'authenticated';
@@ -49,6 +49,8 @@ export const AuthService = {
   async signInWithGoogle() {
     const user = await signInWithGoogleSmart();
     return user;
+  },
+  async consumeGoogleRedirect() {
+    return await consumeGoogleRedirect();
   }
 };
-

@@ -1,5 +1,7 @@
 import { validateUsername, claimUsername, isUsernameAvailable } from '../../services/user';
-import { AuthService, getCachedUser, setCachedUser } from '../../services/auth';
+import { getCachedUser, setCachedUser } from '../../services/auth';
+
+import { ensureFirestoreOnline } from '../../lib/firebase';
 
 export function UsernamePicker(onCreated: () => void, onCancel?: () => void) {
   const el = document.createElement('div');
@@ -43,10 +45,17 @@ export function UsernamePicker(onCreated: () => void, onCancel?: () => void) {
     if (!res.ok) return;
     if (debounce) window.clearTimeout(debounce);
     debounce = window.setTimeout(async () => {
-      const available = await isUsernameAvailable(v);
-      ok = available;
-      msg.textContent = available ? 'Disponível ✅' : 'Indisponível ❌';
-      msg.style.color = available ? '#1f7a2f' : '#a11';
+      try {
+        await ensureFirestoreOnline();
+        const available = await isUsernameAvailable(v);
+        ok = available;
+        msg.textContent = available ? 'Disponivel.' : 'Indisponivel.';
+        msg.style.color = available ? '#1f7a2f' : '#a11';
+      } catch {
+        ok = false;
+        msg.textContent = 'Sem ligacao. Tenta novamente.';
+        msg.style.color = '#a11';
+      }
     }, 250);
   };
 
@@ -56,6 +65,7 @@ export function UsernamePicker(onCreated: () => void, onCancel?: () => void) {
     const cached = getCachedUser();
     if (!cached?.uid) { msg.textContent = 'Sessão inválida. Reentra pelo link.'; return; }
     try {
+      await ensureFirestoreOnline();
       const profile = await claimUsername(cached.uid, cached.email, u.value.trim(), d.value.trim() || undefined);
       setCachedUser({ uid: profile.uid, email: profile.email, username: profile.username, displayName: profile.displayName });
       onCreated();
@@ -67,5 +77,9 @@ export function UsernamePicker(onCreated: () => void, onCancel?: () => void) {
 
   return el;
 }
+
+
+
+
 
 

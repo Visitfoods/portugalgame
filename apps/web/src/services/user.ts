@@ -1,5 +1,5 @@
 import { getDb } from '../lib/firebase';
-import { collection, doc, getDoc, serverTimestamp, setDoc, writeBatch } from 'firebase/firestore';
+import { collection, doc, getDocFromServer, serverTimestamp, setDoc, writeBatch } from 'firebase/firestore';
 
 export interface UserProfile {
   uid: string;
@@ -25,15 +25,20 @@ export async function isUsernameAvailable(username: string): Promise<boolean> {
   if (!v.ok) return false;
   const db = getDb();
   const usernamesRef = doc(db, 'usernames', username.toLowerCase());
-  const snap = await getDoc(usernamesRef);
+  const snap = await getDocFromServer(usernamesRef);
   return !snap.exists();
 }
 
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
-  const db = getDb();
-  const ref = doc(db, 'users', uid);
-  const snap = await getDoc(ref);
-  return snap.exists() ? (snap.data() as UserProfile) : null;
+  try {
+    const db = getDb();
+    const ref = doc(db, 'users', uid);
+    const snap = await getDocFromServer(ref);
+    return snap.exists() ? (snap.data() as UserProfile) : null;
+  } catch (e: any) {
+    console.warn('getUserProfile failed:', e?.code || e?.message || e);
+    return null;
+  }
 }
 
 export async function claimUsername(uid: string, email: string | undefined, username: string, displayName: string | undefined): Promise<UserProfile> {
@@ -44,7 +49,7 @@ export async function claimUsername(uid: string, email: string | undefined, user
   const userRef = doc(db, 'users', uid);
   const batch = writeBatch(db);
 
-  const taken = await getDoc(usernamesRef);
+  const taken = await getDocFromServer(usernamesRef);
   if (taken.exists()) throw new Error('username indisponível');
 
   batch.set(usernamesRef, { username: username.toLowerCase(), uid });

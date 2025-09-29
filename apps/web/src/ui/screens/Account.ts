@@ -1,5 +1,6 @@
 import { AuthService, getCachedUser, setCachedUser } from '../../services/auth';
 import { getUserProfile } from '../../services/user';
+import { UsernamePicker } from './UsernamePicker';
 import { EmailLogin } from '../components/EmailLogin';
 import { listUserScores } from '../../services/score';
 
@@ -44,17 +45,35 @@ export function Account(onBack: () => void) {
       return;
     }
 
-    const profile = await getUserProfile(cached.uid);
+    // Show loading + logout while profile loads
+    content.innerHTML = `
+      <div class="space-y-3">
+        <div class="text-sm opacity-80">A carregar…</div>
+        <div class="flex gap-3">
+          <button id="logout" class="px-5 py-2 rounded-full bg-white/20 text-[#0a2960] border border-[#0a2960]/30">Terminar sessão</button>
+        </div>
+      </div>`;
+    content.querySelector<HTMLButtonElement>('#logout')!.onclick = async () => { await AuthService.signOut(); setCachedUser(null); render(); };
+
+    const profile = await Promise.race([
+      getUserProfile(cached.uid),
+      new Promise<null>(resolve => setTimeout(() => resolve(null), 1500))
+    ] as const) as any;
     if (!profile?.username) {
       content.innerHTML = `
         <div class="space-y-3">
           <div>Estás autenticado mas falta completar o perfil.</div>
-          <div class="text-sm opacity-70">Volta ao fluxo de submissão para escolheres o username.</div>
+          <div class="text-sm opacity-70">Completa já o teu perfil para avançar.</div>
           <div class="flex gap-3">
+            <button id="complete" class="px-5 py-2 rounded-full bg-[#1f4590] text-white font-semibold">Escolher username</button>
             <button id="logout" class="px-5 py-2 rounded-full bg-white/20 text-[#0a2960] border border-[#0a2960]/30">Terminar sessão</button>
           </div>
         </div>`;
       content.querySelector<HTMLButtonElement>('#logout')!.onclick = async () => { await AuthService.signOut(); setCachedUser(null); render(); };
+      content.querySelector<HTMLButtonElement>('#complete')!.onclick = () => {
+        const picker = UsernamePicker(() => { picker.remove(); render(); }, () => { picker.remove(); });
+        document.body.appendChild(picker);
+      };
       return;
     }
 
