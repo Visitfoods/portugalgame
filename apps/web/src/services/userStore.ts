@@ -76,6 +76,7 @@ class UserStore {
       const redirectUser = await AuthService.consumeGoogleRedirect();
       if (redirectUser) {
         await this.refresh(redirectUser.uid);
+        return;
       }
     } catch {}
   }
