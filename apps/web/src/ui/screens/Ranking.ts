@@ -72,10 +72,24 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       </div>
     `).join('');
   }
+  function toUniqueByUsername(rows: { username: string; score: number }[], max = 50) {
+    const seen = new Set<string>();
+    const out: RankEntry[] = [];
+    for (const r of rows) {
+      const key = r.username?.toLowerCase?.() || '';
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      out.push({ pos: out.length + 1, name: r.username, score: r.score });
+      if (out.length >= max) break;
+    }
+    return out;
+  }
+
   (async () => {
     try {
-      const rows = await topScores(50);
-      top = rows.map((r, i) => ({ pos: i+1, name: r.username, score: r.score }));
+      // Buscar mais registos e depois deduplicar por username para ficar só o melhor de cada jogador
+      const rows = await topScores(300);
+      top = toUniqueByUsername(rows, 50);
       renderRows(top);
     } catch {
       renderRows([]);
@@ -89,8 +103,10 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
     if (!q) { renderRows(top); return; }
     (async () => {
       try {
-        const rows = await searchByUsername(q, 50);
-        const mapped = rows.map((r, i) => ({ pos: i+1, name: r.username, score: r.score }));
+        const rows = await searchByUsername(q, 120);
+        // Ordenar por pontuação desc e deduplicar para reter apenas o melhor por username
+        rows.sort((a,b) => (b.score||0) - (a.score||0));
+        const mapped = toUniqueByUsername(rows, 50);
         renderRows(mapped.length ? mapped : top);
       } catch {
         renderRows(top);
