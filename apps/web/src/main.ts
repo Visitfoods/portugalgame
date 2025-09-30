@@ -11,6 +11,7 @@ import { EmailLogin } from './ui/components/EmailLogin'
 import { AuthComplete } from './ui/screens/AuthComplete'
 import { UsernamePicker } from './ui/screens/UsernamePicker'
 import { AuthService, getCachedUser, setCachedUser } from './services/auth'
+import { ensureAutoplayAudioGate } from './platform/DeviceGuard'
 import { getUserProfile } from './services/user'
 import { ensureFirestoreOnline } from './lib/firebase'
 import { userStore } from './services/userStore'
@@ -46,6 +47,8 @@ function showAccount() {
 
 async function startGameDirect() {
   try {
+    // Garante desbloqueio de áudio em iOS (primeiro gesto do utilizador)
+    try { ensureAutoplayAudioGate(); } catch {}
     // Solicitar permissão diretamente no clique do botão JOGAR
     const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
     // Fecha imediatamente; o ecrã do jogo reabre a câmara
@@ -71,13 +74,6 @@ function askPermissions() {
     } catch (e) {
       alert('Não foi possível aceder à câmara.');
       startFlow();
-
-// Try to consume Google redirect results on any route
-AuthService.consumeGoogleRedirect().then(u => {
-  if (u) {
-    try { setCachedUser({ uid: u.uid, email: u.email || undefined, displayName: (u as any).displayName || undefined }); } catch {}
-  }
-});
     }
   }, () => startFlow());
   mount(perms);
@@ -122,15 +118,13 @@ window.addEventListener('load', () => {
   if (path === '/auth-complete') {
     const goNeedsProfile = () => {
       mount(Register(() => {
-        mount(UsernamePicker(() => {
-          const pending = Number(localStorage.getItem('ab-pending-score') || '');
-          try { localStorage.removeItem('ab-pending-score'); } catch {}
-          if (!isNaN(pending)) {
-            handleSubmitScoreFlow(pending, () => startFlow());
-          } else {
-            startFlow();
-          }
-        }, () => startFlow()));
+        const pending = Number(localStorage.getItem('ab-pending-score') || '');
+        try { localStorage.removeItem('ab-pending-score'); } catch {}
+        if (!isNaN(pending)) {
+          handleSubmitScoreFlow(pending, () => startFlow());
+        } else {
+          startFlow();
+        }
       }, () => startFlow()));
     };
     const done = (score?: number) => {
