@@ -70,7 +70,7 @@ export class MouthOpenDetector {
     // Full opening: rx ~ half of corner-to-corner width; ry ~ half of vertical opening
     // Expand capture ellipse to facilitar apanhar objetos
     const RX_BOOST = 1.25; // 25% mais largo
-    const RY_BOOST = 1.60; // 60% mais alto
+    const RY_BOOST = 1.40; // 40% mais alto (reduz falsos positivos)
     const rx = Math.max(8, (widthNorm * widthPx) * 0.5 * RX_BOOST);
     const ry = Math.max(6, (openNorm * heightPx) * 0.5 * RY_BOOST);
     // rotation of the mouth line (ml -> mr)

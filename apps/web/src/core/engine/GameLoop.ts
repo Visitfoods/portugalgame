@@ -140,7 +140,7 @@ export class GameLoop {
       const hitCircle = collidesMouth(this.mouthPos, { x: newX, y: newY }, 36);
       const hitEllipse = pointInRotEllipse(newX, newY, this.mouthEllipse.cx, this.mouthEllipse.cy, this.mouthEllipse.rx, this.mouthEllipse.ry, this.mouthEllipse.rot);
       // Extend capture window after mouth opens to facilitar apanhar objetos
-      const windowMs = Penalty.triggerWindowMs(850);
+      const windowMs = Penalty.triggerWindowMs(700);
       const withinTrigger = (nowMs >= this.lastMouthTrigger) && ((nowMs - this.lastMouthTrigger) < windowMs);
       const hit = this.mouthOpen && (hitEllipse || hitCircle) && withinTrigger;
       if (hit) {

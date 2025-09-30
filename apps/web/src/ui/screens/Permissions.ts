@@ -1,4 +1,4 @@
-import { isSecureContext } from "../../platform/DeviceGuard";
+import { isSecureContext, ensureAutoplayAudioGate } from "../../platform/DeviceGuard";
 
 export function Permissions(onAllow: () => void, onBack: () => void) {
   const el = document.createElement('div');
@@ -15,6 +15,7 @@ export function Permissions(onAllow: () => void, onBack: () => void) {
   `;
   el.querySelector<HTMLButtonElement>('#allow')!.onclick = async () => {
     try {
+      try { ensureAutoplayAudioGate(); } catch {}
       // Pre-request camera on explicit user gesture to satisfy iOS
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
       // Immediately stop tracks; game screen will re-open it

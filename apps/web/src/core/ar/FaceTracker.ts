@@ -33,7 +33,13 @@ export class FaceTracker {
       if (!this.active) return;
       const ts = performance.now();
       // Detect landmarks from the current video frame
-      const res = this.landmarker!.detectForVideo(video, ts);
+      let res: any = null;
+      try {
+        res = this.landmarker!.detectForVideo(video, ts);
+      } catch {
+        // Em alguns browsers, a primeira chamada pode falhar transitoriamente
+        res = null;
+      }
       const lm = res?.faceLandmarks?.[0];
       if (lm && lm.length) {
         // Mirror X to match the CSS-mirrored camera preview (-scale-x-100)
@@ -47,6 +53,14 @@ export class FaceTracker {
     loop();
   }
 
-  stop(): void { this.active = false; }
+  stop(): void {
+    this.active = false;
+    try {
+      // API de Tasks Vision suporta .close() para libertar recursos
+      (this.landmarker as any)?.close?.();
+    } catch {}
+    this.landmarks = null;
+    this.landmarker = undefined;
+  }
   getLandmarks(): Vec2[] | null { return this.landmarks; }
 }

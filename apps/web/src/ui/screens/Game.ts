@@ -21,6 +21,11 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   const video = document.getElementById('camera') as HTMLVideoElement;
   const canvas = document.getElementById('game') as HTMLCanvasElement;
   const stage = document.getElementById('stage') as HTMLDivElement;
+  if (!video || !canvas) {
+    alert('Elemento de jogo em falta. Recarrega a página.');
+    onCancel?.();
+    return el;
+  }
   const hud = new HUD();
   const feed = new CameraFeed(video);
   const tracker = new FaceTracker();
@@ -115,7 +120,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     ]);
 
     await feed.startFrontCamera();
-    await tracker.start(video);
+    try { await tracker.start(video); } catch {}
     loop = new GameLoop(canvas, {
       onScoreUpdate: (s) => hud.setScore(s),
       onTimeUpdate: (t) => hud.setTimeLeft(t),

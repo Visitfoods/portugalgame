@@ -50,11 +50,11 @@ export function UsernamePicker(onCreated: () => void, onCancel?: () => void) {
         await ensureFirestoreOnline();
         const available = await isUsernameAvailable(v);
         ok = available;
-        msg.textContent = available ? 'Disponivel.' : 'Indisponivel.';
+        msg.textContent = available ? 'Disponível.' : 'Indisponível.';
         msg.style.color = available ? '#1f7a2f' : '#a11';
       } catch {
         ok = false;
-        msg.textContent = 'Sem ligacao. Tenta novamente.';
+        msg.textContent = 'Sem ligação. Tenta novamente.';
         msg.style.color = '#a11';
       }
     }, 250);
