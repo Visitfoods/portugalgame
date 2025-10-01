@@ -11,6 +11,7 @@ const makeServer = () => {
 
 export default defineConfig({
   plugins: [mkcert()],
+  base: './',
   server: makeServer(),
   preview: { port: 5173 }
 })

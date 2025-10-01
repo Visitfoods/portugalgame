@@ -10,23 +10,23 @@ html, body, #app { height: 100%; }
 }
 
 /* Nexa font family (served from /public/fonts/Nexa) */
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-Thin.otf') format('opentype'); font-weight: 100; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-ExtraLight.otf') format('opentype'); font-weight: 200; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-Light.otf') format('opentype'); font-weight: 300; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-Regular.otf') format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-Book.otf') format('opentype'); font-weight: 500; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-Bold.otf') format('opentype'); font-weight: 700; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-Heavy.otf') format('opentype'); font-weight: 800; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-ExtraBold.otf') format('opentype'); font-weight: 800; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-Black.otf') format('opentype'); font-weight: 900; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-ThinItalic.otf') format('opentype'); font-weight: 100; font-style: italic; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-ExtraLightItalic.otf') format('opentype'); font-weight: 200; font-style: italic; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-LightItalic.otf') format('opentype'); font-weight: 300; font-style: italic; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-RegularItalic.otf') format('opentype'); font-weight: 400; font-style: italic; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-BoldItalic.otf') format('opentype'); font-weight: 700; font-style: italic; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-HeavyItalic.otf') format('opentype'); font-weight: 800; font-style: italic; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-ExtraBoldItalic.otf') format('opentype'); font-weight: 800; font-style: italic; font-display: swap; }
-@font-face { font-family: 'Nexa'; src: url('/fonts/Nexa/Nexa-BlackItalic.otf') format('opentype'); font-weight: 900; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-Thin.otf') format('opentype'); font-weight: 100; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-ExtraLight.otf') format('opentype'); font-weight: 200; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-Light.otf') format('opentype'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-Regular.otf') format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-Book.otf') format('opentype'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-Bold.otf') format('opentype'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-Heavy.otf') format('opentype'); font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-ExtraBold.otf') format('opentype'); font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-Black.otf') format('opentype'); font-weight: 900; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-ThinItalic.otf') format('opentype'); font-weight: 100; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-ExtraLightItalic.otf') format('opentype'); font-weight: 200; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-LightItalic.otf') format('opentype'); font-weight: 300; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-RegularItalic.otf') format('opentype'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-BoldItalic.otf') format('opentype'); font-weight: 700; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-HeavyItalic.otf') format('opentype'); font-weight: 800; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-ExtraBoldItalic.otf') format('opentype'); font-weight: 800; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Nexa'; src: url('../fonts/Nexa/Nexa-BlackItalic.otf') format('opentype'); font-weight: 900; font-style: italic; font-display: swap; }
 
 /* Apply Nexa globally */
 html, body, button, input, select, textarea { font-family: 'Nexa', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Apple Color Emoji','Segoe UI Emoji', sans-serif; }
@@ -90,7 +90,7 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 /* Icon circle buttons under CTAs */
 .ab-icon-btn { 
   width: 52px; height: 52px; 
-  background: url('/assets/graphics/BG-Button-Circle.svg') center/contain no-repeat; 
+  background: url('../assets/graphics/BG-Button-Circle.svg') center/contain no-repeat; 
   display: inline-flex; align-items: center; justify-content: center; 
   border: 0; padding: 0; cursor: pointer; 
   overflow: hidden; border-radius: 50%; background-color: transparent;
