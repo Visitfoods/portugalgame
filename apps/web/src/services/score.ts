@@ -1,5 +1,5 @@
 import { getDb } from '../lib/firebase';
-import { addDoc, collection, limit, orderBy, query, serverTimestamp, where, getDocsFromServer } from 'firebase/firestore';
+import { addDoc, collection, limit, orderBy, query, serverTimestamp, where, getDocsFromServer, getCountFromServer } from 'firebase/firestore';
 
 export interface ScoreEntry {
   uid: string;
@@ -57,6 +57,39 @@ export async function listUserScores(uid: string, limitN = 100): Promise<ScoreEn
     }
     console.warn('listUserScores failed:', e);
     return [];
+  }
+}
+
+// Compute global rank and total submissions based on the raw scores collection.
+// Rank is 1 + number of entries with a strictly higher score.
+export async function getRankAndTotal(score: number): Promise<{ rank: number; total: number }> {
+  // Importante: alinhar com a classificação, que mostra apenas o melhor resultado por jogador.
+  // Estratégia: obter um conjunto alargado dos melhores scores, ordenar por score desc,
+  // deduplicar por username mantendo o primeiro (melhor) e calcular posição/total nesse universo.
+  // Nota: para escala atual é suficiente; para grandes volumes criaríamos uma coleção agregada.
+  try {
+    const db = getDb();
+    const ref = collection(db, 'scores');
+    const q = query(ref, orderBy('score', 'desc'), limit(2000));
+    const snap = await getDocsFromServer(q);
+    const rows = snap.docs.map(d => d.data() as ScoreEntry);
+    // Deduplicar por username (mantém o primeiro pois já vem ordenado por score desc)
+    const seen = new Set<string>();
+    const unique: ScoreEntry[] = [];
+    for (const r of rows) {
+      const key = (r.username || '').toLowerCase();
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      unique.push(r);
+    }
+    // Calcular posição: 1 + número de jogadores com melhor score
+    const above = unique.filter(r => (r.score || 0) > score).length;
+    const rank = above + 1;
+    const total = unique.length || 1;
+    return { rank, total };
+  } catch (e) {
+    console.warn('getRankAndTotal failed:', e);
+    return { rank: 1, total: 1 };
   }
 }
 
