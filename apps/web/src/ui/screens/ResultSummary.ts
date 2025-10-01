@@ -1,3 +1,5 @@
+import { getRankAndTotal } from '../../services/score';
+
 export function ResultSummary(score: number, onSubmit: () => void, onRetry: () => void) {
   const el = document.createElement('div');
   el.className = 'screen p-0 overflow-hidden';
@@ -13,7 +15,8 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     <div class="relative z-10 w-full flex flex-col items-center">
       <!-- Logo -->
       <div class="relative mt-1 w-full h-[70px] flex items-start justify-center overflow-visible">
-        <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[110px] md:w-[130px] h-auto ab-logo-white"/>
+        <!-- Mantemos a mesma altura do slot para não mexer no PARABÉNS; posicionamos o logo de forma absoluta quase colado ao topo -->
+        <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="absolute left-1/2 -translate-x-1/2 z-[10] w-[110px] md:w-[130px] h-auto ab-logo-white top-[-80px] md:top-[-96px]"/>
       </div>
 
       <!-- Parabéns -->
@@ -87,16 +90,36 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   cancelModal.onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
   confirmAgain.onclick = () => onRetry();
   el.querySelector<HTMLButtonElement>('#share')!.onclick = async () => {
-    const text = `Acabei de fazer ${score} pontos no jogo Alves Bandeira!`;
+    const title = 'Alves Bandeira — Desafio de Pontos';
+    const base = ((import.meta as any)?.env?.VITE_PUBLIC_APP_URL) || window.location.origin;
+    const shareUrl = `${base}/?utm_source=share&utm_medium=game&utm_campaign=abgame`;
+    let userText = '';
     try {
-      if ((navigator as any).share) {
-        await (navigator as any).share({ text });
-      } else {
-        await navigator.clipboard.writeText(text);
-        alert('Pontuação copiada para a área de transferência.');
+      const { getCachedUser } = await import('../../services/auth');
+      const u = getCachedUser();
+      if (u?.username) userText = ` (@${u.username})`;
+    } catch {}
+    const text = `Acabei de fazer ${score} ponto${score===1?'':'s'} no jogo Alves Bandeira${userText}! Consegues bater-me?`;
+    const full = `${title}\n\n${text}\n${shareUrl}`;
+    try {
+      const ns: any = navigator as any;
+      if (ns.share) {
+        await ns.share({ title, text, url: shareUrl });
+        return;
       }
+      // Fallback: copiar para área de transferência
+      await navigator.clipboard.writeText(full);
+      // Em mobile, tentar abrir WhatsApp
+      try {
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (isMobile) {
+          const wa = `https://wa.me/?text=${encodeURIComponent(full)}`;
+          window.open(wa, '_blank');
+        }
+      } catch {}
+      alert('Mensagem de partilha copiada. Cola no teu app favorito!');
     } catch {
-      /* ignore */
+      alert('Não foi possível partilhar. Tenta novamente.');
     }
   };
 
@@ -107,11 +130,20 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   const step = (now:number)=>{ const p=Math.min(1,(now-t0)/dur); const v=Math.round(score*ease(p)); scoreEl.textContent=v.toLocaleString('pt-PT'); if(p<1&&el.isConnected) requestAnimationFrame(step); };
   requestAnimationFrame(step);
 
-  // Mock de ranking (podes ligar a API quando existir)
+  // Ranking real (Firestore): posição global e total de submissões
   const rank = el.querySelector<HTMLSpanElement>('#rank')!;
   const total = el.querySelector<HTMLSpanElement>('#total')!;
-  const tot = 1234; const pos = Math.max(1, Math.min(tot, 200 + Math.floor(Math.random()*300)));
-  rank.textContent = String(pos); total.textContent = String(tot);
+  rank.textContent = '…';
+  total.textContent = '…';
+  getRankAndTotal(score)
+    .then(({ rank: r, total: t }) => {
+      rank.textContent = r.toLocaleString('pt-PT');
+      total.textContent = t.toLocaleString('pt-PT');
+    })
+    .catch(() => {
+      rank.textContent = '—';
+      total.textContent = '—';
+    });
 
   // Som on/off com persistência
   const soundBtn = el.querySelector<HTMLButtonElement>('#sound')!;
