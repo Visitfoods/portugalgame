@@ -57,13 +57,7 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
       <!-- Ícones inferiores -->
             <div class="bottom-icons mt-12 flex items-center justify-center gap-6 md:gap-8 mb-[72px] md:mb-[84px]">
         <button id="account" class="ab-icon-btn" aria-label="Conta">
-          <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="26" cy="26" r="25" fill="white" fill-opacity="0.15" stroke="white" stroke-opacity="0.6"/>
-            <g fill="#ffffff">
-              <circle cx="26" cy="20.5" r="6.5"/>
-              <path d="M12 39c0-6.627 6.268-10 14-10s14 3.373 14 10v1H12v-1z"/>
-            </g>
-          </svg>
+          <img src="/assets/graphics/profile-icon.svg" alt=""/>
         </button>
         <button id="ranking" class="ab-icon-btn" aria-label="Ranking">
           <img src="/assets/graphics/Botao-Ranking.svg" alt=""/>
@@ -288,7 +282,6 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
 
   return el;
 }
-
 
 
 

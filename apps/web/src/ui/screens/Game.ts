@@ -7,6 +7,12 @@ import { loadItemSprites } from "../../core/engine/Assets";
 import { mouthTrigger, resetMouthTrigger } from "../../core/game/mouthTrigger";
 import type { Vec2 } from "../../utils/types";
 
+type MascotController = {
+  destroy(): void;
+  onGoodCatch(): void;
+  onBadCatch(reason?: 'wrong' | 'mouth'): void;
+};
+
 export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   const el = document.createElement('div');
   el.className = 'screen text-center gap-6';
@@ -36,6 +42,9 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   let topLogoWrap: HTMLDivElement | null = null;
   let soundBtnEl: HTMLButtonElement | null = null;
   let devFinishBtn: HTMLButtonElement | null = null;
+  let mouthOpenSince = 0;
+  let prevMouthOpen = false;
+  let lastMouthWarningAt = 0;
 
   const resize = () => {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -55,10 +64,13 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   };
   window.addEventListener('resize', resize);
 
-  let mascotCtl: { destroy(): void } | null = null;
+  let mascotCtl: MascotController | null = null;
 
   const cleanup = (clearCanvas = true) => {
     trackingActive = false;
+    mouthOpenSince = 0;
+    prevMouthOpen = false;
+    lastMouthWarningAt = 0;
     try { tracker.stop(); } catch {}
     try { feed.stop(); } catch {}
     window.removeEventListener('resize', resize);
@@ -103,6 +115,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       const img = document.createElement('img');
       img.src = '/assets/graphics/Alves_Bandeira_logo.svg';
       img.alt = 'Alves Bandeira';
+      img.className = 'ab-logo-white h-auto';
       // Responsive width between 120–220px
       const computeW = () => Math.min(220, Math.max(120, Math.floor(window.innerWidth * 0.33)));
       img.style.width = computeW() + 'px';
@@ -130,7 +143,12 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
           onFinish(loop.getScore());
         }
       },
-      onPopup: (x, y, delta) => hud.popupCanvasPx(x, y, delta, canvas)
+      onPopup: (x, y, delta) => {
+        hud.popupCanvasPx(x, y, delta, canvas);
+        if (!mascotCtl) return;
+        if (delta > 0) mascotCtl.onGoodCatch();
+        else if (delta < 0) mascotCtl.onBadCatch('wrong');
+      }
     }, sprites);
     resize();
 
@@ -185,85 +203,220 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       soundBtnEl = b;
     }
 
-    // Mascote animada (3 frames: 1-2-3-2-1 em loop)
+    // Mascote animada com estados feliz/triste e balao de fala
     mascotCtl = await (async function mountMascot() {
       const stageEl = document.getElementById('stage') || document.body; // sobre o canvas
       const wrap = document.createElement('div');
-      wrap.className = 'absolute bottom-3 left-1/2 -translate-x-1/2 z-[3] pointer-events-none';
+      wrap.className = 'absolute bottom-3 left-1/2 -translate-x-1/2 z-[3] pointer-events-none flex flex-col items-center gap-2';
+
+      const bubbleWrap = document.createElement('div');
+      bubbleWrap.className = 'relative flex items-center justify-center select-none pointer-events-none';
+      bubbleWrap.style.opacity = '0';
+      bubbleWrap.style.visibility = 'hidden';
+      bubbleWrap.style.transform = 'translateY(8px)';
+      bubbleWrap.style.transition = 'opacity 200ms ease, transform 220ms ease';
+      bubbleWrap.style.display = 'none';
+
+      const bubbleImg = document.createElement('img');
+      bubbleImg.src = '/assets/graphics/balao-fala.svg';
+      bubbleImg.alt = '';
+      bubbleImg.className = 'w-[240px] max-w-[280px] h-auto drop-shadow-sm';
+      bubbleWrap.appendChild(bubbleImg);
+
+      const bubbleText = document.createElement('div');
+      bubbleText.className = 'absolute inset-0 flex items-center justify-center px-8 pt-6 pb-10 text-[15px] leading-snug font-semibold text-white text-center drop-shadow';
+      bubbleText.style.textShadow = '0 2px 6px rgba(7,27,66,0.45)';
+      bubbleWrap.appendChild(bubbleText);
+
+      wrap.appendChild(bubbleWrap);
+
       const img = document.createElement('img');
       img.alt = '';
-      img.className = 'w-[110px] h-auto opacity-95 drop-shadow';
+      img.className = 'w-[110px] h-auto opacity-95 drop-shadow select-none';
 
-      // Ajuste responsivo para ecrãs maiores
-      const w = Math.min(140, Math.max(90, Math.floor(window.innerWidth * 0.25)));
+      const w = Math.min(150, Math.max(92, Math.floor(window.innerWidth * 0.26)));
       img.style.width = `${w}px`;
+      // A mascote não deve estar sempre visível; só aparece quando houver mensagem
+      img.style.display = 'none';
 
       wrap.appendChild(img);
       stageEl.appendChild(wrap);
 
-      // Primeiro tenta exatamente os .webp fornecidos (masctoe_Frame_1/2/3.webp)
-      const directWebp = ['/assets/graphics/masctoe_Frame_1.webp','/assets/graphics/masctoe_Frame_2.webp','/assets/graphics/masctoe_Frame_3.webp'];
-      function preload(src: string) { return new Promise<HTMLImageElement>((res, rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=src; }); }
-      let frames: string[] = [];
-      try {
-        const imgs = await Promise.all(directWebp.map(preload));
-        frames = imgs.map(i => i.src);
-      } catch {
-        // Suporta múltiplas convenções de nome (fallback)
-        const basePath = '/assets/graphics/';
-        const frameNameSets: string[][] = [
-          ['Mascote-01','Mascote-02','Mascote-03'],
-          ['Mascote_01','Mascote_02','Mascote_03'],
-          ['mascote_Frame_1','mascote_Frame_2','mascote_Frame_3'],
-          ['masctoe_Frame_1','masctoe_Frame_2','masctoe_Frame_3']
-        ];
-        // Evitar tentar .png para não gerar 404 no console em produção
-        const exts = ['.webp', '.svg'];
-        outer: for (const names of frameNameSets) {
-          for (const ext of exts) {
-            const set = names.map(n => basePath + n + ext);
-            try {
-              const imgs = await Promise.all(set.map(preload));
-              frames = imgs.map(i => i.src);
-              break outer;
-            } catch { /* tenta próximo formato/conjunto */ }
-          }
+      function preload(src: string) {
+        return new Promise<string>((res, rej) => {
+          const i = new Image();
+          i.onload = () => res(src);
+          i.onerror = () => rej(src);
+          i.src = src;
+        });
+      }
+
+      const sequencePaths: Record<'happy' | 'sad', string[]> = {
+        happy: [
+          '/assets/graphics/mascote-feliz_frame1.svg',
+          '/assets/graphics/mascote-feliz_frame2.svg',
+          '/assets/graphics/mascote-feliz_frame3.svg',
+          '/assets/graphics/mascote-feliz_frame4.svg'
+        ],
+        sad: [
+          '/assets/graphics/mascote-triste_frame1.svg',
+          '/assets/graphics/mascote-triste_frame2.svg',
+          '/assets/graphics/mascote-triste_frame3.svg',
+          '/assets/graphics/mascote-triste_frame4.svg'
+        ]
+      };
+
+      const framesByMood: Record<'happy' | 'sad', string[]> = { happy: [], sad: [] };
+      for (const mood of Object.keys(sequencePaths) as Array<'happy' | 'sad'>) {
+        try {
+          const loaded = await Promise.all(sequencePaths[mood].map(preload));
+          framesByMood[mood] = loaded;
+        } catch (err) {
+          console.warn(`[Mascote] Falha ao carregar frames ${mood}:`, err);
         }
       }
-      if (frames.length === 0) {
-        console.warn('[Mascote] Frames não encontrados nas paths esperadas (*.webp/svg/png).');
-      }
-      if (frames.length === 0) {
-        // Se não houver assets, não mostrar mascote
+
+      if (!framesByMood.happy.length && !framesByMood.sad.length) {
         wrap.remove();
-        return { destroy() { /* noop */ } };
+        return {
+          destroy() { /* noop */ },
+          onGoodCatch() { /* noop */ },
+          onBadCatch() { /* noop */ }
+        } as MascotController;
       }
 
-      const seq: number[] = [0,1,2,1];
+      if (!framesByMood.happy.length && framesByMood.sad.length) {
+        framesByMood.happy = framesByMood.sad.slice();
+      }
+      if (!framesByMood.sad.length && framesByMood.happy.length) {
+        framesByMood.sad = framesByMood.happy.slice();
+      }
+
+      const seq: number[] = [0, 1, 2, 3, 2, 1];
       let idx = 0;
-      let raf = 0; let last = 0; const stepMs = 220;
-      const firstIdx = seq[idx] ?? 0; img.src = frames[firstIdx]!;
+      let raf = 0;
+      let last = 0;
+      const stepMs = 180;
+      let activeMood: 'happy' | 'sad' = 'happy';
+
+      const setInitialFrame = () => {
+        const frames = framesByMood[activeMood];
+        const firstIdx = seq[idx] ?? 0;
+        img.src = frames[firstIdx % frames.length]!;
+      };
+      setInitialFrame();
 
       const tick = (t: number) => {
-        if (!wrap.isConnected) return; // já limpo
+        if (!wrap.isConnected) return;
         if (!last) last = t;
         if (t - last >= stepMs) {
           last = t;
           idx = (idx + 1) % seq.length;
-          const fi = seq[idx] ?? 0; img.src = frames[fi]!;
+          const frames = framesByMood[activeMood];
+          const fi = seq[idx] ?? 0;
+          img.src = frames[fi % frames.length]!;
         }
         raf = requestAnimationFrame(tick);
       };
       raf = requestAnimationFrame(tick);
 
-      return {
+      const positiveMessages = [
+        'Boa! Continua!',
+        'Excelente, mais um ponto!',
+        'Top! Mantém o ritmo!',
+        'Fantástico! Mais sabor de Portugal.',
+        'Muito bem! Captura portuguesa!'
+      ];
+      const negativeMessages = [
+        'Acabaste de comer um alimento que não é português.',
+        'Esse não conta. Procura os sabores portugueses.',
+        'Cuidado! Só valem iguarias nacionais.',
+        'Atenção: foca-te nos produtos de Portugal.',
+        'Hmm... esse não era português.'
+      ];
+      const mouthMessages = [
+        'Manter a boca sempre aberta não é válido.',
+        'Fecha e volta a abrir no momento certo.',
+        'Calma! Abre a boca quando o item chegar.',
+        'Respira e espera pelo próximo sabor.',
+        'Boca pronta, mas só na altura certa!'
+      ];
+
+      const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)] ?? arr[0] ?? '';
+      let hideTimer = 0;
+      let hideDisplayTimer = 0;
+
+      const hideBubble = (immediate = false) => {
+        if (hideTimer) { window.clearTimeout(hideTimer); hideTimer = 0; }
+        if (hideDisplayTimer) { window.clearTimeout(hideDisplayTimer); hideDisplayTimer = 0; }
+        bubbleWrap.style.opacity = '0';
+        bubbleWrap.style.transform = 'translateY(8px)';
+        bubbleWrap.style.visibility = 'hidden';
+        if (immediate) {
+          bubbleWrap.style.display = 'none';
+          bubbleText.textContent = '';
+          img.style.display = 'none';
+          return;
+        }
+        hideDisplayTimer = window.setTimeout(() => {
+          bubbleWrap.style.display = 'none';
+          bubbleText.textContent = '';
+          img.style.display = 'none';
+          hideDisplayTimer = 0;
+        }, 240);
+      };
+
+      const showBubble = (message: string) => {
+        if (!message) return;
+        if (hideTimer) { window.clearTimeout(hideTimer); hideTimer = 0; }
+        if (hideDisplayTimer) { window.clearTimeout(hideDisplayTimer); hideDisplayTimer = 0; }
+        bubbleText.textContent = message;
+        bubbleWrap.style.display = 'flex';
+        // Mostrar a mascote juntamente com o balão
+        img.style.display = '';
+        bubbleWrap.style.opacity = '0';
+        bubbleWrap.style.transform = 'translateY(8px)';
+        bubbleWrap.style.visibility = 'visible';
+        // force reflow para animacao de opacidade
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        bubbleWrap.offsetHeight;
+        bubbleWrap.style.opacity = '1';
+        bubbleWrap.style.transform = 'translateY(0)';
+        hideTimer = window.setTimeout(() => {
+          hideBubble();
+          hideTimer = 0;
+        }, 2600);
+      };
+
+      const switchMood = (mood: 'happy' | 'sad') => {
+        if (activeMood === mood) return;
+        activeMood = mood;
+        idx = 0;
+        last = 0;
+        setInitialFrame();
+      };
+
+      const controller: MascotController = {
         destroy() {
+          if (hideTimer) window.clearTimeout(hideTimer);
+          if (hideDisplayTimer) window.clearTimeout(hideDisplayTimer);
+          hideBubble(true);
           if (raf) cancelAnimationFrame(raf);
           wrap.remove();
+        },
+        onGoodCatch() {
+          switchMood('happy');
+          showBubble(pick(positiveMessages));
+        },
+        onBadCatch(reason) {
+          switchMood('sad');
+          const pool = reason === 'mouth' ? mouthMessages : negativeMessages;
+          showBubble(pick(pool));
         }
       };
-    })();
 
+      return controller;
+    })();
     // tracking bridge → mouth position in canvas px
     const step = () => {
       const lm = tracker.getLandmarks();
@@ -292,6 +445,25 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       const t = performance.now();
       const firedAt = mouthTrigger(t, open);
       if (firedAt) loop.registerMouthTrigger(firedAt);
+      const warnCooldownMs = 3500;
+      const holdThresholdMs = 2400;
+      const justOpened = open && !prevMouthOpen;
+      if (open) {
+        if (!mouthOpenSince) mouthOpenSince = t;
+      } else {
+        mouthOpenSince = 0;
+      }
+      if (mascotCtl) {
+        if (justOpened && firedAt === 0 && (t - lastMouthWarningAt) > warnCooldownMs) {
+          mascotCtl.onBadCatch('mouth');
+          lastMouthWarningAt = t;
+        } else if (open && mouthOpenSince && (t - mouthOpenSince) > holdThresholdMs && (t - lastMouthWarningAt) > warnCooldownMs) {
+          mascotCtl.onBadCatch('mouth');
+          lastMouthWarningAt = t;
+          mouthOpenSince = t;
+        }
+      }
+      prevMouthOpen = open;
       // standby: não mostrar badges nem filtros/efeitos visuais
       video.style.filter = '';
       video.classList.add('-scale-x-100');

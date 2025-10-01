@@ -1,9 +1,11 @@
 {
   "good": [
-    "/assets/items/good/galobarcelos-icon.webp",
-    "/assets/items/good/coracaovianda-icon.webp",
+    "/assets/items/good/caracois-icon.webp",
+    "/assets/items/good/chourico_assado-icon.webp",
+    "/assets/items/good/PicaPau-icon.webp",
+    "/assets/items/good/Salada_Polvo-icon.webp",
     "/assets/items/good/Sardinha-icon.webp",
-    "/assets/items/good/GuitarraPortuguesa-icon.webp"
+    "/assets/items/good/tremocos-icon.webp"
   ],
   "bad": [
     "/assets/items/bad/hamburguer-icon.webp",
