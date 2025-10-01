@@ -90,33 +90,39 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   cancelModal.onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
   confirmAgain.onclick = () => onRetry();
   el.querySelector<HTMLButtonElement>('#share')!.onclick = async () => {
-    const title = 'Alves Bandeira — Desafio de Pontos';
-    const base = ((import.meta as any)?.env?.VITE_PUBLIC_APP_URL) || window.location.origin;
+    const title = '🏆 Alves Bandeira — Desafio de Pontos';
+    const envUrl = ((import.meta as any)?.env?.VITE_PUBLIC_APP_URL) as string | undefined;
+    let base = envUrl || window.location.origin;
+    if (/localhost|127\.[0-9]+\.[0-9]+\.[0-9]+/i.test(base) && envUrl) base = envUrl; // evita partilhar localhost quando houver URL público
     const shareUrl = `${base}/?utm_source=share&utm_medium=game&utm_campaign=abgame`;
-    let userText = '';
+    let handle = '';
     try {
       const { getCachedUser } = await import('../../services/auth');
       const u = getCachedUser();
-      if (u?.username) userText = ` (@${u.username})`;
+      if (u?.username) handle = ` (@${u.username})`;
     } catch {}
-    const text = `Acabei de fazer ${score} ponto${score===1?'':'s'} no jogo Alves Bandeira${userText}! Consegues bater-me?`;
-    const full = `${title}\n\n${text}\n${shareUrl}`;
+    const pts = `${score} ponto${score===1?'':'s'}`;
+    const line1 = `🏁 Fiz ${pts} no jogo Alves Bandeira${handle}!`;
+    const line2 = `🔥 Consegues bater-me?`;
+    const line3 = `🎯 Joga aqui: ${shareUrl}`;
+    const full = `${title}\n\n${line1}\n${line2}\n${line3}`;
     try {
-      const ns: any = navigator as any;
-      if (ns.share) {
-        await ns.share({ title, text, url: shareUrl });
+      // Mobile: direcionar para WhatsApp com texto completo
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isMobile) {
+        try { await navigator.clipboard.writeText(full); } catch {}
+        const wa = `https://wa.me/?text=${encodeURIComponent(full)}`;
+        window.open(wa, '_blank');
         return;
       }
-      // Fallback: copiar para área de transferência
+      // Desktop: tentar Web Share com apenas texto (inclui link no texto)
+      const ns: any = navigator as any;
+      if (ns.share) {
+        await ns.share({ title, text: full });
+        return;
+      }
+      // Fallback: copiar para clipboard
       await navigator.clipboard.writeText(full);
-      // Em mobile, tentar abrir WhatsApp
-      try {
-        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        if (isMobile) {
-          const wa = `https://wa.me/?text=${encodeURIComponent(full)}`;
-          window.open(wa, '_blank');
-        }
-      } catch {}
       alert('Mensagem de partilha copiada. Cola no teu app favorito!');
     } catch {
       alert('Não foi possível partilhar. Tenta novamente.');
