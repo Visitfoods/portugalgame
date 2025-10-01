@@ -15,8 +15,8 @@ export class HUD {
     // New timer circle (center/top)
     const tWrap = document.createElement('div');
     tWrap.className = 'absolute left-1/2 -translate-x-1/2 w-[110px] h-[110px] md:w-[130px] md:h-[130px] rounded-full bg-white/95 text-[#0a2960] shadow-[0_12px_28px_rgba(2,20,60,0.25)] flex flex-col items-center justify-center';
-    // position lower, near bottom center (above mascot)
-    (tWrap.style as any).bottom = 'calc(env(safe-area-inset-bottom, 0px) + 50px)';
+    // position near top center, logo clearance + safe area
+    (tWrap.style as any).top = 'calc(env(safe-area-inset-top, 0px) + 96px)';
     const tLbl = document.createElement('div');
     tLbl.className = 'text-[12px] md:text-sm font-[800] tracking-[0.12em]';
     tLbl.textContent = 'TEMPO';
@@ -92,3 +92,4 @@ export class HUD {
 
   destroy() { this.root.remove(); this.fxRoot.remove(); }
 }
+

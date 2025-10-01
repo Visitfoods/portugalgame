@@ -83,10 +83,6 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
       <img id="sound-icon" src="/assets/graphics/icon_Volume-On.svg" alt=""/>
     </button>
 
-    <!-- Nota de compatibilidade -->
-    <div class="absolute left-0 right-0 bottom-2 text-center text-[11px] text-white/85 z-[2] px-4">
-      Requer ligação HTTPS. Compatível com Safari (iOS) e Chrome (Android).
-    </div>
   `;
 
   // Ligações

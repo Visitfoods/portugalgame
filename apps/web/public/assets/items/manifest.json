@@ -8,9 +8,14 @@
     "/assets/items/good/tremocos-icon.webp"
   ],
   "bad": [
-    "/assets/items/bad/hamburguer-icon.webp",
-    "/assets/items/bad/pizza-icon.webp",
     "/assets/items/bad/burrito-icon.webp",
-    "/assets/items/bad/sushi-icon.webp"
+    "/assets/items/bad/cachorro-icon.webp",
+    "/assets/items/bad/Carbonara-icon.webp",
+    "/assets/items/bad/hamburguer-icon.webp",
+    "/assets/items/bad/lasanha-icon.webp",
+    "/assets/items/bad/pizza-icon.webp",
+    "/assets/items/bad/ramen-icon.webp",
+    "/assets/items/bad/sushi-icon.webp",
+    "/assets/items/bad/sushi2-icon.webp"
   ]
 }

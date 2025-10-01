@@ -1,4 +1,4 @@
-import { getRankAndTotal } from '../../services/score';
+ 
 
 export function ResultSummary(score: number, onSubmit: () => void, onRetry: () => void) {
   const el = document.createElement('div');
@@ -42,8 +42,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
         <img src="/assets/graphics/Estrela_2.svg" class="ab-star-burst ab-star-white" style="--tx:20px; --ty:16px; width:10px;" alt=""/>
       </div>
 
-      <!-- Posição (mock) -->
-      <div id="rank-line" class="mt-3 text-white/90 text-base md:text-lg">ESTÁS NA POSIÇÃO <span id="rank">–</span>º de <span id="total">–</span> jogadores</div>
+      
 
       <!-- Ações -->
       <div class="mt-5 w-9/12 max-w-[420px] flex flex-col items-center gap-5 md:gap-6">
@@ -136,20 +135,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   const step = (now:number)=>{ const p=Math.min(1,(now-t0)/dur); const v=Math.round(score*ease(p)); scoreEl.textContent=v.toLocaleString('pt-PT'); if(p<1&&el.isConnected) requestAnimationFrame(step); };
   requestAnimationFrame(step);
 
-  // Ranking real (Firestore): posição global e total de submissões
-  const rank = el.querySelector<HTMLSpanElement>('#rank')!;
-  const total = el.querySelector<HTMLSpanElement>('#total')!;
-  rank.textContent = '…';
-  total.textContent = '…';
-  getRankAndTotal(score)
-    .then(({ rank: r, total: t }) => {
-      rank.textContent = r.toLocaleString('pt-PT');
-      total.textContent = t.toLocaleString('pt-PT');
-    })
-    .catch(() => {
-      rank.textContent = '—';
-      total.textContent = '—';
-    });
+  
 
   // Som on/off com persistência
   const soundBtn = el.querySelector<HTMLButtonElement>('#sound')!;

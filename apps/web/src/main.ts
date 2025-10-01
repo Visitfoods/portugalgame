@@ -17,6 +17,7 @@ import { ensureFirestoreOnline } from './lib/firebase'
 import { userStore } from './services/userStore'
 import { submitScore } from './services/score'
 import { Account } from './ui/screens/Account'
+import { FaceTracker } from './core/ar/FaceTracker'
 
 const app = document.getElementById('app')!;
 
@@ -82,6 +83,21 @@ function askPermissions() {
 // Initialize central user store (auth + profile sync)
 userStore.init().catch(() => {});
 startFlow();
+
+// Pré-aquecer o Face Landmarker em idle para reduzir cold start no primeiro jogo
+function prewarmFaceLandmarker() {
+  const schedule = (cb: () => void) => {
+    try {
+      (window as any).requestIdleCallback ? (window as any).requestIdleCallback(cb, { timeout: 3000 }) : setTimeout(cb, 1200);
+    } catch {
+      setTimeout(cb, 1200);
+    }
+  };
+  schedule(() => {
+    try { new FaceTracker().init().catch(() => {}); } catch {}
+  });
+}
+prewarmFaceLandmarker();
 
 // Ensure Firestore network is enabled (avoids transient offline state)
 ensureFirestoreOnline().catch(() => {});

@@ -49,10 +49,6 @@ export function HowTo(onPlay: () => void, onBack: () => void) {
       </svg>
     </button>
 
-    <!-- Nota de compatibilidade -->
-    <div class="absolute left-0 right-0 bottom-2 text-center text-[11px] text-white/85 z-[2] px-4">
-      Requer ligação HTTPS. Compatível com Safari (iOS) e Chrome (Android).
-    </div>
   `;
 
   // Ligações
@@ -65,7 +61,7 @@ export function HowTo(onPlay: () => void, onBack: () => void) {
   playBtn.onpointerleave = () => setPressed(false);
   playBtn.onpointercancel = () => setPressed(false);
   playBtn.onclick = () => onPlay();
-  // Bot�o Home ? voltar � Home
+  // Bot�o Home ? voltar � Home
   el.querySelector<HTMLButtonElement>('#home')!.onclick = () => onBack();
   // Botão voltar não é necessário nesta versão; usa o botão de som ou navegação do SO
 

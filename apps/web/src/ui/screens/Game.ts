@@ -1,4 +1,5 @@
 import { HUD } from "../components/HUD";
+import { LoadingOverlay } from "../components/LoadingOverlay";
 import { CameraFeed } from "../../core/ar/CameraFeed";
 import { FaceTracker } from "../../core/ar/FaceTracker";
 import { MouthOpenDetector } from "../../core/ar/MouthOpenDetector";
@@ -90,12 +91,13 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   };
 
   const start = async () => {
-    // Show camera background
-    video.classList.remove('hidden');
-    video.classList.add('fixed','inset-0','w-full','h-full','object-cover','transform','-scale-x-100','z-[1]');
-    // Ensure canvas is visible for a replay
+    // Ensure canvas is visible for a replay (mantemos o vídeo oculto até após o countdown)
     canvas.classList.remove('hidden');
     canvas.classList.add('z-[2]');
+
+    // Loading overlay minimalista durante o arranque
+    const loading = LoadingOverlay('A preparar...');
+    loading.show('A carregar recursos...');
 
     // Bottom decorative element (same as other pages), positioned under mascot
     if (!bottomDecor) {
@@ -132,8 +134,10 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       tracker.init().catch(()=>{})
     ]);
 
+    loading.show('A iniciar câmara...');
     await feed.startFrontCamera();
     try { await tracker.start(video); } catch {}
+    loading.hide();
     loop = new GameLoop(canvas, {
       onScoreUpdate: (s) => hud.setScore(s),
       onTimeUpdate: (t) => hud.setTimeLeft(t),
@@ -170,6 +174,10 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
         }
       }, 700);
     });
+
+    // Só mostrar a câmara após o countdown (evita "zoom"/autoexposição antes do jogo)
+    video.classList.remove('hidden');
+    video.classList.add('fixed','inset-0','w-full','h-full','object-cover','transform','-scale-x-100','z-[1]');
 
     loop.start();
     // Developer helper: finish button visible during countdown/gameplay
@@ -220,11 +228,11 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       const bubbleImg = document.createElement('img');
       bubbleImg.src = '/assets/graphics/balao-fala.svg';
       bubbleImg.alt = '';
-      bubbleImg.className = 'w-[240px] max-w-[280px] h-auto drop-shadow-sm';
+      bubbleImg.className = 'w-[200px] max-w-[220px] h-auto drop-shadow-sm';
       bubbleWrap.appendChild(bubbleImg);
 
       const bubbleText = document.createElement('div');
-      bubbleText.className = 'absolute inset-0 flex items-center justify-center px-8 pt-6 pb-10 text-[15px] leading-snug font-semibold text-white text-center drop-shadow';
+      bubbleText.className = 'absolute inset-0 flex items-center justify-center px-6 pt-5 pb-8 text-[14px] leading-snug font-semibold text-white text-center drop-shadow';
       bubbleText.style.textShadow = '0 2px 6px rgba(7,27,66,0.45)';
       bubbleWrap.appendChild(bubbleText);
 
