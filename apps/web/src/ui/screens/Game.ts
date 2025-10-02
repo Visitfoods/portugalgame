@@ -215,7 +215,11 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     mascotCtl = await (async function mountMascot() {
       const stageEl = document.getElementById('stage') || document.body; // sobre o canvas
       const wrap = document.createElement('div');
-      wrap.className = 'absolute bottom-3 left-1/2 -translate-x-1/2 z-[3] pointer-events-none flex flex-col items-center gap-2';
+      // Alinhar à direita e por baixo dos elementos (score: z-30; Graphic-Element01: z-[2])
+      // Colocamos a mascote em z-[1] para ficar atrás de ambos
+      wrap.className = 'absolute bottom-0 right-3 z-[1] pointer-events-none flex flex-col items-center gap-2';
+      // Subir a posição vertical ~3x (apenas para cima)
+      (wrap.style as any).bottom = 'calc(env(safe-area-inset-bottom, 0px) + 72px)';
 
       const bubbleWrap = document.createElement('div');
       bubbleWrap.className = 'relative flex items-center justify-center select-none pointer-events-none';
@@ -228,12 +232,18 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       const bubbleImg = document.createElement('img');
       bubbleImg.src = '/assets/graphics/balao-fala.svg';
       bubbleImg.alt = '';
-      bubbleImg.className = 'w-[200px] max-w-[220px] h-auto drop-shadow-sm';
+      // Largura controlada via JS para permitir tamanho dinâmico
+      bubbleImg.className = 'h-auto drop-shadow-sm';
+      bubbleImg.style.width = '72px';
       bubbleWrap.appendChild(bubbleImg);
 
       const bubbleText = document.createElement('div');
-      bubbleText.className = 'absolute inset-0 flex items-center justify-center px-6 pt-5 pb-8 text-[14px] leading-snug font-semibold text-white text-center drop-shadow';
+      bubbleText.className = 'absolute inset-0 flex items-center justify-center px-2 pt-2 pb-3 text-[10px] leading-snug font-semibold text-white text-center drop-shadow';
       bubbleText.style.textShadow = '0 2px 6px rgba(7,27,66,0.45)';
+      // Permitir várias linhas de texto dentro do balão
+      bubbleText.style.whiteSpace = 'normal';
+      bubbleText.style.wordBreak = 'break-word';
+      (bubbleText.style as any).hyphens = 'auto';
       bubbleWrap.appendChild(bubbleText);
 
       wrap.appendChild(bubbleWrap);
@@ -379,6 +389,41 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
         if (hideTimer) { window.clearTimeout(hideTimer); hideTimer = 0; }
         if (hideDisplayTimer) { window.clearTimeout(hideDisplayTimer); hideDisplayTimer = 0; }
         bubbleText.textContent = message;
+        // Calcular largura dinamicamente permitindo múltiplas linhas e assegurando que cabe em altura
+        try {
+          const cs = getComputedStyle(bubbleText);
+          const meas = document.createElement('div');
+          meas.textContent = message;
+          meas.style.position = 'absolute';
+          meas.style.visibility = 'hidden';
+          meas.style.whiteSpace = 'normal';
+          meas.style.wordBreak = 'break-word';
+          (meas.style as any).hyphens = 'auto';
+          meas.style.fontSize = cs.fontSize;
+          meas.style.fontWeight = cs.fontWeight;
+          meas.style.fontFamily = cs.fontFamily;
+          meas.style.letterSpacing = cs.letterSpacing;
+          document.body.appendChild(meas);
+
+          const MIN_W = 90; // px
+          const MAX_W = 220; // px
+          const PAD_H = 20;  // padding vertical aproximado (pt+pb)
+          const PAD_W = 12;  // padding horizontal aproximado (px esquerda+direita)
+          const ar = (bubbleImg.naturalWidth > 0) ? (bubbleImg.naturalHeight / bubbleImg.naturalWidth) : 0.7;
+          const candidates = [90, 110, 130, 150, 170, 190, 210, 220];
+
+          let chosen = MIN_W;
+          for (const w of candidates) {
+            const bubbleH = w * ar; // altura do SVG à escala
+            const contentW = Math.max(40, Math.floor(w - PAD_W));
+            meas.style.width = contentW + 'px';
+            const textH = meas.offsetHeight; // altura do texto em múltiplas linhas
+            if ((textH + PAD_H) <= (bubbleH - 6)) { chosen = w; break; }
+            chosen = w;
+          }
+          meas.remove();
+          bubbleImg.style.width = Math.min(Math.max(chosen, MIN_W), MAX_W) + 'px';
+        } catch {}
         bubbleWrap.style.display = 'flex';
         // Mostrar a mascote juntamente com o balão
         img.style.display = '';

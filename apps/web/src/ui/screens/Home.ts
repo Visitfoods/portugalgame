@@ -225,10 +225,13 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
         img.alt = '';
         img.draggable = false;
         img.className = 'absolute will-change-transform select-none drop-shadow-[0_6px_8px_rgba(0,0,0,0.25)]';
-        const tBox = titleBox();
-        const startX = tBox.left + Math.random() * (tBox.right - tBox.left);
-        const startY = tBox.top + Math.random() * (tBox.bottom - tBox.top);
-        const startScale = 0.9 + Math.random()*0.3; // perto do título
+        
+        // Posição inicial: fora do ecrã (de cima)
+        const viewportWidth = window.innerWidth;
+        const startX = Math.random() * viewportWidth; // posição horizontal aleatória
+        const startY = -100; // começa fora do ecrã (acima)
+        const startScale = 0.8 + Math.random()*0.4; // escala inicial
+        
         const end = target();
         const jitter0 = (Math.random()*60 - 30); // embudo com ligeiro desvio que morre ao longo do tempo
         const rot = (Math.random()*20 - 10);

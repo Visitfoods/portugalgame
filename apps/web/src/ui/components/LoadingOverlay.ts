@@ -7,7 +7,7 @@ export interface LoadingHandle {
 
 export function LoadingOverlay(initialMessage = 'A preparar...'): LoadingHandle {
   const overlay = document.createElement('div');
-  overlay.className = 'fixed inset-0 z-[60] flex items-center justify-center bg-black/60 pointer-events-none';
+  overlay.className = 'fixed inset-0 z-[60] flex items-center justify-center bg-black pointer-events-auto';
 
   const wrap = document.createElement('div');
   wrap.className = 'flex flex-col items-center gap-5 text-center';
@@ -17,18 +17,21 @@ export function LoadingOverlay(initialMessage = 'A preparar...'): LoadingHandle 
   logo.alt = 'Alves Bandeira';
   logo.className = 'ab-logo-white w-[120px] h-auto opacity-95';
 
+  const spinner = document.createElement('div');
+  spinner.className = 'w-10 h-10 rounded-full border-4 border-white/20 border-t-white animate-spin';
+
   const msg = document.createElement('div');
-  msg.className = 'text-white/90 text-lg font-semibold';
+  msg.className = 'text-white/90 text-base font-semibold';
   msg.textContent = initialMessage;
 
-  wrap.append(logo, msg);
+  wrap.append(logo, spinner, msg);
   overlay.appendChild(wrap);
 
   let mounted = false;
 
   function ensureMounted() {
     if (!mounted) {
-      (document.getElementById('stage') || document.body).appendChild(overlay);
+      document.body.appendChild(overlay);
       mounted = true;
     }
   }

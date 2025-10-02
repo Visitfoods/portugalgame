@@ -29,7 +29,7 @@ export function HowTo(onPlay: () => void, onBack: () => void) {
       </div>
 
       <!-- Botões de ação -->
-      <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play fixed left-1/2 -translate-x-1/2 bottom-[calc(env(safe-area-inset-bottom,0px)+140px)] w-6/12 max-w-[280px] h-auto cursor-pointer active:scale-[.98] transition z-[30]"/>
+      <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play mt-10 mb-[140px] w-7/12 max-w-[300px] h-auto cursor-pointer active:scale-[.98] transition"/>
     </div>
 
     <!-- Nuvens base + elemento gráfico -->
