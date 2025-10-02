@@ -98,7 +98,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
     }
   })();
 
-  // Search by username
+  // Search by username - filter locally loaded data
   const search = el.querySelector<HTMLInputElement>('#search');
   if (!search) {
     console.error('Search input not found!');
@@ -111,21 +111,13 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
         renderRows(top); 
         return; 
       }
-      (async () => {
-        try {
-          console.log('Searching for:', q);
-          const rows = await searchByUsername(q, 120);
-          console.log('Search results:', rows.length, 'entries');
-          // Ordenar por pontuação desc e deduplicar para reter apenas o melhor por username
-          rows.sort((a,b) => (b.score||0) - (a.score||0));
-          const mapped = toUniqueByUsername(rows, 50);
-          console.log('Mapped results:', mapped.length, 'entries');
-          renderRows(mapped.length ? mapped : top);
-        } catch (e) {
-          console.error('Search error:', e);
-          renderRows(top);
-        }
-      })();
+      
+      // Filter locally loaded data instead of querying database
+      const filtered = top.filter(entry => 
+        entry.name.toLowerCase().startsWith(q)
+      );
+      console.log('Filtered results:', filtered.length, 'entries');
+      renderRows(filtered);
     };
   }
 
