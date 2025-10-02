@@ -29,7 +29,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
         <!-- Barra de pesquisa -->
         <div class="flex items-center gap-2 px-4 py-3 border-b-2 border-[#1f4590]/30 text-[#1f4590]">
           <img src="/assets/graphics/lupa-icon.svg" alt="Pesquisar" class="w-[18px] h-[18px]"/>
-          <input id="search" type="text" placeholder="Procurar por username" class="flex-1 bg-transparent outline-none placeholder-[#1f4590]/70"/>
+          <input id="search" type="text" placeholder="Procurar por username" class="flex-1 bg-transparent outline-none placeholder-[#75808c] text-sm placeholder:text-xs"/>
         </div>
         <!-- Lista top 5 -->
         <div id="list" class="divide-y-2 divide-[#1f4590]/30">
