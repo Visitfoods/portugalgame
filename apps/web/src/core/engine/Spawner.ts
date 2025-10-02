@@ -43,8 +43,8 @@ export class Spawner {
 
     const pool = kind === 'good' ? this.sprites.good : this.sprites.bad;
     const img = pool.length ? pool[rngInt(0, pool.length - 1)] : undefined;
-    const baseSize = rngInt(96, 180) * (kind === 'good' ? diff.scale : diff.scale * 1.1);
-    const size = Math.max(64, Math.min(220, Math.floor(baseSize)));
+    const baseSize = rngInt(120, 220) * (kind === 'good' ? diff.scale : diff.scale * 1.1);
+    const size = Math.max(80, Math.min(280, Math.floor(baseSize)));
     const radius = Math.floor(size * 0.42);
 
     let x = rng(32, this.w - 32);
@@ -71,8 +71,8 @@ export class Spawner {
       age: 0,
       swayAmp: diff.drift,
       swayFreq: rng(0.5, 1.5),
-      rot: rng(0, Math.PI * 2),
-      spin: rng(-1.0, 1.0)
+      rot: rng(-Math.PI/6, Math.PI/6), // -30 a +30 graus
+      spin: rng(-0.3, 0.3) // rotação ainda mais suave
     });
   }
 }

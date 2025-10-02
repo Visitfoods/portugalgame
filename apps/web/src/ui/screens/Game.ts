@@ -106,7 +106,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       bottomDecor.alt = '';
       // z-[2] so it sits above the canvas (also z-[2]) due to DOM order,
       // and below the mascot (z-[3]) to avoid covering it
-      bottomDecor.className = 'absolute left-0 right-0 bottom-0 w-full h-[140px] md:h-[180px] object-cover pointer-events-none z-[2]';
+      bottomDecor.className = 'absolute left-0 right-0 bottom-[-60px] w-full h-[140px] md:h-[180px] object-cover pointer-events-none z-[2]';
       (stage || document.body).appendChild(bottomDecor);
     }
 

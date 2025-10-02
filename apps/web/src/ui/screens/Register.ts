@@ -6,7 +6,7 @@ export function Register(onSaved: () => void, onCancel: () => void) {
     <img src="/assets/graphics/Background.svg" alt="" class="absolute inset-0 -z-20 w-full h-full object-cover"/>
     <div class="relative z-10 w-full flex flex-col items-center">
       <div class="relative mt-1 w-full h-[70px] flex items-start justify-center overflow-visible">
-        <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[110px] md:w-[130px] h-auto ab-logo-white"/>
+        <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[150px] md:w-[180px] h-auto ab-logo-white"/>
       </div>
       <div class="mt-2 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">Completa o teu registo</div>
 
@@ -40,7 +40,7 @@ export function Register(onSaved: () => void, onCancel: () => void) {
 
     <img src="/assets/graphics/Nuvem-03.svg" alt="" class="absolute bottom-[40px] left-[-120px] w-[85%] max-w-[820px] z-0 opacity-20 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 70s; --ab-delay: -25s;"/>
     <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute bottom-[36px] right-[-120px] w-[95%] max-w-[920px] z-0 opacity-20 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 64s; --ab-delay: -31s;"/>
-    <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-0 w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
+    <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-[-60px] w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
   `;
 
   const form = el.querySelector<HTMLFormElement>('#form')!;

@@ -12,13 +12,12 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-14 left-0 w-[34%] max-w-[260px] -z-10 opacity-90 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 46s; --ab-delay: -18s;"/>
     <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-20 right-0 w-[36%] max-w-[280px] -z-10 opacity-85 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 52s; --ab-delay: -9s;"/>
 
-    <div class="relative z-10 w-full flex flex-col items-center">
-      <!-- Logo -->
-      <div class="relative mt-1 w-full h-[70px] flex items-start justify-center overflow-visible">
-        <!-- Mantemos a mesma altura do slot para não mexer no PARABÉNS; posicionamos o logo de forma absoluta quase colado ao topo -->
-        <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="absolute left-1/2 -translate-x-1/2 z-[10] w-[110px] md:w-[130px] h-auto ab-logo-white top-[-80px] md:top-[-96px]"/>
-      </div>
+    <!-- Logo independente -->
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 z-[10] w-full flex justify-center">
+      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[150px] md:w-[180px] h-auto ab-logo-white"/>
+    </div>
 
+    <div class="relative z-10 w-full flex flex-col items-center">
       <!-- Parabéns -->
       <div class="mt-1 text-center text-white font-[800] tracking-[0.06em] text-3xl md:text-4xl">PARABÉNS!</div>
 
@@ -70,7 +69,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     <!-- Nuvens base + elemento gráfico -->
     <img src="/assets/graphics/Nuvem-03.svg" alt="" class="absolute left-[-120px] bottom-[40px] w-[85%] max-w-[820px] z-0 opacity-20 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 70s; --ab-delay: -25s;"/>
     <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute right-[-120px] bottom-[36px] w-[95%] max-w-[920px] z-0 opacity-20 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 64s; --ab-delay: -31s;"/>
-    <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-0 w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
+    <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-[-60px] w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
 
     <!-- Botão de som (canto inferior esquerdo) -->
     <button id="sound" class="ab-icon-btn fixed left-5 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px)" aria-label="Som">

@@ -20,7 +20,7 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
         <!-- Nuvem atrás do logotipo -->
         <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-2 left-0 w-[28%] max-w-[240px] opacity-70 z-[5] ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 56s; --ab-delay: -18s;"/>
         <!-- Logotipo -->
-        <img id="ab-logo" src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[110px] md:w-[130px] h-auto ab-logo-white"/>
+        <img id="ab-logo" src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[150px] md:w-[180px] h-auto ab-logo-white"/>
         <!-- Nuvem à frente do logotipo -->
         <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-4 right-0 w-[26%] max-w-[220px] opacity-80 z-[20] ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 50s; --ab-delay: -32s;"/>
       </div>
@@ -74,7 +74,7 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
     <img src="/assets/graphics/Nuvem-03.svg" alt="" class="absolute bottom-[28px] left-[-140px] w-[70%] max-w-[700px] z-0 opacity-20 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 62s; --ab-delay: -59s;"/>
     <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute bottom-[36px] right-[-120px] w-[95%] max-w-[920px] z-0 opacity-20 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 64s; --ab-delay: -31s;"/>
     <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute bottom-[22px] right-[-140px] w-[72%] max-w-[720px] z-0 opacity-20 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 76s; --ab-delay: -11s;"/>
-    <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-0 w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
+    <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-[-60px] w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
 
     <!-- Camada para "chuva" de ícones -->
     <div id="icon-rain" class="pointer-events-none absolute inset-0 z-[1] overflow-visible"></div>

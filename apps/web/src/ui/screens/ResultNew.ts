@@ -54,7 +54,7 @@ export function Result(score: number, onRetry: () => void) {
           </div>
         </form>
       </div>
-    <!-- Botão de som (canto inferior esquerdo) -->
+    <!-- Botï¿½o de som (canto inferior esquerdo) -->
     <button id="sound" class="ab-icon-btn fixed left-5 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px)" aria-label="Som">
       <img id="sound-icon" src="/assets/graphics/icon_Volume-On.svg" alt=""/>
     </button>
@@ -64,7 +64,7 @@ export function Result(score: number, onRetry: () => void) {
     <!-- Nuvens base + elemento grÃ¡fico -->
     <img src="/assets/graphics/Nuvem-03.svg" alt="" class="absolute left-[-120px] bottom-[40px] w-[85%] max-w-[820px] z-0 opacity-20 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 70s; --ab-delay: -25s;"/>
     <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute right-[-120px] bottom-[36px] w-[95%] max-w-[920px] z-0 opacity-20 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 64s; --ab-delay: -31s;"/>
-    <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-0 w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
+    <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-[-60px] w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
   `;
 
   const again = el.querySelector<HTMLButtonElement>('#again')!;
@@ -111,7 +111,7 @@ export function Result(score: number, onRetry: () => void) {
     alert('Registo guardado (local).');
   };
 
-  // Som on/off com persistência
+  // Som on/off com persistï¿½ncia
   const soundBtn = el.querySelector<HTMLButtonElement>("#sound");
   const soundIcon = el.querySelector<HTMLImageElement>("#sound-icon");
   if (soundBtn && soundIcon) {
@@ -136,7 +136,7 @@ export function Result(score: number, onRetry: () => void) {
     soundBtn.addEventListener("touchstart", (e) => { try { e.preventDefault(); } catch {} toggleMute(); }, { passive: false });
     soundBtn.onkeydown = (e: KeyboardEvent) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleMute(); } };
   }
-  // Press feedback para ícones e glass buttons
+  // Press feedback para ï¿½cones e glass buttons
   el.querySelectorAll<HTMLButtonElement>(".ab-icon-btn, .home-glass-btn").forEach(btn => {
     const set = (on: boolean) => btn.classList.toggle("is-pressing", on);
     btn.addEventListener("pointerdown", () => set(true));

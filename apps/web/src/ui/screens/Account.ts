@@ -13,7 +13,7 @@ export function Account(onBack: () => void) {
     <img src="/assets/graphics/Background.svg" alt="" class="absolute inset-0 -z-20 w-full h-full object-cover"/>
     <div class="relative z-10 w-full flex flex-col items-center">
       <div class="relative mt-1 w-full h-[70px] flex items-start justify-center overflow-visible">
-        <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[110px] md:w-[130px] h-auto ab-logo-white"/>
+        <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[150px] md:w-[180px] h-auto ab-logo-white"/>
       </div>
       <div class="mt-2 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">A Minha Conta</div>
 
