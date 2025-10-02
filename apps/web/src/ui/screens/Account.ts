@@ -18,7 +18,7 @@ export function Account(onBack: () => void) {
       <div class="mt-2 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">A Minha Conta</div>
 
       <div id="card" class="mt-3 w-11/12 max-w-[680px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden p-5">
-        <div id="content" class="space-y-3"></div>
+        <div id="content" class="space-y-3 text-center"></div>
       </div>
 
       <div class="mt-5 w-9/12 max-w-[420px] flex flex-col items-center gap-4">
@@ -37,7 +37,7 @@ export function Account(onBack: () => void) {
       content.innerHTML = `
         <div class="space-y-3">
           <div class="text-base">Não estás autenticado.</div>
-          <div class="flex gap-3">
+          <div class="flex justify-center gap-3">
             <button id="login" class="px-5 py-2 rounded-full bg-[#1f4590] text-white font-semibold">Entrar / Registar</button>
           </div>
         </div>`;
@@ -49,12 +49,12 @@ export function Account(onBack: () => void) {
 
     // Show loading + logout while profile loads
     content.innerHTML = `
-      <div class="space-y-3">
-        <div class="text-sm opacity-80">A carregar…</div>
-        <div class="flex gap-3">
-          <button id="logout" class="px-5 py-2 rounded-full bg-white/20 text-[#0a2960] border border-[#0a2960]/30">Terminar sessão</button>
-        </div>
-      </div>`;
+        <div class="space-y-3">
+          <div class="text-sm opacity-80">A carregar…</div>
+          <div class="flex justify-center gap-3">
+            <button id="logout" class="px-5 py-2 rounded-full bg-white/20 text-[#0a2960] border border-[#0a2960]/30">Terminar sessão</button>
+          </div>
+        </div>`;
     content.querySelector<HTMLButtonElement>('#logout')!.onclick = async () => { await AuthService.signOut(); setCachedUser(null); render(); };
 
     const profile = await Promise.race([
@@ -67,7 +67,7 @@ export function Account(onBack: () => void) {
         <div class="space-y-3">
           <div>Estás autenticado mas falta completar o perfil.</div>
           <div class="text-sm opacity-70">Completa já o teu perfil para avançar.</div>
-          <div class="flex gap-3">
+          <div class="flex justify-center gap-3">
             ${needsBasic
               ? '<button id="register" class="px-5 py-2 rounded-full bg-[#1f4590] text-white font-semibold">Completar registo</button>'
               : '<button id="complete" class="px-5 py-2 rounded-full bg-[#1f4590] text-white font-semibold">Escolher username</button>'}
