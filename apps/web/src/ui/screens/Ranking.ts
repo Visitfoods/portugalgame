@@ -28,7 +28,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       <div class="mt-3 w-11/12 max-w-[640px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden">
         <!-- Barra de pesquisa -->
         <div class="flex items-center gap-2 px-4 py-3 border-b-2 border-[#1f4590]/30 text-[#1f4590]">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.5 21.5 20l-6-6zM9.5 14A4.5 4.5 0 115 9.5 4.5 4.5 0 019.5 14z" fill="#1f4590"/></svg>
+          <img src="/assets/graphics/lupa-icon.svg" alt="Pesquisar" class="w-[18px] h-[18px]"/>
           <input id="search" type="text" placeholder="Procurar por username" class="flex-1 bg-transparent outline-none placeholder-[#1f4590]/70"/>
         </div>
         <!-- Lista top 5 -->
