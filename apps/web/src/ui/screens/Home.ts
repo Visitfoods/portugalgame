@@ -52,7 +52,7 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
 
       <!-- Botões principais -->
       <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play mt-20 w-7/12 max-w-[320px] h-auto cursor-pointer active:scale-[.98] transition"/>
-      <button id="how" class="home-glass-btn btn-how mt-7 w-5/12 max-w-[240px] px-4 py-2 rounded-full text-white font-semibold text-[17px] md:text-lg border border-white/60 bg-white/15 backdrop-blur-sm shadow-[0_6px_16px_rgba(2,20,60,0.25)] active:scale-[.98] transition">COMO JOGAR</button>
+      <button id="how" class="home-glass-btn btn-how mt-7 w-5/12 max-w-[240px] px-4 py-2 rounded-full text-white font-semibold text-sm md:text-base whitespace-nowrap border border-white/60 bg-white/15 backdrop-blur-sm shadow-[0_6px_16px_rgba(2,20,60,0.25)] active:scale-[.98] transition">COMO JOGAR</button>
 
       <!-- Ícones inferiores -->
             <div class="bottom-icons mt-12 flex items-center justify-center gap-6 md:gap-8 mb-[72px] md:mb-[84px]">
