@@ -55,8 +55,7 @@ async function startGameDirect() {
     // Fecha imediatamente; o ecrã do jogo reabre a câmara
     stream.getTracks().forEach(t => t.stop());
     mount(Game((score) => {
-      const goForm = () => mount(ResultForm(score, () => startFlow()));
-      mount(ResultSummary(score, () => handleSubmitScoreFlow(score, goForm), () => startFlow()));
+      mount(ResultSummary(score, () => handleSubmitScoreFlow(score, () => startFlow()), () => startFlow()));
     }, () => startFlow()));
   } catch (e) {
     // Fallback para o ecrã de permissões, caso falhe ou seja negado
@@ -69,8 +68,7 @@ function askPermissions() {
     try {
       // Permissions are requested when Game screen starts the camera
       mount(Game((score) => {
-        const goForm = () => mount(ResultForm(score, () => startFlow()));
-        mount(ResultSummary(score, () => handleSubmitScoreFlow(score, goForm), () => startFlow()));
+        mount(ResultSummary(score, () => handleSubmitScoreFlow(score, () => startFlow()), () => startFlow()));
       }, () => startFlow()));
     } catch (e) {
       alert('Não foi possível aceder à câmara.');
