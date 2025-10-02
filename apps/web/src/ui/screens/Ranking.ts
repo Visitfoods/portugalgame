@@ -99,22 +99,35 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
   })();
 
   // Search by username
-  const search = el.querySelector<HTMLInputElement>('#search')!;
-  search.oninput = () => {
-    const q = search.value.trim().toLowerCase();
-    if (!q) { renderRows(top); return; }
-    (async () => {
-      try {
-        const rows = await searchByUsername(q, 120);
-        // Ordenar por pontuação desc e deduplicar para reter apenas o melhor por username
-        rows.sort((a,b) => (b.score||0) - (a.score||0));
-        const mapped = toUniqueByUsername(rows, 50);
-        renderRows(mapped.length ? mapped : top);
-      } catch {
-        renderRows(top);
+  const search = el.querySelector<HTMLInputElement>('#search');
+  if (!search) {
+    console.error('Search input not found!');
+  } else {
+    search.oninput = () => {
+      const q = search.value.trim().toLowerCase();
+      console.log('Search query:', q);
+      if (!q) { 
+        console.log('Empty query, showing top scores');
+        renderRows(top); 
+        return; 
       }
-    })();
-  };
+      (async () => {
+        try {
+          console.log('Searching for:', q);
+          const rows = await searchByUsername(q, 120);
+          console.log('Search results:', rows.length, 'entries');
+          // Ordenar por pontuação desc e deduplicar para reter apenas o melhor por username
+          rows.sort((a,b) => (b.score||0) - (a.score||0));
+          const mapped = toUniqueByUsername(rows, 50);
+          console.log('Mapped results:', mapped.length, 'entries');
+          renderRows(mapped.length ? mapped : top);
+        } catch (e) {
+          console.error('Search error:', e);
+          renderRows(top);
+        }
+      })();
+    };
+  }
 
   // Buttons
   el.querySelector<HTMLImageElement>('#play')!.onclick = () => onPlay();
