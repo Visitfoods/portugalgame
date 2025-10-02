@@ -15,7 +15,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
     <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-14 left-0 w-[34%] max-w-[260px] -z-10 opacity-90 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 46s; --ab-delay: -18s;"/>
     <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-20 right-0 w-[36%] max-w-[280px] -z-10 opacity-85 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 52s; --ab-delay: -9s;"/>
 
-    <div class="relative z-10 w-full flex flex-col items-center">
+    <div class="relative z-10 w-full flex flex-col items-center pb-[160px]">
       <!-- Logo -->
       <div class="relative mt-1 w-full h-[70px] flex items-start justify-center overflow-visible">
         <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[110px] md:w-[130px] h-auto ab-logo-white"/>
