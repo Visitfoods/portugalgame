@@ -19,7 +19,7 @@ export function HowTo(onPlay: () => void, onBack: () => void) {
       <h1 class="w-10/12 max-w-[720px] mx-auto text-center text-white font-[800] uppercase tracking-[0.09em] leading-tight mt-2 text-[clamp(26px,9vw,48px)]">COMO JOGAR</h1>
 
       <!-- Regras (SVGs) -->
-      <div class="w-10/12 max-w-[720px] mx-auto mt-3 flex flex-col items-stretch gap-3 md:gap-4">
+      <div class="w-10/12 max-w-[720px] mx-auto mt-3 flex flex-col items-stretch gap-3 md:gap-4 howto-rules">
         <img src="/assets/graphics/Regra-1.svg" alt="Regra 1" class="block w-full h-auto mx-auto"/>
         <img src="/assets/graphics/Regra-3.svg" alt="Regra 3" class="block w-full h-auto mx-auto"/>
         <img src="/assets/graphics/Regra-4.svg" alt="Regra 4" class="block w-full h-auto mx-auto"/>

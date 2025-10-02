@@ -264,18 +264,38 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   }
 }
 
-/* Very small screens - ensure no overlap with bottom buttons */
-@media (max-height: 500px) {
+/* Very small screens (like 375x667) - drastically reduce button size */
+@media (max-height: 680px) and (max-width: 400px) {
   .howto-content .btn-play {
     margin-top: 0.5rem !important;
-    margin-bottom: 0.75rem !important;
-    width: 45% !important;
-    max-width: 200px !important;
+    margin-bottom: 0.5rem !important;
+    width: 40% !important;
+    max-width: 160px !important;
+  }
+  
+  /* Reduce spacing between rules */
+  .howto-rules {
+    gap: 0.5rem !important;
   }
   
   /* Ensure bottom buttons have enough space */
   .ab-icon-btn[style*="bottom"] {
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 10px) !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
+  }
+}
+
+/* Extra small screens - even smaller button */
+@media (max-height: 500px) {
+  .howto-content .btn-play {
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.25rem !important;
+    width: 35% !important;
+    max-width: 140px !important;
+  }
+  
+  /* Ensure bottom buttons have enough space */
+  .ab-icon-btn[style*="bottom"] {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 5px) !important;
   }
 }
 
@@ -294,6 +314,19 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 .howto-content {
   gap: clamp(16px, 2.3vh, 26px);
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(120px, 18vh, 200px));
+}
+
+/* Extra small screens - reduce padding significantly */
+@media (max-height: 680px) and (max-width: 400px) {
+  .howto-content {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px) !important;
+  }
+}
+
+@media (max-height: 500px) {
+  .howto-content {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 60px) !important;
+  }
 }
 .howto-play {
   margin-top: clamp(24px, 3.6vh, 44px);
