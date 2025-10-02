@@ -49,12 +49,12 @@ export function Account(onBack: () => void) {
 
     // Show loading + logout while profile loads
     content.innerHTML = `
-        <div class="space-y-3">
-          <div class="text-sm opacity-80">A carregar…</div>
-          <div class="flex justify-center gap-3">
-            <button id="logout" class="px-5 py-2 rounded-full bg-white/20 text-[#0a2960] border border-[#0a2960]/30">Terminar sessão</button>
-          </div>
-        </div>`;
+      <div class="space-y-3">
+        <div class="text-sm opacity-80">A carregar…</div>
+        <div class="flex justify-center gap-3">
+          <button id="logout" class="px-5 py-2 rounded-full bg-white/20 text-[#0a2960] border border-[#0a2960]/30">Terminar sessão</button>
+        </div>
+      </div>`;
     content.querySelector<HTMLButtonElement>('#logout')!.onclick = async () => { await AuthService.signOut(); setCachedUser(null); render(); };
 
     const profile = await Promise.race([
