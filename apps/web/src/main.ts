@@ -165,10 +165,16 @@ function handleSubmitScoreFlow(score: number, onAfter: () => void) {
   }
   // Se autenticado mas sem username → usar o novo ecrã Register (que já cria username)
   if (!cached.username) {
+    // Guardar pontos no localStorage para preservar durante o registo
+    try { localStorage.setItem('ab-pending-score', String(score)); } catch {}
     mount(Register(() => {
-      // Depois de registar, voltar a esta rotina
+      // Depois de registar, submeter os pontos automaticamente
       handleSubmitScoreFlow(score, onAfter);
-    }, () => onAfter()));
+    }, () => {
+      // Se cancelar, limpar pontos pendentes e voltar
+      try { localStorage.removeItem('ab-pending-score'); } catch {}
+      onAfter();
+    }));
     return;
   }
   // (mantemos a tentativa de obter perfil para garantir dados atualizados)

@@ -68,6 +68,11 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
   btnGoogle.onclick = async () => {
     setBusy(true); msg.textContent = 'A abrir Google…';
     try {
+      // Guardar pontos antes do login Google
+      const score = getPendingScore ? (getPendingScore() ?? null) : null;
+      if (score != null) {
+        try { localStorage.setItem('ab-pending-score', String(score)); } catch {}
+      }
       await AuthService.signInWithGoogle();
       onSent(); wrap.remove();
       try { setTimeout(() => location.assign('/auth-complete'), 100); } catch {}
