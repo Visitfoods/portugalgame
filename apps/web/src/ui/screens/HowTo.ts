@@ -3,7 +3,7 @@ export function HowTo(onPlay: () => void, onBack: () => void) {
   el.className = 'home-screen fixed inset-0 flex flex-col items-center justify-start p-0 overflow-hidden';
   el.innerHTML = `
     <!-- Fundo -->
-    <img src="/assets/graphics/Background.svg" alt="" class="absolute inset-0 -z-20 w-full h-full object-cover"/>
+    <img src="/assets/graphics/Background.svg" alt="" class="absolute inset-0 -z-20 w-full h-full object-cover min-h-screen"/>
 
     <!-- Nuvens topo (marquee infinito com instâncias desfasadas) -->
     <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-14 left-0 w-[34%] max-w-[260px] -z-10 opacity-90 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 46s; --ab-delay: 0s;"/>

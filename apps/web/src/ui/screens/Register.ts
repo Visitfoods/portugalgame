@@ -3,7 +3,7 @@ export function Register(onSaved: () => void, onCancel: () => void) {
   el.className = 'screen p-0 overflow-hidden';
 
   el.innerHTML = `
-    <img src="/assets/graphics/Background.svg" alt="" class="absolute inset-0 -z-20 w-full h-full object-cover"/>
+    <img src="/assets/graphics/Background.svg" alt="" class="absolute inset-0 -z-20 w-full h-full object-cover min-h-screen"/>
     
     <!-- Logo independente -->
     <div class="absolute top-4 left-1/2 -translate-x-1/2 z-[10] w-full flex justify-center">

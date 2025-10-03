@@ -11,7 +11,7 @@ export function Account(onBack: () => void) {
   el.className = 'screen p-0 overflow-hidden';
   el.innerHTML = `
     <!-- Fundo -->
-    <img src="/assets/graphics/Background.svg" alt="" class="absolute inset-0 -z-20 w-full h-full object-cover"/>
+    <img src="/assets/graphics/Background.svg" alt="" class="absolute inset-0 -z-20 w-full h-full object-cover min-h-screen"/>
 
     <!-- Nuvens topo (marquee infinito com instâncias desfasadas) -->
     <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-14 left-0 w-[34%] max-w-[260px] -z-10 opacity-90 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 46s; --ab-delay: 0s;"/>
@@ -24,7 +24,7 @@ export function Account(onBack: () => void) {
       <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[150px] md:w-[180px] h-auto ab-logo-white"/>
     </div>
 
-    <div class="relative z-10 w-full flex flex-col items-center">
+    <div class="relative z-10 w-full flex flex-col items-center min-h-screen">
       <div class="mt-20 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">A Minha Conta</div>
 
       <div id="card" class="mt-3 w-11/12 max-w-[680px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden p-4 sm:p-5">
