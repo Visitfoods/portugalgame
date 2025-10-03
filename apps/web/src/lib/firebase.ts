@@ -411,6 +411,18 @@ export async function signInWithGoogleSmart(): Promise<User | null> {
       code.includes('operation-not-supported-in-this-environment')
     ) {
       try {
+        // Se precisar de redirect, primeiro garantir que estamos em /auth-complete
+        // para que o redirect volte para um lugar que sabe processar o resultado
+        const currentPath = typeof window !== 'undefined' ? new URL(window.location.href).pathname : '/';
+        if (currentPath !== '/auth-complete') {
+          // Navegar para /auth-complete antes de fazer o redirect
+          if (typeof window !== 'undefined') {
+            window.location.href = '/auth-complete?google-redirect=1';
+            // Retornar null porque a página vai recarregar
+            return null;
+          }
+        }
+        
         await signInWithRedirect(auth, provider);
         // After redirect back, attempt to read the result
         const res = await getRedirectResult(auth).catch(() => null);

@@ -189,6 +189,65 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
   };
 
   (async () => {
+    // Verifica se estamos no fluxo de Google redirect
+    const urlParams = new URLSearchParams(window.location.search);
+    const isGoogleRedirect = urlParams.has('google-redirect');
+    
+    // Se estivermos a iniciar um Google login, fazê-lo agora
+    if (isGoogleRedirect && !urlParams.has('state')) {
+      // Este é o momento antes do redirect para Google
+      statusText.textContent = 'A redirecionar para Google...';
+      try {
+        await AuthService.signInWithGoogle();
+        // Se chegou aqui, o popup funcionou
+        clearFallbackGuard();
+        clearFallbackTimer();
+        const cached = await import('../../services/auth').then(m => m.getCachedUser());
+        const pending = readPendingScore();
+        if (!cached?.username) {
+          onNeedsProfile();
+          return;
+        }
+        finish(typeof pending === 'number' ? pending : undefined);
+        return;
+      } catch (err) {
+        console.error('Google login failed:', err);
+        errorBox.textContent = 'Falha ao iniciar sessão com Google. Tenta novamente.';
+        errorBox.classList.remove('hidden');
+        window.setTimeout(() => finish(), 2000);
+        return;
+      }
+    }
+    
+    // Primeiro tenta processar Google redirect (se houver)
+    try {
+      statusText.textContent = 'A processar autenticação...';
+      const googleUser = await AuthService.consumeGoogleRedirect();
+      if (googleUser) {
+        // Login com Google bem-sucedido
+        const profile = await getUserProfile(googleUser.uid);
+        setCachedUser({ 
+          uid: googleUser.uid, 
+          email: googleUser.email || undefined, 
+          username: profile?.username, 
+          displayName: profile?.displayName || (googleUser as any).displayName 
+        });
+        clearFallbackGuard();
+        clearFallbackTimer();
+        const pending = readPendingScore();
+        if (!profile?.username) { 
+          onNeedsProfile(); 
+          return; 
+        }
+        finish(typeof pending === 'number' ? pending : undefined);
+        return;
+      }
+    } catch (err) {
+      console.warn('Google redirect check failed:', err);
+      // Continua para tentar email link
+    }
+
+    // Se não for Google redirect, tenta processar email link
     try {
       if (!AuthService.isEmailLink()) { clearFallbackTimer(); clearFallbackGuard(); finish(); return; }
     } catch {
