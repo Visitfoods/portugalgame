@@ -10,8 +10,8 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
   wrap.innerHTML = `
     <div class="w-11/12 max-w-[430px] text-[#0a2960]">
       <div id="state-form" class="bg-white/95 rounded-2xl p-5 shadow-xl space-y-4">
-        <div class="font-[800] text-lg">Entrar para submeter pontuacao</div>
-        <div class="text-sm opacity-80">Receberas um email com um link para concluir o login.</div>
+        <div class="font-[800] text-lg">Entrar para submeter pontuação</div>
+        <div class="text-sm opacity-80">Receberás um email com um link para concluir o login.</div>
         <input id="email" type="email" autocomplete="email" placeholder="Email" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#0a2960]/30"/>
         <div class="flex gap-3">
           <button id="cancel" class="home-glass-btn flex-1 px-4 py-2 rounded-full text-[#0a2960] border border-[#0a2960]/30 bg-white/70">Cancelar</button>
