@@ -20,7 +20,7 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
 
     <div class="relative z-10 w-full h-full flex items-center justify-center">
       <div class="w-11/12 max-w-[420px] text-center space-y-6">
-        <div class="text-white text-xl font-[800] tracking-[0.06em]" id="status-text">A processar autenticacao...</div>
+        <div class="text-white text-xl font-[800] tracking-[0.06em]" id="status-text">A processar autenticação...</div>
         <div id="manual-email" class="hidden bg-white/95 text-[#0a2960] rounded-2xl p-5 shadow-lg">
           <div class="font-[700] text-base mb-2">Confirma o teu email</div>
           <div class="text-sm opacity-80 mb-3" id="manual-help">Introduz o email usado para pedir o link. Se abriste no Outlook, escolhe "Abrir no browser".</div>
@@ -136,7 +136,7 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
     } catch (error: any) {
       const code = (error?.code || error?.message || '').toString().toLowerCase();
       if (code.includes('invalid-email')) {
-        manualError.textContent = 'Nao conseguimos confirmar esse email com o link recebido.';
+        manualError.textContent = 'Não conseguimos confirmar esse email com o link recebido.';
         setManualBusy(false);
         return;
       }
@@ -146,7 +146,7 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
         window.setTimeout(() => finish(), 2800);
         return;
       }
-      manualError.textContent = 'Falha ao concluir. Pede um novo email ou volta atras.';
+      manualError.textContent = 'Falha ao concluir. Pede um novo email ou volta atrás.';
       trackMagicLinkEvent('magic_link_manual_email_failure', { code });
       setManualBusy(false);
     }
@@ -275,10 +275,10 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
       trackMagicLinkEvent('magic_link_complete_failure_unhandled', { code: rawCode });
       if (code.includes('expired-action-code')) {
         statusText.textContent = 'O link expirou. Pede um novo email e tenta outra vez.';
-        errorBox.textContent = 'O link expirou ou ja foi usado. Volta atras e pede um novo email.';
+        errorBox.textContent = 'O link expirou ou já foi usado. Volta atrás e pede um novo email.';
       } else {
-        statusText.textContent = 'Nao foi possivel concluir o login.';
-        errorBox.textContent = 'Nao conseguimos validar o link. Pede um novo email ou tenta novamente.';
+        statusText.textContent = 'Não foi possível concluir o login.';
+        errorBox.textContent = 'Não conseguimos validar o link. Pede um novo email ou tenta novamente.';
       }
       errorBox.classList.remove('hidden');
       window.setTimeout(() => finish(), 3200);

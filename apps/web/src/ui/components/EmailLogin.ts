@@ -76,12 +76,12 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
   const mapError = (code: string) => {
     if (!code) return 'Ocorreu um erro.';
     const lower = code.toLowerCase();
-    if (lower.includes('operation-not-allowed')) return 'Metodo desativado no projeto Firebase.';
-    if (lower.includes('unauthorized-continue-uri')) return 'Dominio/URL de retorno nao autorizado nas definicoes Firebase.';
-    if (lower.includes('unauthorized-continue-host') || lower.includes('invalid-continue-url')) return 'Configuracao invalida do URL de retorno. Garante HTTPS e que o dominio esta autorizado.';
-    if (lower.includes('invalid-email')) return 'Email invalido.';
+    if (lower.includes('operation-not-allowed')) return 'Método desativado no projeto Firebase.';
+    if (lower.includes('unauthorized-continue-uri')) return 'Domínio/URL de retorno não autorizado nas definições Firebase.';
+    if (lower.includes('unauthorized-continue-host') || lower.includes('invalid-continue-url')) return 'Configuração inválida do URL de retorno. Garante HTTPS e que o domínio está autorizado.';
+    if (lower.includes('invalid-email')) return 'Email inválido.';
     if (lower.includes('too-many-requests')) return 'Muitas tentativas. Tenta novamente mais tarde.';
-    if (lower.includes('network-request-failed')) return 'Sem ligacao a internet. Verifica a tua ligacao.';
+    if (lower.includes('network-request-failed')) return 'Sem ligação à internet. Verifica a tua ligação.';
     return code;
   };
 
@@ -116,7 +116,7 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
   btnCancel.onclick = () => { onCancel(); wrap.remove(); };
   btnSend.onclick = async () => {
     const email = input.value.trim();
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = 'Introduz um email valido.'; return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = 'Introduz um email válido.'; return; }
     setBusy(true); msg.textContent = 'A enviar...';
     try {
       handlePendingScore();
