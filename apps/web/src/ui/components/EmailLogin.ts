@@ -136,12 +136,13 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
     try {
       handlePendingScore();
       await AuthService.signInWithGoogle();
+      // Login com Google não precisa de /auth-complete, já está autenticado
       notifySent(); wrap.remove();
-      try { setTimeout(() => location.assign('/auth-complete'), 100); } catch {}
     } catch (e: any) {
       const code = e?.code || e?.message || String(e);
       msg.textContent = `Falha no Google Sign-In. ${mapError(code)}`;
-    } finally { setBusy(false); }
+      setBusy(false);
+    }
   };
 
   btnSentClose.onclick = () => { notifySent(); wrap.remove(); };
