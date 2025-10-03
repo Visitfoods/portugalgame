@@ -17,11 +17,13 @@ export function Account(onBack: () => void) {
     <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-14 left-0 w-[34%] max-w-[260px] -z-10 opacity-90 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 46s; --ab-cloud-scroll-dur: -18s;"/>
     <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-20 right-0 w-[36%] max-w-[280px] -z-10 opacity-85 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 52s; --ab-cloud-scroll-dur: -9s;"/>
 
+    <!-- Logo independente -->
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 z-[10] w-full flex justify-center">
+      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[150px] md:w-[180px] h-auto ab-logo-white"/>
+    </div>
+
     <div class="relative z-10 w-full flex flex-col items-center">
-      <div class="relative mt-1 w-full h-[70px] flex items-start justify-center overflow-visible">
-        <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[150px] md:w-[180px] h-auto ab-logo-white"/>
-      </div>
-      <div class="mt-2 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">A Minha Conta</div>
+      <div class="mt-20 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">A Minha Conta</div>
 
       <div id="card" class="mt-3 w-11/12 max-w-[680px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden p-4 sm:p-5">
         <div id="content" class="space-y-2 sm:space-y-3 text-center"></div>

@@ -1,6 +1,6 @@
-import { AuthService, setCachedUser } from '../../services/auth';
+﻿import { AuthService, setCachedUser } from '../../services/auth';
 import { getUserProfile } from '../../services/user';
-import { getFirebaseAuth } from '../../lib/firebase';
+import { getFirebaseAuth, trackMagicLinkEvent } from '../../lib/firebase';
 
 export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number) => void) {
   const el = document.createElement('div');
@@ -19,59 +19,214 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
     </div>
 
     <div class="relative z-10 w-full h-full flex items-center justify-center">
-      <div class="text-white text-xl font-[800] tracking-[0.06em]">A processar autenticação…</div>
+      <div class="w-11/12 max-w-[420px] text-center space-y-6">
+        <div class="text-white text-xl font-[800] tracking-[0.06em]" id="status-text">A processar autenticacao...</div>
+        <div id="manual-email" class="hidden bg-white/95 text-[#0a2960] rounded-2xl p-5 shadow-lg">
+          <div class="font-[700] text-base mb-2">Confirma o teu email</div>
+          <div class="text-sm opacity-80 mb-3" id="manual-help">Introduz o email usado para pedir o link. Se abriste no Outlook, escolhe "Abrir no browser".</div>
+          <input id="manual-email-input" type="email" placeholder="Email" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#0a2960]/30"/>
+          <div class="mt-3 flex gap-3">
+            <button id="manual-cancel" class="flex-1 px-4 py-2 rounded-full text-[#0a2960] border border-[#0a2960]/30 bg-white/70">Cancelar</button>
+            <button id="manual-confirm" class="flex-1 px-4 py-2 rounded-full bg-[#1f4590] text-white font-semibold">Confirmar login</button>
+          </div>
+          <div class="text-xs mt-2 opacity-70">Dica: usa o mesmo email com o qual pediste o link.</div>
+          <div id="manual-error" class="text-xs text-red-600 mt-2 h-4"></div>
+        </div>
+        <div id="auth-error" class="hidden text-sm text-red-200"></div>
+      </div>
     </div>
 
-    <!-- Nuvens base + elemento gráfico -->
+    <!-- Nuvens base + elemento grafico -->
     <img src="/assets/graphics/Nuvem-03.svg" alt="" class="absolute bottom-[40px] left-[-120px] w-[85%] max-w-[820px] z-0 opacity-20 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 70s; --ab-delay: -25s;"/>
     <img src="/assets/graphics/Nuvem-04.svg" alt="" class="absolute bottom-[36px] right-[-120px] w-[95%] max-w-[920px] z-0 opacity-20 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 64s; --ab-delay: -31s;"/>
     <img src="/assets/graphics/Graphic-Element01.svg" alt="" class="absolute left-0 right-0 bottom-[-60px] w-full h-[140px] md:h-[180px] object-cover z-[1]"/>
 
-    <!-- Botão de som (canto inferior esquerdo) -->
+    <!-- Botao de som (canto inferior esquerdo) -->
     <button id="sound" class="ab-icon-btn fixed left-5 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px)" aria-label="Som">
       <img id="sound-icon" src="/assets/graphics/icon_Volume-On.svg" alt=""/>
     </button>
   `;
 
-  // Fallback de segurança: se algo ficar pendurado, decide em ~3s
-  const fallbackTimer = window.setTimeout(async () => {
+  const statusText = el.querySelector<HTMLDivElement>('#status-text')!;
+  const manualWrap = el.querySelector<HTMLDivElement>('#manual-email')!;
+  const manualHelp = el.querySelector<HTMLDivElement>('#manual-help')!;
+  const manualInput = el.querySelector<HTMLInputElement>('#manual-email-input')!;
+  const manualConfirm = el.querySelector<HTMLButtonElement>('#manual-confirm')!;
+  const manualCancel = el.querySelector<HTMLButtonElement>('#manual-cancel')!;
+  const manualError = el.querySelector<HTMLDivElement>('#manual-error')!;
+  const errorBox = el.querySelector<HTMLDivElement>('#auth-error')!;
+
+  let resolved = false;
+  let waitingManual = false;
+
+  const clearFallbackTimer = (() => {
+    let cleared = false;
+    const timer = window.setTimeout(() => {
+      if (resolved || waitingManual) return;
+      trackMagicLinkEvent('magic_link_complete_timeout', { waitingManual });
+      finish();
+    }, 6000);
+    return () => {
+      if (cleared) return;
+      cleared = true;
+      try { window.clearTimeout(timer); } catch {}
+    };
+  })();
+
+  const finish = (score?: number) => {
+    if (resolved) return;
+    resolved = true;
+    clearFallbackTimer();
+    onDone(score);
+  };
+
+  const showManualEmailPrompt = (message?: string) => {
+    waitingManual = true;
+    clearFallbackTimer();
+    manualWrap.classList.remove('hidden');
+    statusText.textContent = 'Confirma o teu email para concluir o login.';
+    const hint = AuthService.getMagicLinkEmailHint();
+    if (hint) {
+      manualHelp.textContent = `Introduz o email usado para pedir o link (${hint}).`;
+    }
+    manualError.textContent = message ?? '';
+    trackMagicLinkEvent('magic_link_manual_email_prompt', { hasHint: Boolean(hint) });
+    window.setTimeout(() => {
+      try { manualInput.focus(); } catch {}
+    }, 80);
+  };
+
+  const readPendingScore = () => {
+    let pending: number | undefined;
+    try {
+      const raw = localStorage.getItem('ab-pending-score');
+      if (raw) {
+        const parsed = Number(raw);
+        if (!Number.isNaN(parsed)) pending = parsed;
+        localStorage.removeItem('ab-pending-score');
+      }
+    } catch {}
+    return pending;
+  };
+
+  const setManualBusy = (busy: boolean) => {
+    manualConfirm.disabled = busy;
+    manualCancel.disabled = busy;
+    manualInput.disabled = busy;
+  };
+
+  const manualComplete = async () => {
+    const email = manualInput.value.trim();
+    if (!email) {
+      manualError.textContent = 'Introduz o email usado para pedir o link.';
+      return;
+    }
+    manualError.textContent = '';
+    setManualBusy(true);
+    statusText.textContent = 'A confirmar login...';
+    try {
+      AuthService.cacheMagicLinkEmail(email);
+      const user = await AuthService.completeMagicLink(undefined, email);
+      const profile = await getUserProfile(user.uid);
+      setCachedUser({ uid: user.uid, email: user.email || undefined, username: profile?.username, displayName: profile?.displayName });
+      const pending = readPendingScore();
+      trackMagicLinkEvent('magic_link_manual_email_success', { hasProfile: Boolean(profile?.username) });
+      if (!profile?.username) { onNeedsProfile(); return; }
+      finish(typeof pending === 'number' ? pending : undefined);
+    } catch (error: any) {
+      const code = (error?.code || error?.message || '').toString().toLowerCase();
+      if (code.includes('invalid-email')) {
+        manualError.textContent = 'Nao conseguimos confirmar esse email com o link recebido.';
+        setManualBusy(false);
+        return;
+      }
+      if (code.includes('expired-action-code')) {
+        manualError.textContent = 'O link expirou. Pede um novo email.';
+        trackMagicLinkEvent('magic_link_complete_expired', { viaManual: true });
+        window.setTimeout(() => finish(), 2800);
+        return;
+      }
+      manualError.textContent = 'Falha ao concluir. Pede um novo email ou volta atras.';
+      trackMagicLinkEvent('magic_link_manual_email_failure', { code });
+      setManualBusy(false);
+    }
+  };
+
+  manualConfirm.onclick = () => { manualComplete(); };
+  manualInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      manualComplete();
+    }
+  });
+  manualCancel.onclick = () => {
+    trackMagicLinkEvent('magic_link_manual_email_cancelled');
+    finish();
+  };
+
+  // Fallback de seguranca: se algo ficar pendurado, decide em ~3s
+  const fallbackGuard = window.setTimeout(async () => {
+    if (resolved || waitingManual) return;
     try {
       const cur = getFirebaseAuth().currentUser;
       let pending: number | undefined;
-      try { const raw = localStorage.getItem('ab-pending-score'); if (raw) { pending = Number(raw); localStorage.removeItem('ab-pending-score'); } } catch {}
-      if (!cur) { onDone(); return; }
+      try {
+        const raw = localStorage.getItem('ab-pending-score');
+        if (raw) {
+          pending = Number(raw);
+          localStorage.removeItem('ab-pending-score');
+        }
+      } catch {}
+      if (!cur) { finish(); return; }
       const profile = await getUserProfile(cur.uid);
       if (!profile?.username) { onNeedsProfile(); return; }
-      onDone(pending);
-    } catch { onDone(); }
+      finish(pending);
+    } catch { finish(); }
   }, 3000);
 
+  const clearFallbackGuard = () => {
+    try { window.clearTimeout(fallbackGuard); } catch {}
+  };
+
   (async () => {
-    // Se o URL atual não é um link válido de login por e‑mail, sair sem pedir nada
     try {
-      if (!AuthService.isEmailLink()) { onDone(); return; }
-    } catch {}
+      if (!AuthService.isEmailLink()) { clearFallbackTimer(); clearFallbackGuard(); finish(); return; }
+    } catch {
+      clearFallbackTimer(); clearFallbackGuard(); finish(); return;
+    }
     try {
       const user = await AuthService.completeMagicLink();
       const profile = await getUserProfile(user.uid);
       setCachedUser({ uid: user.uid, email: user.email || undefined, username: profile?.username, displayName: profile?.displayName });
-      let pending: number | undefined;
-      try {
-        const raw = localStorage.getItem('ab-pending-score');
-        if (raw) { pending = Number(raw); localStorage.removeItem('ab-pending-score'); }
-      } catch {}
-      clearTimeout(fallbackTimer);
-      if (!profile?.username) { onNeedsProfile(); return; }
-      onDone(pending);
-    } catch (e: any) {
-      // Se não for um fluxo válido ou faltar email em cache, ignora sem bloquear o jogo
-      const code = e?.code || e?.message || '';
-      if (String(code).includes('missing-email-for-magic-link')) { onDone(); return; }
-      onDone();
+      clearFallbackGuard();
+      const pending = readPendingScore();
+      if (!profile?.username) { clearFallbackTimer(); onNeedsProfile(); return; }
+      clearFallbackTimer();
+      finish(typeof pending === 'number' ? pending : undefined);
+    } catch (error: any) {
+      const rawCode = error?.code || error?.message || '';
+      const code = rawCode.toString().toLowerCase();
+      if (code.includes('missing-email-for-magic-link')) {
+        clearFallbackGuard();
+        showManualEmailPrompt();
+        return;
+      }
+      clearFallbackTimer();
+      clearFallbackGuard();
+      trackMagicLinkEvent('magic_link_complete_failure_unhandled', { code: rawCode });
+      if (code.includes('expired-action-code')) {
+        statusText.textContent = 'O link expirou. Pede um novo email e tenta outra vez.';
+        errorBox.textContent = 'O link expirou ou ja foi usado. Volta atras e pede um novo email.';
+      } else {
+        statusText.textContent = 'Nao foi possivel concluir o login.';
+        errorBox.textContent = 'Nao conseguimos validar o link. Pede um novo email ou tenta novamente.';
+      }
+      errorBox.classList.remove('hidden');
+      window.setTimeout(() => finish(), 3200);
     }
   })();
 
-  // Som on/off com persistência
+  // Som on/off com persistencia
   const soundBtn = el.querySelector<HTMLButtonElement>('#sound')!;
   const soundIcon = el.querySelector<HTMLImageElement>('#sound-icon')!;
   const updateSoundIcon = () => {
@@ -85,5 +240,3 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
 
   return el;
 }
-
-

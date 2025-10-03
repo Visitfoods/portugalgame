@@ -1,4 +1,4 @@
-import { EmailLink, getFirebaseAuth, signInWithGooglePopup, signInWithGoogleSmart, consumeGoogleRedirect } from '../lib/firebase';
+﻿import { EmailLink, getFirebaseAuth, signInWithGoogleSmart, consumeGoogleRedirect } from '../lib/firebase';
 import type { User } from 'firebase/auth';
 
 export type AuthState = 'loading' | 'unauthenticated' | 'needsProfile' | 'authenticated';
@@ -33,12 +33,23 @@ export const AuthService = {
   isEmailLink(url?: string) {
     return EmailLink.isLink(url);
   },
-  async sendMagicLink(email: string, completeUrl: string) {
-    await EmailLink.send(email, completeUrl);
+  getContinueUrl(url?: string) {
+    return EmailLink.getContinueUrl(url);
   },
-  async completeMagicLink(url?: string) {
-    const user = await EmailLink.complete(url);
-    return user;
+  getMagicLinkEmailHint(): string | null {
+    return EmailLink.getCachedEmailInfo()?.hint ?? null;
+  },
+  cacheMagicLinkEmail(email: string) {
+    EmailLink.cacheEmail(email);
+  },
+  clearMagicLinkEmail() {
+    EmailLink.clearCachedEmail();
+  },
+  async sendMagicLink(email: string, continueUrl?: string) {
+    await EmailLink.send(email, continueUrl);
+  },
+  async completeMagicLink(url?: string, email?: string) {
+    return await EmailLink.complete(url, email);
   },
   onAuth(cb: (user: User | null) => void) {
     return EmailLink.onChange(cb);
