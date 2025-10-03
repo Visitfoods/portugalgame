@@ -15,14 +15,14 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
     <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-14 left-0 w-[34%] max-w-[260px] -z-10 opacity-90 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 46s; --ab-delay: -18s;"/>
     <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-20 right-0 w-[36%] max-w-[280px] -z-10 opacity-85 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 52s; --ab-delay: -9s;"/>
 
-    <div class="relative z-10 w-full flex flex-col items-center pb-[160px]">
-      <!-- Logo -->
-      <div class="relative mt-1 w-full h-[70px] flex items-start justify-center overflow-visible">
-        <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[150px] md:w-[180px] h-auto ab-logo-white"/>
-      </div>
+    <!-- Logo independente -->
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 z-[10] w-full flex justify-center">
+      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[150px] md:w-[180px] h-auto ab-logo-white"/>
+    </div>
 
+    <div class="relative z-10 w-full flex flex-col items-center pb-[160px]">
       <!-- Título -->
-      <div class="mt-2 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">CLASSIFICAÇÃO</div>
+      <div class="mt-20 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">CLASSIFICAÇÃO</div>
 
       <!-- Quadro -->
       <div class="mt-3 w-11/12 max-w-[640px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden">
@@ -39,7 +39,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       </div>
 
       <!-- Ações -->
-      <div class="mt-5 w-9/12 max-w-[420px] flex flex-col items-center gap-4">
+      <div class="mt-8 sm:mt-10 md:mt-12 w-9/12 max-w-[420px] flex flex-col items-center gap-6 sm:gap-8">
         <button id="view-all" class="home-glass-btn px-6 py-2 rounded-full text-white font-semibold border border-white/60 bg-white/15 backdrop-blur-sm shadow-[0_6px_16px_rgba(2,20,60,0.25)] active:scale-[.98]">VER TODOS</button>
         <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play w-9/12 max-w-[300px] h-auto cursor-pointer active:scale-[.98] transition"/>
       </div>
@@ -123,7 +123,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
 
   // Buttons
   el.querySelector<HTMLImageElement>('#play')!.onclick = () => onPlay();
-  el.querySelector<HTMLButtonElement>('#view-all')!.onclick = () => alert('Lista completa em breve.');
+  el.querySelector<HTMLButtonElement>('#view-all')!.onclick = () => showFullRankingModal();
 
   // Botão Home - voltar à Home
   el.querySelector<HTMLButtonElement>('#home')!.onclick = () => { if (onBack) onBack(); };
@@ -146,6 +146,129 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
     btn.addEventListener('pointerdown',()=>set(true));
     ['pointerup','pointerleave','pointercancel'].forEach(ev=>btn.addEventListener(ev,()=>set(false)));
   });
+
+  // Modal para lista completa
+  function showFullRankingModal() {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm';
+    
+    modal.innerHTML = `
+      <div class="relative w-full max-w-[90vw] max-h-[80vh] bg-white/95 rounded-[22px] shadow-[0_20px_40px_rgba(2,20,60,0.3)] overflow-hidden">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-4 border-b-2 border-[#1f4590]/30 bg-[#1f4590]/10">
+          <h2 class="text-xl font-[800] text-[#0a2960]">Classificação Completa</h2>
+          <button id="close-modal" class="w-8 h-8 rounded-full bg-[#1f4590]/20 text-[#0a2960] hover:bg-[#1f4590]/30 transition flex items-center justify-center">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path stroke="currentColor" stroke-width="2" d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Search -->
+        <div class="p-4 border-b border-[#1f4590]/20">
+          <div class="relative">
+            <input id="modal-search" type="text" placeholder="Procurar por username..." 
+                   class="w-full px-4 py-2 pl-10 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 border border-[#1f4590]/30 focus:outline-none focus:ring-2 focus:ring-[#1f4590]/30"/>
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1f4590]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+        </div>
+        
+        <!-- List -->
+        <div id="modal-list" class="max-h-[50vh] overflow-y-auto">
+          <!-- Lista será preenchida aqui -->
+        </div>
+        
+        <!-- Footer -->
+        <div class="p-4 border-t border-[#1f4590]/20 bg-[#1f4590]/5">
+          <div class="text-sm text-[#0a2960]/70 text-center">
+            Total: <span id="total-count">0</span> participantes
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Função para renderizar a lista no modal
+    function renderModalList(rows: RankEntry[]) {
+      const modalList = modal.querySelector<HTMLDivElement>('#modal-list')!;
+      const totalCount = modal.querySelector<HTMLSpanElement>('#total-count')!;
+      
+      totalCount.textContent = rows.length.toString();
+      
+      if (rows.length === 0) {
+        modalList.innerHTML = `
+          <div class="p-8 text-center text-[#0a2960]/60">
+            <div class="text-lg font-semibold mb-2">Nenhum resultado encontrado</div>
+            <div class="text-sm">Tenta uma pesquisa diferente</div>
+          </div>
+        `;
+        return;
+      }
+
+      modalList.innerHTML = rows.map((r, index) => `
+        <div class="grid grid-cols-[50px_1fr_80px] items-center px-4 py-3 hover:bg-[#1f4590]/5 transition">
+          <div class="text-[#1f4590] font-[800] text-lg flex items-center justify-center">
+            ${r.pos === 1 ? '<span class="w-8 h-8 rounded-full bg-[#ffd04a] text-[#0a2960] flex items-center justify-center text-sm font-[800]">1</span>' : 
+              r.pos === 2 ? '<span class="w-8 h-8 rounded-full bg-[#c0c0c0] text-[#0a2960] flex items-center justify-center text-sm font-[800]">2</span>' :
+              r.pos === 3 ? '<span class="w-8 h-8 rounded-full bg-[#cd7f32] text-white flex items-center justify-center text-sm font-[800]">3</span>' :
+              r.pos}
+          </div>
+          <div class="text-[#0a2960] font-[600] pl-2">@${r.name}</div>
+          <div class="text-[#0a2960] font-[800] text-right pr-3">${r.score}</div>
+        </div>
+      `).join('');
+    }
+
+    // Carregar dados completos
+    (async () => {
+      try {
+        const allRows = await topScores(1000); // Buscar mais registos
+        const allUnique = toUniqueByUsername(allRows, 1000);
+        renderModalList(allUnique);
+        
+        // Search no modal
+        const modalSearch = modal.querySelector<HTMLInputElement>('#modal-search')!;
+        modalSearch.oninput = () => {
+          const query = modalSearch.value.trim().toLowerCase();
+          if (!query) {
+            renderModalList(allUnique);
+            return;
+          }
+          const filtered = allUnique.filter(entry => 
+            entry.name.toLowerCase().includes(query)
+          );
+          renderModalList(filtered);
+        };
+      } catch (error) {
+        console.error('Error loading full ranking:', error);
+        renderModalList([]);
+      }
+    })();
+
+    // Fechar modal
+    modal.querySelector<HTMLButtonElement>('#close-modal')!.onclick = () => {
+      modal.remove();
+    };
+    
+    // Fechar ao clicar fora
+    modal.onclick = (e) => {
+      if (e.target === modal) {
+        modal.remove();
+      }
+    };
+
+    // ESC para fechar
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        modal.remove();
+        document.removeEventListener('keydown', handleEsc);
+      }
+    };
+    document.addEventListener('keydown', handleEsc);
+
+    document.body.appendChild(modal);
+  }
 
   return el;
 }
