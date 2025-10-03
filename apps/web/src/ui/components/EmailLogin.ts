@@ -15,7 +15,7 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
         <input id="email" type="email" autocomplete="email" placeholder="Email" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#0a2960]/30"/>
         <div class="flex gap-3">
           <button id="cancel" class="home-glass-btn flex-1 px-4 py-2 rounded-full text-[#0a2960] border border-[#0a2960]/30 bg-white/70">Cancelar</button>
-          <button id="send" class="flex-1 px-4 py-2 rounded-full bg-[#1f4590] text-white font-semibold">Enviar Link Magico</button>
+          <button id="send" class="flex-1 px-4 py-2 rounded-full bg-[#1f4590] text-white font-semibold">Enviar verificação por e-mail</button>
         </div>
         <div class="text-[11px] leading-4 opacity-70">
           Abre o email no navegador principal (por exemplo, escolhe "Abrir no browser" no Outlook) para completar o login.
@@ -31,7 +31,7 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
       <div id="state-sent" class="hidden bg-white/95 rounded-2xl p-6 shadow-xl space-y-4">
         <div class="font-[800] text-lg">Verifica o teu email</div>
         <div class="text-sm opacity-80" id="sent-copy">
-          Enviamos um link magico para <span id="sent-email" class="font-semibold"></span>.
+          Enviamos uma verificação por e-mail para <span id="sent-email" class="font-semibold"></span>.
         </div>
         <ul class="text-sm opacity-80 space-y-2">
           <li>- Abre o email e toca no botao "Entrar" ou na ligacao recebida.</li>
