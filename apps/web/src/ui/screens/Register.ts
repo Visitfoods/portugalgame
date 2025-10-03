@@ -4,11 +4,14 @@ export function Register(onSaved: () => void, onCancel: () => void) {
 
   el.innerHTML = `
     <img src="/assets/graphics/Background.svg" alt="" class="absolute inset-0 -z-20 w-full h-full object-cover"/>
+    
+    <!-- Logo independente -->
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 z-[10] w-full flex justify-center">
+      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[150px] md:w-[180px] h-auto ab-logo-white"/>
+    </div>
+    
     <div class="relative z-10 w-full flex flex-col items-center">
-      <div class="relative mt-1 w-full h-[70px] flex items-start justify-center overflow-visible">
-        <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[150px] md:w-[180px] h-auto ab-logo-white"/>
-      </div>
-      <div class="mt-2 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">Completa o teu registo</div>
+      <div class="mt-20 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">Completa o teu registo</div>
 
       <div class="mt-3 w-11/12 max-w-[680px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden p-5">
         <form id="form" class="space-y-3">
@@ -68,7 +71,20 @@ export function Register(onSaved: () => void, onCancel: () => void) {
       if (!cached?.uid) { msg.textContent = 'Sessão inválida. Volta a iniciar sessão.'; msg.style.color = '#a11'; return; }
       const v = validateUsername(username);
       if (!v.ok) { msg.textContent = `Username inválido (${v.reason}).`; msg.style.color = '#a11'; return; }
-      try { await ensureFirestoreOnline(); } catch {}
+      
+      // Tentar conectar ao Firestore com melhor tratamento de erro
+      try { 
+        await ensureFirestoreOnline(); 
+      } catch (firebaseError: any) {
+        console.warn('Firebase connection issue:', firebaseError);
+        if (firebaseError?.code === 'unavailable' || firebaseError?.message?.includes('ERR_BLOCKED_BY_CLIENT')) {
+          msg.textContent = 'Erro de ligação. Verifica se tens ad-blocker ativo ou tenta novamente.'; 
+          msg.style.color = '#a11'; 
+          return;
+        }
+        // Continuar mesmo com erro de ligação para tentar operações offline
+      }
+      
       const free = await isUsernameAvailable(username);
       if (!free) { msg.textContent = 'Username indisponível.'; msg.style.color = '#a11'; return; }
       const prof = await claimUsername(cached.uid, cached.email, username, undefined);
@@ -76,8 +92,18 @@ export function Register(onSaved: () => void, onCancel: () => void) {
       setCachedUser({ uid: prof.uid, email: prof.email, username: prof.username, displayName: prof.displayName || username });
       msg.textContent = 'Registo guardado!'; msg.style.color = '#1f7a2f';
       setTimeout(() => onSaved(), 300);
-    } catch {
-      msg.textContent = 'Falha ao guardar. Tenta novamente.'; msg.style.color = '#a11';
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      if (error?.code === 'unavailable' || error?.message?.includes('ERR_BLOCKED_BY_CLIENT')) {
+        msg.textContent = 'Erro de ligação. Verifica se tens ad-blocker ativo ou tenta novamente.'; 
+        msg.style.color = '#a11';
+      } else if (error?.message?.includes('username indisponível')) {
+        msg.textContent = 'Username indisponível.'; 
+        msg.style.color = '#a11';
+      } else {
+        msg.textContent = 'Falha ao guardar. Tenta novamente.'; 
+        msg.style.color = '#a11';
+      }
     }
   };
 

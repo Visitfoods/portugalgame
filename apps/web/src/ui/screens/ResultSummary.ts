@@ -89,10 +89,8 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   confirmAgain.onclick = () => onRetry();
   el.querySelector<HTMLButtonElement>('#share')!.onclick = async () => {
     const title = '🏆 Alves Bandeira — Desafio de Pontos';
-    const envUrl = ((import.meta as any)?.env?.VITE_PUBLIC_APP_URL) as string | undefined;
-    let base = envUrl || window.location.origin;
-    if (/localhost|127\.[0-9]+\.[0-9]+\.[0-9]+/i.test(base) && envUrl) base = envUrl; // evita partilhar localhost quando houver URL público
-    const shareUrl = `${base}/?utm_source=share&utm_medium=game&utm_campaign=abgame`;
+    // Usar sempre a URL de produção para partilha
+    const shareUrl = 'https://saboresdeportugal.vercel.app/?utm_source=share&utm_medium=game&utm_campaign=abgame';
     let handle = '';
     try {
       const { getCachedUser } = await import('../../services/auth');
@@ -105,25 +103,31 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     const line3 = `🎯 Joga aqui: ${shareUrl}`;
     const full = `${title}\n\n${line1}\n${line2}\n${line3}`;
     try {
-      // Mobile: direcionar para WhatsApp com texto completo
-      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      if (isMobile) {
-        try { await navigator.clipboard.writeText(full); } catch {}
-        const wa = `https://wa.me/?text=${encodeURIComponent(full)}`;
-        window.open(wa, '_blank');
+      // Tentar usar a API nativa de partilha do browser
+      const ns: any = navigator as any;
+      if (ns.share && ns.canShare && ns.canShare({ text: full })) {
+        await ns.share({ 
+          title: title,
+          text: full
+        });
         return;
       }
-      // Desktop: tentar Web Share com apenas texto (inclui link no texto)
-      const ns: any = navigator as any;
-      if (ns.share) {
-        await ns.share({ title, text: full });
+      
+      // Fallback: copiar para clipboard
+      await navigator.clipboard.writeText(full);
+      alert('Mensagem de partilha copiada para a área de transferência! Cola no teu app favorito (WhatsApp, Telegram, Email, etc.)');
+    } catch (error) {
+      // Se o utilizador cancelar a partilha, não mostrar erro
+      if (error instanceof Error && error.name === 'AbortError') {
         return;
       }
       // Fallback: copiar para clipboard
-      await navigator.clipboard.writeText(full);
-      alert('Mensagem de partilha copiada. Cola no teu app favorito!');
-    } catch {
-      alert('Não foi possível partilhar. Tenta novamente.');
+      try {
+        await navigator.clipboard.writeText(full);
+        alert('Mensagem de partilha copiada para a área de transferência! Cola no teu app favorito.');
+      } catch {
+        alert('Não foi possível partilhar. Tenta novamente.');
+      }
     }
   };
 

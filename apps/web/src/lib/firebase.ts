@@ -44,6 +44,8 @@ export function getDb(): Firestore {
     // Improve compatibility in restrictive networks/proxies during dev
     db = initializeFirestore(getFirebaseApp(), {
       experimentalForceLongPolling: true,
+      // Add more resilient settings for blocked connections
+      ignoreUndefinedProperties: true,
     });
     // Reduce noisy SDK logs in console
     try { setLogLevel('error'); } catch {}
@@ -54,7 +56,14 @@ export function getDb(): Firestore {
 export async function ensureFirestoreOnline(): Promise<void> {
   try {
     await enableNetwork(getDb());
-  } catch {}
+  } catch (error: any) {
+    // Re-throw specific connection errors for better handling
+    if (error?.code === 'unavailable' || error?.message?.includes('ERR_BLOCKED_BY_CLIENT')) {
+      throw error;
+    }
+    // For other errors, just log and continue
+    console.warn('Firestore connection warning:', error?.message || error);
+  }
 }
 
 export const EmailLink = {
