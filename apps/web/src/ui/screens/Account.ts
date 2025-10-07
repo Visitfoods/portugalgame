@@ -26,9 +26,9 @@ export function Account(onBack: () => void) {
 
     <div class="relative z-10 w-full min-h-screen flex items-center justify-center pt-28 pb-24">
       <div class="flex flex-col items-center">
-        <div class="text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">A Minha Conta</div>
+        <div class="text-white text-2xl md:text-3xl font-[800] tracking-[0.06em] whitespace-nowrap">A Minha Conta</div>
 
-        <div id="card" class="mt-3 w-11/12 max-w-[680px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden p-4 sm:p-5">
+        <div id="card" class="mt-3 w-11/12 max-w-[680px] min-w-[320px] sm:min-w-[360px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden p-4 sm:p-5">
           <div id="content" class="space-y-2 sm:space-y-3 text-center"></div>
         </div>
 
