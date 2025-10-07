@@ -63,7 +63,7 @@ export function Account(onBack: () => void) {
         <div class="space-y-3">
           <div class="text-base">Não estás autenticado.</div>
           <div class="flex justify-center gap-3">
-            <button id="login" class="px-5 py-2 rounded-full bg-[#1f4590] text-white font-semibold">Entrar / Registar</button>
+            <button id="login" class="px-6 py-2 rounded-full bg-[#1f4590] text-white font-semibold whitespace-nowrap min-w-[190px]">Entrar / Registar</button>
           </div>
         </div>`;
       content.querySelector<HTMLButtonElement>('#login')!.onclick = () => {
