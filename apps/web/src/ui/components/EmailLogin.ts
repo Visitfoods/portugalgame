@@ -13,13 +13,13 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
         <div class="font-[800] text-lg">Entrar para submeter pontuação</div>
         <div class="text-sm opacity-80">Receberás um e-mail com um código de 6 dígitos para concluir o login.</div>
         <input id="email" type="email" autocomplete="email" placeholder="Email" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#0a2960]/30"/>
-        <input id="code" type="tel" inputmode="numeric" maxlength="6" placeholder="Código (6 dígitos)" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#0a2960]/30"/>
+        <input id="code" type="tel" inputmode="numeric" maxlength="6" placeholder="Código (6 dígitos)" class="hidden w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#0a2960]/30"/>
         <div class="flex gap-3">
           <button id="cancel" class="home-glass-btn flex-1 px-4 py-2 rounded-full text-[#0a2960] border border-[#0a2960]/30 bg-white/70">Cancelar</button>
           <button id="send" class="flex-1 px-3 py-2 rounded-full bg-[#1f4590] text-white font-semibold text-sm">Enviar código</button>
-          <button id="verify" class="flex-1 px-3 py-2 rounded-full bg-[#1f4590] text-white font-semibold text-sm">Confirmar código</button>
+          <button id="verify" class="hidden flex-1 px-3 py-2 rounded-full bg-[#1f4590] text-white font-semibold text-sm">Confirmar código</button>
         </div>
-        <div class="text-[11px] leading-4 opacity-70">O código expira em alguns minutos. Podes pedir outro a qualquer momento.</div>
+        <div id="hint" class="text-[11px] leading-4 opacity-70">O código expira em alguns minutos.</div>
         <div class="flex items-center gap-3">
           <div class="h-px bg-[#0a2960]/20 flex-1"></div>
           <div class="text-xs opacity-70">ou</div>
@@ -60,8 +60,50 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
   const btnSentResend = wrap.querySelector<HTMLButtonElement>('#sent-resend')!;
 
   const codeInput = wrap.querySelector<HTMLInputElement>('#code')!;
+  const hint = wrap.querySelector<HTMLDivElement>('#hint')!;
 
   const busyTargets: BusyTarget[] = [btnSend, btnVerify, btnCancel, btnGoogle, input, codeInput];
+
+  type Step = 'email' | 'code';
+  let step: Step = 'email';
+  const RESEND_COOLDOWN_SECONDS = 30;
+  let nextResendAt = 0;
+  let resendTimer: number | null = null;
+
+  const updateStepUI = () => {
+    if (step === 'email') {
+      codeInput.classList.add('hidden');
+      btnVerify.classList.add('hidden');
+      btnSend.textContent = 'Enviar código';
+      btnSend.disabled = false;
+      hint.textContent = 'O código expira em alguns minutos.';
+    } else {
+      codeInput.classList.remove('hidden');
+      btnVerify.classList.remove('hidden');
+      hint.textContent = 'Introduz o código recebido. Podes pedir novo após alguns segundos.';
+      updateResendButton();
+    }
+  };
+
+  const clearResendTimer = () => {
+    if (resendTimer != null) {
+      window.clearInterval(resendTimer);
+      resendTimer = null;
+    }
+  };
+
+  const updateResendButton = () => {
+    if (step !== 'code') return;
+    const now = Date.now();
+    const remain = Math.max(0, Math.ceil((nextResendAt - now) / 1000));
+    if (remain > 0) {
+      btnSend.disabled = true;
+      btnSend.textContent = `Enviar código novamente (${remain}s)`;
+    } else {
+      btnSend.disabled = false;
+      btnSend.textContent = 'Enviar código novamente';
+    }
+  };
 
   let notifyHandled = false;
   const notifySent = () => {
@@ -121,6 +163,11 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
       handlePendingScore();
       await AuthService.sendMagicLink(email);
       msg.textContent = 'Código enviado. Verifica o teu e-mail e introduz o código.';
+      step = 'code';
+      nextResendAt = Date.now() + RESEND_COOLDOWN_SECONDS * 1000;
+      clearResendTimer();
+      resendTimer = window.setInterval(updateResendButton, 500) as unknown as number;
+      updateStepUI();
     } catch (e: any) {
       const code = (e?.code || e?.message || String(e)) as string;
       msg.textContent = `Falha ao enviar código. ${mapError(code)}`;
@@ -182,5 +229,6 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
   });
 
   showForm();
+  updateStepUI();
   return wrap;
 }
