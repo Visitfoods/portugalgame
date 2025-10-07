@@ -24,15 +24,17 @@ export function Account(onBack: () => void) {
       <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[150px] md:w-[180px] h-auto ab-logo-white"/>
     </div>
 
-    <div class="relative z-10 w-full flex flex-col items-center min-h-screen">
-      <div class="mt-20 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">A Minha Conta</div>
+    <div class="relative z-10 w-full min-h-screen flex flex-col">
+      <div class="flex-1 flex flex-col items-center justify-center pt-16">
+        <div class="text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">A Minha Conta</div>
 
-      <div id="card" class="mt-3 w-11/12 max-w-[680px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden p-4 sm:p-5">
-        <div id="content" class="space-y-2 sm:space-y-3 text-center"></div>
-      </div>
+        <div id="card" class="mt-3 w-11/12 max-w-[680px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden p-4 sm:p-5">
+          <div id="content" class="space-y-2 sm:space-y-3 text-center"></div>
+        </div>
 
-      <div class="mt-3 sm:mt-5 w-9/12 max-w-[420px] flex flex-col items-center gap-3 sm:gap-4 pb-4">
-        <button id="back" class="home-glass-btn px-6 py-2 rounded-full text-white font-semibold border border-white/60 bg-white/15 backdrop-blur-sm shadow-[0_6px_16px_rgba(2,20,60,0.25)] active:scale-[.98]">VOLTAR</button>
+        <div class="mt-3 sm:mt-5 w-9/12 max-w-[420px] flex flex-col items-center gap-3 sm:gap-4 pb-4">
+          <button id="back" class="home-glass-btn px-6 py-2 rounded-full text-white font-semibold border border-white/60 bg-white/15 backdrop-blur-sm shadow-[0_6px_16px_rgba(2,20,60,0.25)] active:scale-[.98]">VOLTAR</button>
+        </div>
       </div>
     </div>
 
