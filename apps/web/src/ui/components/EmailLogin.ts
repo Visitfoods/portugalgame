@@ -11,15 +11,15 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
     <div class="w-11/12 max-w-[430px] text-[#0a2960]">
       <div id="state-form" class="bg-white/95 rounded-2xl p-5 shadow-xl space-y-4">
         <div class="font-[800] text-lg">Entrar para submeter pontuação</div>
-        <div class="text-sm opacity-80">Receberás um email com um link para concluir o login.</div>
+        <div class="text-sm opacity-80">Receberás um e-mail com um código de 6 dígitos para concluir o login.</div>
         <input id="email" type="email" autocomplete="email" placeholder="Email" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#0a2960]/30"/>
+        <input id="code" type="tel" inputmode="numeric" maxlength="6" placeholder="Código (6 dígitos)" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#0a2960]/30"/>
         <div class="flex gap-3">
           <button id="cancel" class="home-glass-btn flex-1 px-4 py-2 rounded-full text-[#0a2960] border border-[#0a2960]/30 bg-white/70">Cancelar</button>
-          <button id="send" class="flex-1 px-3 py-2 rounded-full bg-[#1f4590] text-white font-semibold text-sm">Enviar verificação</button>
+          <button id="send" class="flex-1 px-3 py-2 rounded-full bg-[#1f4590] text-white font-semibold text-sm">Enviar código</button>
+          <button id="verify" class="flex-1 px-3 py-2 rounded-full bg-[#1f4590] text-white font-semibold text-sm">Confirmar código</button>
         </div>
-        <div class="text-[11px] leading-4 opacity-70">
-          Abre o email no navegador principal (por exemplo, escolhe "Abrir no browser" no Outlook) para completar o login.
-        </div>
+        <div class="text-[11px] leading-4 opacity-70">O código expira em alguns minutos. Podes pedir outro a qualquer momento.</div>
         <div class="flex items-center gap-3">
           <div class="h-px bg-[#0a2960]/20 flex-1"></div>
           <div class="text-xs opacity-70">ou</div>
@@ -48,6 +48,7 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
 
   const input = wrap.querySelector<HTMLInputElement>('#email')!;
   const btnSend = wrap.querySelector<HTMLButtonElement>('#send')!;
+  const btnVerify = wrap.querySelector<HTMLButtonElement>('#verify')!;
   const btnCancel = wrap.querySelector<HTMLButtonElement>('#cancel')!;
   const btnGoogle = wrap.querySelector<HTMLButtonElement>('#google')!;
   const msg = wrap.querySelector<HTMLDivElement>('#msg')!;
@@ -58,7 +59,9 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
   const btnSentClose = wrap.querySelector<HTMLButtonElement>('#sent-close')!;
   const btnSentResend = wrap.querySelector<HTMLButtonElement>('#sent-resend')!;
 
-  const busyTargets: BusyTarget[] = [btnSend, btnCancel, btnGoogle, input];
+  const codeInput = wrap.querySelector<HTMLInputElement>('#code')!;
+
+  const busyTargets: BusyTarget[] = [btnSend, btnVerify, btnCancel, btnGoogle, input, codeInput];
 
   let notifyHandled = false;
   const notifySent = () => {
@@ -70,6 +73,7 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
   const setBusy = (busy: boolean) => {
     busyTargets.forEach((el) => { el.disabled = busy; });
     btnSend.style.opacity = busy ? '0.7' : '1';
+    btnVerify.style.opacity = busy ? '0.7' : '1';
     btnGoogle.style.opacity = busy ? '0.7' : '1';
   };
 
@@ -94,13 +98,8 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
   };
 
   const showSent = () => {
-    const hint = AuthService.getMagicLinkEmailHint();
-    if (hint) {
-      sentEmail.textContent = hint;
-    } else {
-      const raw = input.value.trim();
-      sentEmail.textContent = raw || 'o teu email';
-    }
+    const raw = input.value.trim();
+    sentEmail.textContent = raw || 'o teu email';
     sentCopy.classList.remove('hidden');
     sentCard.classList.remove('hidden');
     formCard.classList.add('hidden');
@@ -121,13 +120,28 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
     try {
       handlePendingScore();
       await AuthService.sendMagicLink(email);
-      AuthService.cacheMagicLinkEmail(email);
-      msg.textContent = '';
-      notifySent();
-      showSent();
+      msg.textContent = 'Código enviado. Verifica o teu e-mail e introduz o código.';
     } catch (e: any) {
       const code = (e?.code || e?.message || String(e)) as string;
-      msg.textContent = `Falha ao enviar link. ${mapError(code)}`;
+      msg.textContent = `Falha ao enviar código. ${mapError(code)}`;
+    } finally { setBusy(false); }
+  };
+
+  const verify = async () => {
+    const email = input.value.trim();
+    const code = codeInput.value.trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = 'Introduz um email válido.'; return; }
+    if (!/^\d{6}$/.test(code)) { msg.textContent = 'Introduz o código de 6 dígitos.'; return; }
+    setBusy(true); msg.textContent = 'A validar...';
+    try {
+      handlePendingScore();
+      await AuthService.verifyOtp(email, code);
+      msg.textContent = '';
+      notifySent();
+      wrap.remove();
+    } catch (e: any) {
+      const c = e?.code || e?.message || String(e);
+      msg.textContent = `Falha ao validar. ${mapError(c)}`;
     } finally { setBusy(false); }
   };
 
@@ -151,6 +165,9 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
     notifyHandled = false;
     showForm();
   };
+
+  btnVerify.onclick = () => { void verify(); };
+  codeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); void verify(); } });
 
   const tearDown: Cleanup = () => {
     wrap.remove();

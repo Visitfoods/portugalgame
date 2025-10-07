@@ -1,17 +1,16 @@
 {
-  "name": "alvesbandeira-game-workspace",
+  "name": "alvesbandeira-game-backend",
   "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "apps/web"
-  ],
   "scripts": {
-    "dev": "npm run dev --workspace=apps/web",
-    "build": "npm run build --workspace=apps/web",
-    "preview": "npm run preview --workspace=apps/web",
-    "install:web": "npm install --workspace=apps/web"
+    "build": "npm run clean && cd apps/web && npm run build",
+    "preview": "cd apps/web && npm run preview",
+    "clean": "node scripts/prebuild-clean.mjs"
   },
-  "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "@getbrevo/brevo": "^2.1.0",
+    "dotenv": "^16.4.5",
+    "firebase-admin": "^12.5.0",
+    "rate-limiter-flexible": "^5.0.4"
+  }
 }
-

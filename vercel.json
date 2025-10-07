@@ -1,11 +1,15 @@
 {
   "version": 2,
-  "framework": "vite",
-  "buildCommand": "cd apps/web && npm ci && npm run build",
+  "buildCommand": "npm run build",
   "outputDirectory": "apps/web/dist",
-  "devCommand": "cd apps/web && npm run dev",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
-

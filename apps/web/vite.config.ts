@@ -12,6 +12,15 @@ const makeServer = () => {
 export default defineConfig({
   plugins: [mkcert()],
   base: './',
-  server: makeServer(),
+  server: {
+    ...makeServer(),
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  },
   preview: { port: 5173 }
 })
