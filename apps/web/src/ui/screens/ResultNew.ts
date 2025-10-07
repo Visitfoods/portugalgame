@@ -1,3 +1,5 @@
+import { BackgroundMusic } from '../../core/engine/Audio';
+
 export function Result(score: number, onRetry: () => void) {
   const el = document.createElement('div');
   el.className = 'screen p-0 overflow-hidden';
@@ -135,7 +137,7 @@ export function Result(score: number, onRetry: () => void) {
       const current = (localStorage.getItem("ab-muted") === "1");
       try { localStorage.setItem("ab-muted", current ? "0" : "1"); } catch {}
       updateSoundIcon();
-      try { (await import("../../core/engine/Audio")).BackgroundMusic.syncFromStorage(); } catch {}
+      try { BackgroundMusic.syncFromStorage(); } catch {}
     };
     updateSoundIcon();
     soundBtn.onclick = () => toggleMute();

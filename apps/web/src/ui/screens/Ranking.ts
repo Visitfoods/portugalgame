@@ -1,6 +1,8 @@
 export interface RankEntry { pos: number; name: string; score: number; email?: string }
 import { topScores, searchByUsername } from '../../services/score';
 
+import { BackgroundMusic } from '../../core/engine/Audio';
+
 export function Ranking(onPlay: () => void, onBack?: () => void) {
   const el = document.createElement('div');
   el.className = 'screen p-0 overflow-hidden';
@@ -140,7 +142,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
     const muted = (localStorage.getItem('ab-muted') === '1');
     soundIcon.src = muted ? '/assets/graphics/Icon_Volume-Muted.svg' : '/assets/graphics/icon_Volume-On.svg';
   };
-  const toggleMute = () => { const cur = (localStorage.getItem('ab-muted')==='1'); try{localStorage.setItem('ab-muted', cur?'0':'1');}catch{} updateSoundIcon(); try { (await import('../../core/engine/Audio')).BackgroundMusic.syncFromStorage(); } catch {} };
+  const toggleMute = () => { const cur = (localStorage.getItem('ab-muted')==='1'); try{localStorage.setItem('ab-muted', cur?'0':'1');}catch{} updateSoundIcon(); try { BackgroundMusic.syncFromStorage(); } catch {} };
   updateSoundIcon();
   soundBtn.onclick = () => toggleMute();
   soundBtn.addEventListener('touchstart', (e)=>{ try{e.preventDefault();}catch{} toggleMute(); }, {passive:false});
