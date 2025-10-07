@@ -23,7 +23,7 @@ function get(name, fallback) {
 function getRequired(name) {
   const value = get(name);
   if (value == null || value === '') {
-    throw new Error(Missing required env var );
+    throw new Error(`Missing required env var ${name}`);
   }
   return value;
 }
@@ -31,12 +31,12 @@ function getRequired(name) {
 function getNumber(name, fallback) {
   const raw = get(name, fallback == null ? undefined : String(fallback));
   if (raw == null || raw === '') {
-    if (fallback == null) throw new Error(Missing required numeric env var );
+    if (fallback == null) throw new Error(`Missing required numeric env var ${name}`);
     return Number(fallback);
   }
   const value = Number(raw);
   if (!Number.isFinite(value)) {
-    throw new Error(Invalid numeric env var );
+    throw new Error(`Invalid numeric env var ${name}`);
   }
   return value;
 }
