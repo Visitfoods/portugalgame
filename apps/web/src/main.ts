@@ -18,6 +18,7 @@ import { userStore } from './services/userStore'
 import { submitScore } from './services/score'
 import { Account } from './ui/screens/Account'
 import { FaceTracker } from './core/ar/FaceTracker'
+import { BackgroundMusic } from './core/engine/Audio'
 
 const app = document.getElementById('app')!;
 
@@ -27,6 +28,7 @@ function mount(el: HTMLElement) {
 }
 
 function startFlow() {
+  try { BackgroundMusic.init(); } catch {}
   const home = Home(() => startGameDirect(), Object.assign(() => showHowTo(), { gotoAccount: () => showAccount() }), () => showRanking());
   mount(home);
 }

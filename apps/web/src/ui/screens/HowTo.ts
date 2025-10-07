@@ -88,6 +88,7 @@ export function HowTo(onPlay: () => void, onBack: () => void) {
     const current = (localStorage.getItem('ab-muted') === '1');
     try { localStorage.setItem('ab-muted', current ? '0' : '1'); } catch {}
     updateSoundIcon();
+    try { (await import('../../core/engine/Audio')).BackgroundMusic.syncFromStorage(); } catch {}
   };
   soundBtn.onclick = () => toggleMute();
   soundBtn.addEventListener('touchstart', (e) => { try { e.preventDefault(); } catch {} toggleMute(); }, { passive: false });

@@ -1,3 +1,5 @@
+import { BackgroundMusic } from '../../core/engine/Audio';
+
 export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => void) {
   const el = document.createElement('div');
   // Full-screen stage; on Home we want content aligned to the top
@@ -122,6 +124,8 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
     const current = (localStorage.getItem('ab-muted') === '1');
     try { localStorage.setItem('ab-muted', current ? '0' : '1'); } catch {}
     updateSoundIcon();
+    // Sincronizar música de fundo
+    try { BackgroundMusic.syncFromStorage(); } catch {}
   };
   soundBtn.onclick = () => toggleMute();
   // iOS Safari: garantir toggle no toque sem click duplicado

@@ -32,3 +32,48 @@ export class Sfx {
     a.play().catch(() => {});
   }
 }
+
+export class BackgroundMusic {
+  private static audio: HTMLAudioElement | null = null;
+  private static initialized = false;
+
+  static init(): void {
+    if (BackgroundMusic.initialized) return;
+    BackgroundMusic.initialized = true;
+    const a = new Audio('/music/saboresdeportugal.mp3');
+    a.loop = true;
+    a.preload = 'auto';
+    a.volume = 0.5;
+    BackgroundMusic.audio = a;
+
+    // Desbloquear em iOS no primeiro gesto do utilizador
+    const unlock = () => {
+      a.play().then(() => { a.pause(); a.currentTime = 0; }).catch(() => {});
+    };
+    try {
+      window.addEventListener('pointerdown', unlock, { once: true } as any);
+      window.addEventListener('touchstart', unlock as any, { once: true, passive: true } as any);
+    } catch {}
+
+    BackgroundMusic.syncFromStorage();
+  }
+
+  static setMuted(muted: boolean): void {
+    const a = BackgroundMusic.audio;
+    if (!a) return;
+    if (muted) {
+      try { a.pause(); } catch {}
+    } else {
+      a.play().catch(() => {});
+    }
+  }
+
+  static syncFromStorage(): void {
+    try {
+      const muted = (localStorage.getItem('ab-muted') === '1');
+      BackgroundMusic.setMuted(muted);
+    } catch {
+      BackgroundMusic.setMuted(false);
+    }
+  }
+}

@@ -135,6 +135,7 @@ export function Result(score: number, onRetry: () => void) {
       const current = (localStorage.getItem("ab-muted") === "1");
       try { localStorage.setItem("ab-muted", current ? "0" : "1"); } catch {}
       updateSoundIcon();
+      try { (await import("../../core/engine/Audio")).BackgroundMusic.syncFromStorage(); } catch {}
     };
     updateSoundIcon();
     soundBtn.onclick = () => toggleMute();
