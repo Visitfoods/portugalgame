@@ -46,9 +46,13 @@ export class BackgroundMusic {
     a.volume = 0.5;
     BackgroundMusic.audio = a;
 
-    // Desbloquear em iOS no primeiro gesto do utilizador
+    // Tentar autoplay imediato se não estiver muted (pode falhar por políticas do browser)
+    try { const muted = (localStorage.getItem('ab-muted') === '1'); if (!muted) a.play().catch(() => {}); } catch {}
+
+    // Desbloquear em iOS no primeiro gesto do utilizador e iniciar se não estiver muted
     const unlock = () => {
-      a.play().then(() => { a.pause(); a.currentTime = 0; }).catch(() => {});
+      const muted = (localStorage.getItem('ab-muted') === '1');
+      a.play().then(() => { if (muted) { a.pause(); a.currentTime = 0; } }).catch(() => {});
     };
     try {
       window.addEventListener('pointerdown', unlock, { once: true } as any);
