@@ -46,8 +46,8 @@ export class BackgroundMusic {
     a.volume = 0.5;
     BackgroundMusic.audio = a;
 
-    // Definir mute por defeito na primeira visita (evita bloqueios de autoplay)
-    try { if (localStorage.getItem('ab-muted') == null) localStorage.setItem('ab-muted', '1'); } catch {}
+    // Forçar iniciar SEMPRE em mute a cada carregamento (UX desejada)
+    try { localStorage.setItem('ab-muted', '1'); } catch {}
 
     // Desbloquear em iOS no primeiro gesto do utilizador e iniciar se não estiver muted
     const unlock = () => {

@@ -122,6 +122,7 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
     updateSoundIcon();
   const toggleMute = () => {
     const current = (localStorage.getItem('ab-muted') === '1');
+    // tocar/apagar e atualizar storage
     try { localStorage.setItem('ab-muted', current ? '0' : '1'); } catch {}
     updateSoundIcon();
     // Sincronizar música de fundo
