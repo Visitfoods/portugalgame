@@ -46,8 +46,8 @@ export class BackgroundMusic {
     a.volume = 0.5;
     BackgroundMusic.audio = a;
 
-    // Tentar autoplay imediato se não estiver muted (pode falhar por políticas do browser)
-    try { const muted = (localStorage.getItem('ab-muted') === '1'); if (!muted) a.play().catch(() => {}); } catch {}
+    // Definir mute por defeito na primeira visita (evita bloqueios de autoplay)
+    try { if (localStorage.getItem('ab-muted') == null) localStorage.setItem('ab-muted', '1'); } catch {}
 
     // Desbloquear em iOS no primeiro gesto do utilizador e iniciar se não estiver muted
     const unlock = () => {
