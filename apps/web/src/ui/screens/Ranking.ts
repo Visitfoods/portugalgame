@@ -142,7 +142,12 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
     const muted = (localStorage.getItem('ab-muted') === '1');
     soundIcon.src = muted ? '/assets/graphics/Icon_Volume-Muted.svg' : '/assets/graphics/icon_Volume-On.svg';
   };
-  const toggleMute = () => { const cur = (localStorage.getItem('ab-muted')==='1'); try{localStorage.setItem('ab-muted', cur?'0':'1');}catch{} updateSoundIcon(); try { BackgroundMusic.syncFromStorage(); } catch {} };
+  const toggleMute = () => {
+    const cur = (localStorage.getItem('ab-muted')==='1');
+    try{localStorage.setItem('ab-muted', cur?'0':'1');}catch{}
+    updateSoundIcon();
+    try { BackgroundMusic.syncFromStorage(); } catch {}
+  };
   updateSoundIcon();
   soundBtn.onclick = () => toggleMute();
   soundBtn.addEventListener('touchstart', (e)=>{ try{e.preventDefault();}catch{} toggleMute(); }, {passive:false});

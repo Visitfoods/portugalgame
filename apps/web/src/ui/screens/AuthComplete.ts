@@ -1,6 +1,7 @@
 ﻿import { AuthService, setCachedUser } from '../../services/auth';
 import { getUserProfile } from '../../services/user';
 import { getFirebaseAuth, trackMagicLinkEvent } from '../../lib/firebase';
+import { BackgroundMusic } from '../../core/engine/Audio';
 
 export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number) => void) {
   const el = document.createElement('div');
@@ -297,7 +298,7 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
     const muted = (localStorage.getItem('ab-muted') === '1');
     soundIcon.src = muted ? '/assets/graphics/Icon_Volume-Muted.svg' : '/assets/graphics/icon_Volume-On.svg';
   };
-  const toggleMute = () => { const cur = (localStorage.getItem('ab-muted')==='1'); try{localStorage.setItem('ab-muted', cur?'0':'1');}catch{} updateSoundIcon(); };
+  const toggleMute = () => { const cur = (localStorage.getItem('ab-muted')==='1'); try{localStorage.setItem('ab-muted', cur?'0':'1');}catch{} updateSoundIcon(); try { BackgroundMusic.syncFromStorage(); } catch {} };
   updateSoundIcon();
   soundBtn.onclick = () => toggleMute();
   soundBtn.addEventListener('touchstart', (e)=>{ try{e.preventDefault();}catch{} toggleMute(); }, {passive:false});

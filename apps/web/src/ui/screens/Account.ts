@@ -1,4 +1,5 @@
 import { AuthService, getCachedUser, setCachedUser } from '../../services/auth';
+import { BackgroundMusic } from '../../core/engine/Audio';
 import { getUserProfile } from '../../services/user';
 import { UsernamePicker } from './UsernamePicker';
 import { Register } from './Register';
@@ -55,6 +56,27 @@ export function Account(onBack: () => void) {
   const content = el.querySelector<HTMLDivElement>('#content')!;
   const back = el.querySelector<HTMLButtonElement>('#back')!;
   back.onclick = () => onBack();
+
+  // Som on/off (global)
+  (function attachSoundToggle(root: HTMLElement) {
+    const soundBtn = root.querySelector<HTMLButtonElement>('#sound');
+    const soundIcon = root.querySelector<HTMLImageElement>('#sound-icon');
+    if (!soundBtn || !soundIcon) return;
+    const updateSoundIcon = () => {
+      const muted = (localStorage.getItem('ab-muted') === '1');
+      soundIcon.src = muted ? '/assets/graphics/Icon_Volume-Muted.svg' : '/assets/graphics/icon_Volume-On.svg';
+      try { soundBtn.setAttribute('aria-pressed', muted ? 'true' : 'false'); } catch {}
+    };
+    updateSoundIcon();
+    const toggleMute = () => {
+      const current = (localStorage.getItem('ab-muted') === '1');
+      try { localStorage.setItem('ab-muted', current ? '0' : '1'); } catch {}
+      updateSoundIcon();
+      try { BackgroundMusic.syncFromStorage(); } catch {}
+    };
+    soundBtn.onclick = () => toggleMute();
+    soundBtn.addEventListener('touchstart', (e) => { try { e.preventDefault(); } catch {} toggleMute(); }, { passive: false });
+  })(el);
 
   async function render() {
     const cached = userStore.getUser() || getCachedUser();
