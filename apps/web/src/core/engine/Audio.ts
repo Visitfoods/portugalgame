@@ -40,7 +40,7 @@ export class BackgroundMusic {
   static init(): void {
     if (BackgroundMusic.initialized) return;
     BackgroundMusic.initialized = true;
-    const a = new Audio('/music/saboresdeportugal.mp3');
+    const a = new Audio('/music/saboresdeportugal-game_Music.mp3');
     a.loop = true;
     a.preload = 'auto';
     a.volume = 0.5;
@@ -56,6 +56,7 @@ export class BackgroundMusic {
     };
     try {
       window.addEventListener('pointerdown', unlock, { once: true } as any);
+      window.addEventListener('click', unlock as any, { once: true } as any);
       window.addEventListener('touchstart', unlock as any, { once: true, passive: true } as any);
     } catch {}
 
