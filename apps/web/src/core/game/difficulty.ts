@@ -9,9 +9,9 @@ export type Diff = {
 };
 
 export const DIFF_STAGES: { t: number; v: Diff }[] = [
-  { t: 0,  v: { spawnMs: [900, 700], vy: [220, 280], fakeRatio: 0.20, scale: 1.0, maxSimul: 3, drift: 0,  sideSpawns: false } },
-  { t: 20, v: { spawnMs: [750, 550], vy: [260, 340], fakeRatio: 0.35, scale: 0.9, maxSimul: 4, drift: 10, sideSpawns: false } },
-  { t: 40, v: { spawnMs: [600, 400], vy: [320, 420], fakeRatio: 0.50, scale: 0.8, maxSimul: 5, drift: 20, sideSpawns: true } },
+  { t: 0,  v: { spawnMs: [1200, 900], vy: [220, 280], fakeRatio: 0.20, scale: 1.0, maxSimul: 3, drift: 0,  sideSpawns: false } },
+  { t: 20, v: { spawnMs: [1000, 750], vy: [260, 340], fakeRatio: 0.35, scale: 0.9, maxSimul: 4, drift: 10, sideSpawns: false } },
+  { t: 40, v: { spawnMs: [800, 600], vy: [320, 420], fakeRatio: 0.50, scale: 0.8, maxSimul: 5, drift: 20, sideSpawns: true } },
 ];
 
 const clamp = (x: number, a: number, b: number) => Math.max(a, Math.min(b, x));

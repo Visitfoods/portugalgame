@@ -11,7 +11,7 @@ export function Register(onSaved: () => void, onCancel: () => void) {
     </div>
     
     <div class="relative z-10 w-full flex flex-col items-center">
-      <div class="mt-20 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">Completa o teu registo</div>
+      <div class="mt-20 text-white text-xl md:text-2xl font-[800] tracking-[0.06em]">COMPLETA O TEU REGISTO</div>
 
       <div class="mt-3 w-11/12 max-w-[680px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden p-5">
         <form id="form" class="space-y-3">

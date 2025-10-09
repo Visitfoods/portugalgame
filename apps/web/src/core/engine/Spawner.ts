@@ -55,7 +55,7 @@ export class Spawner {
     if (fromSide === 'right') { x = this.w + 40; y = rng(80, this.h * 0.7); vx = -rng(60, 120); vy = rng(10, 60); }
 
     // Avoid overcrowding: keep min distance from existing
-    const minDist = 64;
+    const minDist = 100;
     for (let tries = 0; tries < 6; tries++) {
       const ok = items.every(it => Math.hypot((it.pos.x - x), (it.pos.y - y)) > minDist);
       if (ok) break;

@@ -45,7 +45,7 @@ export class HUD {
   }
 
   setTimeLeft(seconds: number) {
-    const s = Math.max(0, Math.ceil(seconds));
+    const s = Math.max(0, Math.floor(seconds));
     const mm = String(Math.floor(s / 60)).padStart(2,'0');
     const ss = String(s % 60).padStart(2,'0');
     this.timeEl.textContent = `${mm}:${ss}`;

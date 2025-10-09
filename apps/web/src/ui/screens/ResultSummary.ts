@@ -21,7 +21,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
 
     <div class="relative z-10 w-full flex flex-col items-center">
       <!-- Parabéns -->
-      <div class="mt-1 text-center text-white font-[800] tracking-[0.06em] text-3xl md:text-4xl">PARABÉNS!</div>
+      <div class="mt-1 text-center text-white font-[800] tracking-[0.06em] text-2xl md:text-3xl">PARABÉNS!</div>
 
       <!-- Score com troféu -->
       <div class="relative mt-3 flex items-center justify-center gap-4">

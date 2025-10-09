@@ -1,6 +1,6 @@
 import { BackgroundMusic } from '../../core/engine/Audio';
 
-export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => void) {
+export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => void, onTerms?: () => void) {
   const el = document.createElement('div');
   // Full-screen stage; on Home we want content aligned to the top
   // Use explicit utilities instead of the shared `.screen` (which centers vertically)
@@ -10,25 +10,25 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
     <img src="/assets/graphics/Background.svg" alt="" class="absolute inset-0 -z-20 w-full h-full object-cover min-h-screen"/>
 
     <!-- Nuvens topo (marquee infinito com instâncias desfasadas) -->
-    <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-14 left-0 w-[34%] max-w-[260px] -z-10 opacity-90 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 46s; --ab-delay: -8s;"/>
-    <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-24 left-0 w-[28%] max-w-[220px] -z-10 opacity-70 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 54s; --ab-delay: -35s;"/>
-    <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-20 right-0 w-[36%] max-w-[280px] -z-10 opacity-85 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 52s; --ab-delay: -15s;"/>
-    <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-10 right-0 w-[30%] max-w-[230px] -z-10 opacity-60 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 40s; --ab-delay: -35s;"/>
+    <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-6 left-0 w-[16%] max-w-[120px] -z-10 opacity-90 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 50s; --ab-delay: 0s;"/>
+    <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-48 left-0 w-[14%] max-w-[110px] -z-10 opacity-70 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 60s; --ab-delay: -25s;"/>
+    <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-6 right-0 w-[18%] max-w-[140px] -z-10 opacity-85 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 55s; --ab-delay: -12s;"/>
+    <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-48 right-0 w-[14%] max-w-[110px] -z-10 opacity-60 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 45s; --ab-delay: -30s;"/>
 
     <!-- Conteúdo principal -->
     <div class="relative z-10 w-full flex flex-col items-center">
       <!-- Logo com parallax de nuvens (algumas atrás e outras à frente) -->
       <div class="relative mt-6 w-full h-[70px] flex items-start justify-center overflow-visible">
         <!-- Nuvem atrás do logotipo -->
-        <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-2 left-0 w-[28%] max-w-[240px] opacity-70 z-[5] ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 56s; --ab-delay: 0s;"/>
+        <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-2 left-0 w-[16%] max-w-[120px] opacity-70 z-[5] ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 56s; --ab-delay: 0s;"/>
         <!-- Logotipo -->
         <img id="ab-logo" src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[150px] md:w-[180px] h-auto ab-logo-white"/>
         <!-- Nuvem à frente do logotipo -->
-        <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-4 right-0 w-[26%] max-w-[220px] opacity-80 z-[20] ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 50s; --ab-delay: -28s;"/>
+        <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-4 right-0 w-[14%] max-w-[110px] opacity-80 z-[20] ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 50s; --ab-delay: -28s;"/>
       </div>
 
       <!-- Container único para ambas as animações (mesmo espaço) -->
-      <div class="home-title-slot relative mt-4 w-10/12 max-w-[720px] h-[260px] md:h-[320px] overflow-visible">
+      <div class="home-title-slot relative mt-4 w-8/12 max-w-[480px] h-[180px] md:h-[220px] overflow-visible">
         <!-- Primeira animação: Título do jogo -->
         <div id="title-container" class="absolute inset-0 flex items-center justify-center ab-anim-fade-out">
           <img id="title" src="/assets/graphics/Titulo-Jogo.svg" alt="Apanha os Sabores de Portugal" class="relative z-[2] w-full h-auto ab-anim-fade-zoom-in"/>
@@ -47,14 +47,14 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
       </div>
 
       <!-- Nuvens 05/06 pequenas por baixo do título (marquee lento) -->
-      <div class="relative mt-2 w-10/12 max-w-[720px] h-8 overflow-visible">
+      <div class="relative mt-2 w-8/12 max-w-[480px] h-6 overflow-visible">
         <img src="/assets/graphics/Nuvem-05.svg" alt="" class="absolute top-0 left-0 w-[18%] opacity-90 ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 60s; --ab-delay: 0s;"/>
         <img src="/assets/graphics/Nuvem-06.svg" alt="" class="absolute top-1 right-0 w-[16%] opacity-90 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 58s; --ab-delay: -30s;"/>
       </div>
 
       <!-- Botões principais -->
-      <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play mt-20 w-7/12 max-w-[320px] h-auto cursor-pointer active:scale-[.98] transition"/>
-      <button id="how" class="home-glass-btn btn-how mt-7 w-5/12 max-w-[240px] px-4 py-2 rounded-full text-white font-semibold text-sm md:text-base whitespace-nowrap border border-white/60 bg-white/15 backdrop-blur-sm shadow-[0_6px_16px_rgba(2,20,60,0.25)] active:scale-[.98] transition">COMO JOGAR</button>
+      <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play mt-20 w-5/12 max-w-[220px] h-auto cursor-pointer active:scale-[.98] transition"/>
+      <button id="how" class="home-glass-btn btn-how mt-7 w-4/12 max-w-[180px] px-3 py-2 rounded-full text-white font-semibold text-sm md:text-base whitespace-nowrap border border-white/60 bg-white/15 backdrop-blur-sm shadow-[0_6px_16px_rgba(2,20,60,0.25)] active:scale-[.98] transition">COMO JOGAR</button>
 
       <!-- Ícones inferiores -->
             <div class="bottom-icons mt-12 flex items-center justify-center gap-6 md:gap-8 mb-[72px] md:mb-[84px]">
@@ -103,7 +103,7 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
   el.querySelector<HTMLButtonElement>('#how')!.onclick = () => { if (onHow) onHow(); else alert('Como jogar: manter o rosto visivel e centrado. Abre a boca para apanhar os icones. Evita os falsos!'); };
   el.querySelector<HTMLButtonElement>('#account')!.onclick = () => { const fn = (onHow as any)?.gotoAccount; if (typeof fn === 'function') fn(); else alert('Conta: em breve.'); };
   el.querySelector<HTMLButtonElement>('#ranking')!.onclick = () => { if (onRanking) onRanking(); else alert('Ranking: em breve.'); };
-  el.querySelector<HTMLButtonElement>('#info')!.onclick = () => alert('Projeto Alves Bandeira — WebAR jogo promocional.');
+  el.querySelector<HTMLButtonElement>('#info')!.onclick = () => { if (onTerms) onTerms(); else alert('Projeto Alves Bandeira — WebAR jogo promocional.'); };
   // Som on/off com persistência
   const soundBtn = el.querySelector<HTMLButtonElement>('#sound')!;
   const soundIcon = el.querySelector<HTMLImageElement>('#sound-icon')!;
@@ -269,9 +269,9 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
       }
 
       // spawn contínuo em loop, desfasado
-      spawnTimer = window.setInterval(spawnOnce, 380);
+      spawnTimer = window.setInterval(spawnOnce, 1000);
       // lança alguns de arranque
-      for (let i=0;i<4;i++) setTimeout(spawnOnce, i*180);
+      for (let i=0;i<2;i++) setTimeout(spawnOnce, i*200);
     }).catch(() => {});
   }
 
@@ -282,7 +282,7 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
     if (ended >= revealClouds.length) startIconRain();
   }, { once: true }));
   // Fallback de segurança
-  setTimeout(startIconRain, 2600);
+  setTimeout(startIconRain, 1800);
 
   return el;
 }

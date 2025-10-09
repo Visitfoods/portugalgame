@@ -10,7 +10,7 @@ export class Timer60s {
   constructor(durationSec = 60) { this.duration = durationSec; }
   start(nowSec: number) { this.startAt = nowSec; }
   timeLeft(nowSec: number) { return Math.max(0, this.duration - (nowSec - this.startAt)); }
-  done(nowSec: number) { return this.timeLeft(nowSec) <= 0; }
+  done(nowSec: number) { return this.timeLeft(nowSec) < 1; }
   addSeconds(delta: number) { this.duration = Math.max(5, this.duration + delta); }
   addMs(deltaMs: number) { this.addSeconds(deltaMs / 1000); }
 }

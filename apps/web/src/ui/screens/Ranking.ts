@@ -20,21 +20,21 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
     <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-10 right-0 w-[30%] max-w-[230px] -z-10 opacity-60 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 40s; --ab-delay: -20s;"/>
 
     <!-- Logo independente -->
-    <div class="absolute top-4 left-1/2 -translate-x-1/2 z-[10] w-full flex justify-center">
-      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[150px] md:w-[180px] h-auto ab-logo-white"/>
+    <div class="absolute top-2 sm:top-4 left-1/2 -translate-x-1/2 z-[10] w-full flex justify-center">
+      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[120px] sm:w-[150px] md:w-[180px] h-auto ab-logo-white"/>
     </div>
 
-    <div class="relative z-10 w-full flex flex-col items-center pb-[160px]">
+    <div class="relative z-10 w-full flex flex-col items-center pb-[160px] min-h-screen justify-center">
       <!-- Título -->
-      <div class="mt-20 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">CLASSIFICAÇÃO</div>
+      <div class="mt-8 sm:mt-12 md:mt-16 text-white text-lg sm:text-xl md:text-2xl font-[800] tracking-[0.06em]">CLASSIFICAÇÃO</div>
 
       <!-- Quadro -->
-      <div class="mt-3 w-11/12 max-w-[640px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden">
+      <div class="mt-2 sm:mt-3 w-10/12 sm:w-11/12 max-w-[580px] sm:max-w-[640px] bg-white/90 text-[#0a2960] rounded-[18px] sm:rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden">
         <!-- Barra de pesquisa -->
-        <div class="flex items-center justify-center px-4 py-3 border-b-2 border-[#1f4590]/30 text-[#1f4590]">
+        <div class="flex items-center justify-center px-3 sm:px-4 py-2 sm:py-3 border-b-2 border-[#1f4590]/30 text-[#1f4590]">
           <div class="flex items-center gap-2">
-            <img src="/assets/graphics/lupa-icon.svg" alt="Pesquisar" class="w-[14px] h-[14px]"/>
-            <input id="search" type="text" placeholder="Procurar por username" class="bg-transparent outline-none placeholder-[#75808c] text-sm placeholder:text-xs w-48"/>
+            <img src="/assets/graphics/lupa-icon.svg" alt="Pesquisar" class="w-[12px] sm:w-[14px] h-[12px] sm:h-[14px]"/>
+            <input id="search" type="text" placeholder="Procurar por username" class="bg-transparent outline-none placeholder-[#75808c] text-xs sm:text-sm placeholder:text-xs w-40 sm:w-48"/>
           </div>
         </div>
         <!-- Lista top 5 -->
@@ -43,9 +43,9 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       </div>
 
       <!-- Ações -->
-      <div class="mt-8 sm:mt-10 md:mt-12 w-9/12 max-w-[420px] flex flex-col items-center gap-6 sm:gap-8">
-        <button id="view-all" class="home-glass-btn px-6 py-2 rounded-full text-white font-semibold border border-white/60 bg-white/15 backdrop-blur-sm shadow-[0_6px_16px_rgba(2,20,60,0.25)] active:scale-[.98]">VER TODOS</button>
-        <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play w-9/12 max-w-[300px] h-auto cursor-pointer active:scale-[.98] transition"/>
+      <div class="mt-4 sm:mt-6 md:mt-8 w-9/12 max-w-[420px] flex flex-col items-center gap-4 sm:gap-6">
+        <button id="view-all" class="home-glass-btn px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-white font-semibold text-sm sm:text-base border border-white/60 bg-white/15 backdrop-blur-sm shadow-[0_6px_16px_rgba(2,20,60,0.25)] active:scale-[.98]">VER TODOS</button>
+        <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play w-7/12 max-w-[300px] h-auto cursor-pointer active:scale-[.98] transition"/>
       </div>
     </div>
 
@@ -68,16 +68,20 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
         <path fill="#243a79" d="M12 3.2l8 6.4v10a1 1 0 0 1-1 1h-4.5a.5.5 0 0 1-.5-.5V14H10v6.1a.5.5 0 0 1-.5.5H5a1 1 0 0 1-1-1V9.6l8-6.4zM3.6 9L2 10.3l.8 1 .8-.6V9zm18.4 1.3L20.4 9v1.7l.8.6.8-1z"/>
       </svg>
     </button>
+
   `;
 
   // Render list
   const list = el.querySelector<HTMLDivElement>('#list')!;
+  
   function renderRows(rows: RankEntry[]) {
-    list.innerHTML = rows.map(r => `
-      <div class="grid grid-cols-[38px_1fr_auto] items-center px-4 py-3">
-        <div class="text-[#1f4590] font-[800] text-xl flex items-center justify-center">${r.pos === 1 ? '<span class=\'w-9 h-9 rounded-full bg-[#ffd04a] text-[#0a2960] flex items-center justify-center text-base font-[800]\'>1</span>' : r.pos}</div>
-        <div class="text-[#0a2960] font-[800] pl-2">${r.name}</div>
-        <div class="text-[#0a2960] font-[800] pr-3 text-right">${r.score}</div>
+    // Mostra apenas os primeiros 3 lugares
+    const top3 = rows.slice(0, 3);
+    list.innerHTML = top3.map(r => `
+      <div class="grid grid-cols-[32px_1fr_auto] sm:grid-cols-[38px_1fr_auto] items-center px-3 sm:px-4 py-2 sm:py-3">
+        <div class="text-[#1f4590] font-[800] text-lg sm:text-xl flex items-center justify-center">${r.pos === 1 ? '<span class=\'w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#ffd04a] text-[#0a2960] flex items-center justify-center text-sm sm:text-base font-[800]\'>1</span>' : r.pos === 2 ? '<span class=\'w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#243b78] text-white flex items-center justify-center text-sm sm:text-base font-[800]\'>2</span>' : r.pos === 3 ? '<span class=\'w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#1a2d5a] text-white flex items-center justify-center text-sm sm:text-base font-[800]\'>3</span>' : r.pos}</div>
+        <div class="text-[#0a2960] font-[800] pl-1 sm:pl-2 text-sm sm:text-base">${r.name}</div>
+        <div class="text-[#0a2960] font-[800] pr-2 sm:pr-3 text-right text-sm sm:text-base">${r.score}</div>
       </div>
     `).join('');
   }
@@ -99,7 +103,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       // Buscar mais registos e depois deduplicar por username para ficar só o melhor de cada jogador
       const rows = await topScores(300);
       top = toUniqueByUsername(rows, 50);
-      renderRows(top);
+      renderRows(top); // Mostra apenas top 3 por defeito
     } catch {
       renderRows([]);
     }
@@ -167,9 +171,9 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
     modal.innerHTML = `
       <div class="relative w-full max-w-[90vw] max-h-[80vh] bg-white/95 rounded-[22px] shadow-[0_20px_40px_rgba(2,20,60,0.3)] overflow-hidden">
         <!-- Header -->
-        <div class="flex items-center justify-between p-4 border-b-2 border-[#1f4590]/30 bg-[#1f4590]/10">
-          <h2 class="text-xl font-[800] text-[#0a2960]">Classificação Completa</h2>
-          <button id="close-modal" class="w-8 h-8 rounded-full bg-[#1f4590]/20 text-[#0a2960] hover:bg-[#1f4590]/30 transition flex items-center justify-center">
+        <div class="flex items-center justify-between p-4 border-b-2 border-[#243b78]/30 bg-[#243b78]">
+          <h2 class="text-xl font-[800] text-white">Classificação Completa</h2>
+          <button id="close-modal" class="w-8 h-8 rounded-full bg-white/20 text-white hover:bg-white/30 transition flex items-center justify-center">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path stroke="currentColor" stroke-width="2" d="M18 6L6 18M6 6l12 12"/>
             </svg>
@@ -193,8 +197,8 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
         </div>
         
         <!-- Footer -->
-        <div class="p-4 border-t border-[#1f4590]/20 bg-[#1f4590]/5">
-          <div class="text-sm text-[#0a2960]/70 text-center">
+        <div class="p-4 border-t border-[#243b78]/30 bg-[#243b78]">
+          <div class="text-xl font-[800] text-white text-center">
             Total: <span id="total-count">0</span> participantes
           </div>
         </div>
@@ -222,8 +226,8 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
         <div class="grid grid-cols-[50px_1fr_80px] items-center px-4 py-3 hover:bg-[#1f4590]/5 transition">
           <div class="text-[#1f4590] font-[800] text-lg flex items-center justify-center">
             ${r.pos === 1 ? '<span class="w-8 h-8 rounded-full bg-[#ffd04a] text-[#0a2960] flex items-center justify-center text-sm font-[800]">1</span>' : 
-              r.pos === 2 ? '<span class="w-8 h-8 rounded-full bg-[#c0c0c0] text-[#0a2960] flex items-center justify-center text-sm font-[800]">2</span>' :
-              r.pos === 3 ? '<span class="w-8 h-8 rounded-full bg-[#cd7f32] text-white flex items-center justify-center text-sm font-[800]">3</span>' :
+              r.pos === 2 ? '<span class="w-8 h-8 rounded-full bg-[#243b78] text-white flex items-center justify-center text-sm font-[800]">2</span>' :
+              r.pos === 3 ? '<span class="w-8 h-8 rounded-full bg-[#1a2d5a] text-white flex items-center justify-center text-sm font-[800]">3</span>' :
               r.pos}
           </div>
           <div class="text-[#0a2960] font-[600] pl-2">@${r.name}</div>

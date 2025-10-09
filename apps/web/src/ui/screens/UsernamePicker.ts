@@ -13,7 +13,7 @@ export function UsernamePicker(onCreated: () => void, onCancel?: () => void) {
       <div class="relative mt-1 w-full h-[70px] flex items-start justify-center overflow-visible">
         <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[150px] md:w-[180px] h-auto ab-logo-white"/>
       </div>
-      <div class="mt-2 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em]">Escolhe o teu username</div>
+      <div class="mt-2 text-white text-xl md:text-2xl font-[800] tracking-[0.06em]">ESCOLHE O TEU USERNAME</div>
       <div class="mt-3 w-11/12 max-w-[640px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden p-5">
         <div class="space-y-3">
           <input id="username" type="text" placeholder="username" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#1f4590]/30"/>

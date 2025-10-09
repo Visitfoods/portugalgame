@@ -17,6 +17,7 @@ import { ensureFirestoreOnline } from './lib/firebase'
 import { userStore } from './services/userStore'
 import { submitScore } from './services/score'
 import { Account } from './ui/screens/Account'
+import { TermsAndConditions } from './ui/screens/TermsAndConditions'
 import { FaceTracker } from './core/ar/FaceTracker'
 import { BackgroundMusic } from './core/engine/Audio'
 
@@ -29,7 +30,7 @@ function mount(el: HTMLElement) {
 
 function startFlow() {
   try { BackgroundMusic.init(); } catch {}
-  const home = Home(() => startGameDirect(), Object.assign(() => showHowTo(), { gotoAccount: () => showAccount() }), () => showRanking());
+  const home = Home(() => startGameDirect(), Object.assign(() => showHowTo(), { gotoAccount: () => showAccount() }), () => showRanking(), () => showTerms());
   mount(home);
 }
 
@@ -46,6 +47,11 @@ function showRanking() {
 function showAccount() {
   const acc = Account(() => startFlow());
   mount(acc);
+}
+
+function showTerms() {
+  const terms = TermsAndConditions(() => startFlow());
+  mount(terms);
 }
 
 async function startGameDirect() {

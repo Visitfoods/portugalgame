@@ -13,17 +13,17 @@ export function HowTo(onPlay: () => void, onBack: () => void) {
     <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-20 right-0 w-[36%] max-w-[280px] -z-10 opacity-85 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 52s; --ab-delay: -26s;"/>
     <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-10 right-0 w-[30%] max-w-[230px] -z-10 opacity-60 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 40s; --ab-delay: -20s;"/>
 
-    <div class="relative z-10 w-full flex flex-col items-center howto-content">
+    <div class="relative z-10 w-full max-w-[520px] mx-auto flex flex-col items-center howto-content howto-shell">
       <!-- Logo -->
       <div class="relative mt-4 w-full h-[70px] flex items-start justify-center overflow-visible">
         <img id="ab-logo" src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[150px] md:w-[180px] h-auto ab-logo-white"/>
       </div>
 
       <!-- TÃ­tulo -->
-      <h1 class="w-10/12 max-w-[720px] mx-auto text-center text-white font-[800] uppercase tracking-[0.09em] leading-tight mt-2 text-[clamp(26px,9vw,48px)]">COMO JOGAR</h1>
+      <h1 class="howto-title w-10/12 max-w-[480px] mx-auto text-center text-white font-[800] uppercase tracking-[0.09em] leading-tight mt-2 text-[clamp(26px,9vw,48px)]">COMO JOGAR</h1>
 
       <!-- Regras (SVGs) -->
-      <div class="w-10/12 max-w-[720px] mx-auto mt-3 flex flex-col items-stretch gap-3 md:gap-4 howto-rules">
+      <div class="w-10/12 max-w-[480px] mx-auto mt-3 flex flex-col items-stretch gap-3 md:gap-4 howto-rules">
         <img src="/assets/graphics/Regra-1.svg" alt="Regra 1" class="block w-full h-auto mx-auto"/>
         <img src="/assets/graphics/Regra-3.svg" alt="Regra 3" class="block w-full h-auto mx-auto"/>
         <img src="/assets/graphics/Regra-4.svg" alt="Regra 4" class="block w-full h-auto mx-auto"/>
@@ -31,8 +31,8 @@ export function HowTo(onPlay: () => void, onBack: () => void) {
         <img src="/assets/graphics/Regra-6.svg" alt="Regra 6" class="block w-full h-auto mx-auto"/>
       </div>
 
-      <!-- BotÃµes de aÃ§Ã£o -->
-      <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play w-7/12 max-w-[300px] h-auto cursor-pointer active:scale-[.98] transition"/>
+      <!-- Botões de ação -->
+      <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play howto-play h-auto cursor-pointer active:scale-[.98] transition"/>
     </div>
 
     <!-- Nuvens base + elemento gráfico -->
@@ -105,8 +105,6 @@ export function HowTo(onPlay: () => void, onBack: () => void) {
 
   return el;
 }
-
-
 
 
 

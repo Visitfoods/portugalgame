@@ -16,11 +16,20 @@ type MascotController = {
 
 export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   const el = document.createElement('div');
-  el.className = 'screen text-center gap-6';
+  el.className = 'screen text-center gap-6 bg-[#243b78]';
   el.innerHTML = `
-    <div class="text-2xl font-semibold">Preparar...</div>
-    <div class="text-white/80">Coloca o teu rosto visível e centrado. O jogo começa já!</div>
-        <div id="controls" class="fixed top-3 left-3 z-40">
+    <!-- Logotipo sempre em cima -->
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 z-[50] w-full flex justify-center">
+      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[120px] sm:w-[150px] md:w-[180px] h-auto ab-logo-white"/>
+    </div>
+    
+    <!-- Conteúdo principal com espaçamento para o logotipo -->
+    <div class="pt-20 flex flex-col items-center justify-center min-h-screen">
+      <div class="text-6xl font-bold text-white mb-4">Preparar...</div>
+      <div class="text-white text-center px-4 text-lg">Coloca o teu rosto visível e centrado. O jogo começa já!</div>
+    </div>
+    
+    <div id="controls" class="fixed top-3 left-3 z-40">
       <button id="btn-exit" class="px-3 py-2 rounded bg-black/50 text-white border border-white/20">Sair</button>
     </div>
   `;
@@ -159,9 +168,10 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     // 3-2-1 countdown
     await new Promise<void>((resolve) => {
       const overlay = document.createElement('div');
-      overlay.className = 'fixed inset-0 flex items-center justify-center text-6xl font-bold bg-black/50';
+      overlay.className = 'fixed inset-0 flex items-center justify-center text-6xl font-bold bg-[#243b78]/80 z-[60]';
       let n = 3;
       const span = document.createElement('div');
+      span.className = 'text-white';
       overlay.appendChild(span);
       document.body.appendChild(overlay);
       const id = setInterval(() => {
