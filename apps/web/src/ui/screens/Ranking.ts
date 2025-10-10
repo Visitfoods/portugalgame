@@ -24,12 +24,12 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[120px] sm:w-[150px] md:w-[180px] h-auto ab-logo-white"/>
     </div>
 
-    <div class="relative z-10 w-full flex flex-col items-center pb-[160px] min-h-screen justify-center">
+    <div class="ranking-container relative z-10 w-full flex flex-col items-center pb-[160px] min-h-screen justify-start pt-[100px] sm:pt-[120px] md:pt-[140px]">
       <!-- Título -->
-      <div class="mt-8 sm:mt-12 md:mt-16 text-white text-lg sm:text-xl md:text-2xl font-[800] tracking-[0.06em]">CLASSIFICAÇÃO</div>
+      <div class="ranking-title mt-1 sm:mt-2 text-white text-base sm:text-lg md:text-xl font-[800] tracking-[0.06em]">CLASSIFICAÇÃO</div>
 
       <!-- Quadro -->
-      <div class="mt-2 sm:mt-3 w-10/12 sm:w-11/12 max-w-[580px] sm:max-w-[640px] bg-white/90 text-[#0a2960] rounded-[18px] sm:rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden">
+      <div class="ranking-card mt-2 sm:mt-3 w-10/12 sm:w-11/12 max-w-[580px] sm:max-w-[640px] bg-white/90 text-[#0a2960] rounded-[16px] sm:rounded-[20px] shadow-[0_8px_20px_rgba(2,20,60,0.18)] overflow-hidden">
         <!-- Barra de pesquisa -->
         <div class="flex items-center justify-center px-3 sm:px-4 py-2 sm:py-3 border-b-2 border-[#1f4590]/30 text-[#1f4590]">
           <div class="flex items-center gap-2">
@@ -42,8 +42,51 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
         </div>
       </div>
 
+      <!-- Secção de Prémios Compacta -->
+      <div class="prizes-section mt-2 sm:mt-3 w-10/12 sm:w-11/12 max-w-[580px] sm:max-w-[640px] bg-gradient-to-r from-[#ffd04a]/15 to-[#ffb347]/10 backdrop-blur-sm rounded-[12px] border border-[#ffd04a]/20 shadow-[0_4px_12px_rgba(255,208,74,0.08)] overflow-hidden">
+        <!-- Header compacto -->
+        <div class="flex items-center justify-center px-2 py-1.5 border-b border-[#ffd04a]/20">
+          <img src="/assets/graphics/trophy.svg" alt="Troféu" class="w-4 h-4"/>
+          <span class="text-[#0a2960] font-[700] text-xs ml-1">PRÉMIOS DISPONÍVEIS</span>
+        </div>
+        
+        <!-- Prémios em grid 2x2 para evitar sobreposição -->
+        <div class="grid grid-cols-2 gap-1 p-2">
+          <!-- 1º Prémio -->
+          <div class="flex items-center justify-center gap-1 bg-gradient-to-br from-[#ffd04a]/20 to-[#ffb347]/20 border border-[#ffd04a]/30 rounded px-2 py-1">
+            <span class="text-[#0a2960] font-[800] text-xs">1º</span>
+            <span class="text-[#0a2960] font-[600] text-xs">500€</span>
+          </div>
+          
+          <!-- 2º Prémio -->
+          <div class="flex items-center justify-center gap-1 bg-gradient-to-br from-[#243b78]/20 to-[#1a2d5a]/20 border border-[#243b78]/30 rounded px-2 py-1">
+            <span class="text-[#0a2960] font-[800] text-xs">2º</span>
+            <span class="text-[#0a2960] font-[600] text-xs">250€</span>
+          </div>
+          
+          <!-- 3º Prémio -->
+          <div class="flex items-center justify-center gap-1 bg-gradient-to-br from-[#1a2d5a]/20 to-[#0f1a3a]/20 border border-[#1a2d5a]/30 rounded px-2 py-1">
+            <span class="text-[#0a2960] font-[800] text-xs">3º</span>
+            <span class="text-[#0a2960] font-[600] text-xs">150€</span>
+          </div>
+          
+          <!-- 4º ao 50º Prémio -->
+          <div class="flex items-center justify-center gap-1 bg-gradient-to-br from-[#2472ba]/20 to-[#1c5a9a]/20 border border-[#2472ba]/30 rounded px-2 py-1">
+            <span class="text-[#0a2960] font-[800] text-xs">4º-50º</span>
+            <span class="text-[#0a2960] font-[600] text-xs">10€</span>
+          </div>
+        </div>
+        
+        <!-- Nota sobre combustível -->
+        <div class="px-3 pb-2 pt-1">
+          <p class="text-[#0a2960]/70 text-[10px] text-center font-[500]">
+            * Prémios em combustível
+          </p>
+        </div>
+      </div>
+
       <!-- Ações -->
-      <div class="mt-4 sm:mt-6 md:mt-8 w-9/12 max-w-[420px] flex flex-col items-center gap-4 sm:gap-6">
+      <div class="actions-section mt-2 sm:mt-3 w-9/12 max-w-[420px] flex flex-col items-center gap-2 sm:gap-3">
         <button id="view-all" class="home-glass-btn px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-white font-semibold text-sm sm:text-base border border-white/60 bg-white/15 backdrop-blur-sm shadow-[0_6px_16px_rgba(2,20,60,0.25)] active:scale-[.98]">VER TODOS</button>
         <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play w-7/12 max-w-[300px] h-auto cursor-pointer active:scale-[.98] transition"/>
       </div>

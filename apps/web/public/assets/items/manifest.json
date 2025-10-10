@@ -1,21 +1,23 @@
 {
   "good": [
-    "/assets/items/good/caracois-icon.webp",
-    "/assets/items/good/chourico_assado-icon.webp",
-    "/assets/items/good/PicaPau-icon.webp",
-    "/assets/items/good/Salada_Polvo-icon.webp",
-    "/assets/items/good/Sardinha-icon.webp",
-    "/assets/items/good/tremocos-icon.webp"
+    "/assets/items/good/Bifana.webp",
+    "/assets/items/good/Brisa-Lis.webp",
+    "/assets/items/good/chourico.webp",
+    "/assets/items/good/Ovos-moles.webp",
+    "/assets/items/good/pastel-bacalhau.webp",
+    "/assets/items/good/pastel-nata.webp",
+    "/assets/items/good/pastel-tentugal.webp"
   ],
   "bad": [
-    "/assets/items/bad/burrito-icon.webp",
+    "/assets/items/bad/bola-berlim.webp",
+    "/assets/items/bad/bolacha-maria.webp",
+    "/assets/items/bad/bolo-arroz.webp",
     "/assets/items/bad/cachorro-icon.webp",
-    "/assets/items/bad/Carbonara-icon.webp",
+    "/assets/items/bad/Cornucopia.webp",
+    "/assets/items/bad/croaissant.webp",
+    "/assets/items/bad/donut.webp",
     "/assets/items/bad/hamburguer-icon.webp",
-    "/assets/items/bad/lasanha-icon.webp",
     "/assets/items/bad/pizza-icon.webp",
-    "/assets/items/bad/ramen-icon.webp",
-    "/assets/items/bad/sushi-icon.webp",
     "/assets/items/bad/sushi2-icon.webp"
   ]
 }

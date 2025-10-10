@@ -7,15 +7,22 @@ export interface LoadingHandle {
 
 export function LoadingOverlay(initialMessage = 'A preparar...'): LoadingHandle {
   const overlay = document.createElement('div');
-  overlay.className = 'fixed inset-0 z-[60] flex items-center justify-center bg-black pointer-events-auto';
+  overlay.className = 'fixed inset-0 z-[60] bg-[#243b78] pointer-events-auto';
 
-  const wrap = document.createElement('div');
-  wrap.className = 'flex flex-col items-center gap-5 text-center';
-
+  // Logotipo no topo
+  const logoContainer = document.createElement('div');
+  logoContainer.className = 'absolute top-4 left-1/2 -translate-x-1/2 w-full flex justify-center';
+  
   const logo = document.createElement('img');
   logo.src = '/assets/graphics/Alves_Bandeira_logo.svg';
   logo.alt = 'Alves Bandeira';
-  logo.className = 'ab-logo-white w-[120px] h-auto opacity-95';
+  logo.className = 'w-[120px] sm:w-[150px] md:w-[180px] h-auto ab-logo-white';
+  
+  logoContainer.appendChild(logo);
+
+  // Conteúdo central
+  const wrap = document.createElement('div');
+  wrap.className = 'flex flex-col items-center justify-center min-h-screen gap-5 text-center';
 
   const spinner = document.createElement('div');
   spinner.className = 'w-10 h-10 rounded-full border-4 border-white/20 border-t-white animate-spin';
@@ -24,7 +31,8 @@ export function LoadingOverlay(initialMessage = 'A preparar...'): LoadingHandle 
   msg.className = 'text-white/90 text-base font-semibold';
   msg.textContent = initialMessage;
 
-  wrap.append(logo, spinner, msg);
+  wrap.append(spinner, msg);
+  overlay.appendChild(logoContainer);
   overlay.appendChild(wrap);
 
   let mounted = false;

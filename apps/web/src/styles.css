@@ -239,56 +239,67 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 
 /* HowTo page specific responsive adjustments */
 .howto-content .btn-play {
-  margin-top: 1rem !important;
-  margin-bottom: 1.5rem !important;
-  /* Tornar o botão proporcional e com limite máximo (reage a largura e altura) */
-  width: clamp(96px, 24vmin, 200px) !important;
-  max-width: 200px !important;
+  margin-top: 2rem !important;
+  margin-bottom: 2rem !important;
+  /* Tornar o botão muito maior e mais visível */
+  width: clamp(180px, 40vmin, 360px) !important;
+  max-width: 360px !important;
 }
-/* Garantir que o botão JOGAR nunca fica por trás dos ícones inferiores */
+/* Remover posicionamento sticky problemático - usar layout normal */
 .howto-content #play {
-  position: sticky;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(180px, 24vh, 260px));
+  position: static;
   z-index: 5;
 }
 
-/* Empurrar ainda mais para cima em alturas muito baixas */
+/* Ajustes para alturas muito baixas - manter botão visível */
 @media (max-height: 560px) {
-  .howto-content #play { bottom: calc(env(safe-area-inset-bottom, 0px) + 140px); }
+  .howto-content .btn-play {
+    margin-top: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    width: clamp(160px, 35vmin, 300px) !important;
+  }
 }
 @media (max-height: 540px) {
-  .howto-content #play { bottom: calc(env(safe-area-inset-bottom, 0px) + 150px); }
+  .howto-content .btn-play {
+    margin-top: 1.25rem !important;
+    margin-bottom: 1.25rem !important;
+    width: clamp(150px, 33vmin, 280px) !important;
+  }
 }
 @media (max-height: 520px) {
-  .howto-content #play { bottom: calc(env(safe-area-inset-bottom, 0px) + 160px); }
+  .howto-content .btn-play {
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+    width: clamp(140px, 30vmin, 260px) !important;
+  }
 }
 
 /* Small screens - reduce button size and spacing */
 @media (max-height: 700px) {
   .howto-content .btn-play {
-    margin-top: 0.75rem !important;
-    margin-bottom: 1rem !important;
-    width: clamp(88px, 22vmin, 180px) !important;
-    max-width: 180px !important;
+    margin-top: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    width: clamp(160px, 35vmin, 300px) !important;
+    max-width: 300px !important;
   }
 }
 
 @media (max-height: 600px) {
   .howto-content .btn-play {
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.75rem !important;
-    width: clamp(80px, 20vmin, 160px) !important;
-    max-width: 160px !important;
+    margin-top: 1.25rem !important;
+    margin-bottom: 1.25rem !important;
+    width: clamp(150px, 33vmin, 280px) !important;
+    max-width: 280px !important;
   }
 }
 
-/* Very small screens (like 375x667) - drastically reduce button size */
+/* Very small screens (like 375x667) - maintain reasonable button size */
 @media (max-height: 680px) and (max-width: 400px) {
   .howto-content .btn-play {
-    margin-top: 0.25rem !important;
-    margin-bottom: 0.25rem !important;
-    width: clamp(72px, 18vmin, 140px) !important;
-    max-width: 140px !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+    width: clamp(140px, 30vmin, 240px) !important;
+    max-width: 240px !important;
   }
   
   /* Reduce spacing between rules */
@@ -302,13 +313,13 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   }
 }
 
-/* Extra small screens - even smaller button */
+/* Extra small screens - maintain minimum usable size */
 @media (max-height: 500px) {
   .howto-content .btn-play {
-    margin-top: 0.125rem !important;
-    margin-bottom: 0.125rem !important;
-    width: clamp(68px, 16vmin, 120px) !important;
-    max-width: 120px !important;
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+    width: clamp(130px, 28vmin, 220px) !important;
+    max-width: 220px !important;
   }
   
   /* Ensure bottom buttons have enough space */
@@ -317,13 +328,13 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   }
 }
 
-/* Fix for wide screens with small height - prevent button overlap */
+/* Fix for wide screens with small height - maintain reasonable button size */
 @media (min-width: 768px) and (max-height: 600px) {
   .howto-content .btn-play {
-    margin-top: 0.25rem !important;
-    margin-bottom: 0.5rem !important;
-    width: 20% !important;
-    max-width: 120px !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+    width: 30% !important;
+    max-width: 240px !important;
   }
   
   .howto-content {
@@ -334,10 +345,10 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 /* Fix for very wide screens with small height */
 @media (min-width: 1024px) and (max-height: 500px) {
   .howto-content .btn-play {
-    margin-top: 0.125rem !important;
-    margin-bottom: 0.25rem !important;
-    width: 15% !important;
-    max-width: 100px !important;
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+    width: 25% !important;
+    max-width: 220px !important;
   }
   
   .howto-content {
@@ -348,10 +359,10 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 /* Additional fix for any wide screen with small height */
 @media (min-width: 600px) and (max-height: 700px) {
   .howto-content .btn-play {
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.75rem !important;
-    width: 25% !important;
-    max-width: 140px !important;
+    margin-top: 1.25rem !important;
+    margin-bottom: 1.25rem !important;
+    width: 35% !important;
+    max-width: 260px !important;
   }
   
   .howto-content {
@@ -375,6 +386,108 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   gap: clamp(16px, 2.3vh, 26px);
   /* Reservar mais espaço na base para nunca colidir com botões fixos */
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(200px, 28vh, 320px));
+}
+
+/* Ranking page - optimize for small screens */
+@media (max-height: 700px) {
+  .ranking-container {
+    padding-top: 80px !important;
+  }
+  
+  .ranking-title {
+    margin-top: 0.5rem !important;
+    font-size: 1rem !important;
+  }
+  
+  .ranking-card {
+    margin-top: 0.75rem !important;
+    border-radius: 12px !important;
+  }
+  
+  .prizes-section {
+    margin-top: 0.5rem !important;
+    border-radius: 8px !important;
+  }
+  
+  .prizes-section .grid {
+    gap: 0.125rem !important;
+    padding: 0.25rem !important;
+  }
+  
+  .prizes-section .grid > div {
+    padding: 0.125rem 0.25rem !important;
+    font-size: 0.625rem !important;
+  }
+  
+  .actions-section {
+    margin-top: 0.5rem !important;
+    gap: 0.5rem !important;
+  }
+}
+
+@media (max-height: 600px) {
+  .ranking-container {
+    padding-top: 70px !important;
+  }
+  
+  .ranking-title {
+    margin-top: 0.25rem !important;
+    font-size: 0.875rem !important;
+  }
+  
+  .ranking-card {
+    margin-top: 0.5rem !important;
+  }
+  
+  .prizes-section {
+    margin-top: 0.25rem !important;
+  }
+  
+  .prizes-section .grid {
+    gap: 0.125rem !important;
+    padding: 0.125rem !important;
+  }
+  
+  .prizes-section .grid > div {
+    padding: 0.125rem 0.25rem !important;
+    font-size: 0.625rem !important;
+  }
+  
+  .prizes-section .grid > div {
+    font-size: 0.5rem !important;
+  }
+  
+  .prizes-section .grid > div span:first-child {
+    font-size: 0.5rem !important;
+  }
+  
+  .actions-section {
+    margin-top: 0.25rem !important;
+  }
+}
+
+/* Extra small screens - hide prizes section to prioritize leaderboard */
+@media (max-height: 500px) {
+  .prizes-section {
+    display: none !important;
+  }
+  
+  .ranking-container {
+    padding-top: 60px !important;
+  }
+  
+  .ranking-title {
+    margin-top: 0.125rem !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .ranking-card {
+    margin-top: 0.25rem !important;
+  }
+  
+  .actions-section {
+    margin-top: 0.25rem !important;
+  }
 }
 
 /* Extra small screens - reduce padding significantly */
@@ -405,9 +518,9 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 }
 
 .howto-play {
-  margin-top: clamp(24px, 3.6vh, 44px);
-  margin-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(180px, 24vh, 260px));
-  width: min(62%, 240px);
+  margin-top: clamp(32px, 4vh, 48px);
+  margin-bottom: clamp(32px, 4vh, 48px);
+  width: min(80%, 360px);
 }
 @media (max-height: 720px) {
   .howto-content {
@@ -415,9 +528,9 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(190px, 26vh, 260px));
   }
   .howto-play {
-    margin-top: clamp(20px, 3vh, 32px);
-    margin-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(165px, 22vh, 220px));
-    width: min(68%, 220px);
+    margin-top: clamp(28px, 3.5vh, 40px);
+    margin-bottom: clamp(28px, 3.5vh, 40px);
+    width: min(78%, 300px);
   }
 }
 @media (max-height: 640px) {
@@ -426,9 +539,9 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(170px, 24vh, 220px));
   }
   .howto-play {
-    margin-top: clamp(16px, 2.4vh, 26px);
-    margin-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(140px, 20vh, 190px));
-    width: min(74%, 200px);
+    margin-top: clamp(24px, 3vh, 32px);
+    margin-bottom: clamp(24px, 3vh, 32px);
+    width: min(80%, 280px);
   }
 }
 @media (max-height: 560px) {
@@ -437,9 +550,9 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(160px, 26vh, 220px));
   }
   .howto-play {
-    margin-top: clamp(12px, 2vh, 22px);
-    margin-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(130px, 22vh, 180px));
-    width: clamp(96px, 36vw, 160px);
+    margin-top: clamp(20px, 2.5vh, 28px);
+    margin-bottom: clamp(20px, 2.5vh, 28px);
+    width: clamp(160px, 35vw, 240px);
   }
 }
 
@@ -449,8 +562,9 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 230px);
   }
   .howto-play {
-    margin-bottom: calc(env(safe-area-inset-bottom, 0px) + 190px);
-    width: clamp(92px, 34vw, 150px);
+    margin-top: clamp(18px, 2.2vh, 24px);
+    margin-bottom: clamp(18px, 2.2vh, 24px);
+    width: clamp(150px, 33vw, 220px);
   }
 }
 
@@ -460,8 +574,9 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 250px);
   }
   .howto-play {
-    margin-bottom: calc(env(safe-area-inset-bottom, 0px) + 210px);
-    width: clamp(88px, 32vw, 140px);
+    margin-top: clamp(16px, 2vh, 22px);
+    margin-bottom: clamp(16px, 2vh, 22px);
+    width: clamp(140px, 30vw, 200px);
   }
 }
 
@@ -481,13 +596,11 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   }
 
   .howto-play {
-    width: clamp(180px, 26vw, 240px);
-    margin-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(200px, 24vh, 280px));
-  }
-
-  .howto-content #play {
-    bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(190px, 24vh, 280px));
+    width: clamp(240px, 35vw, 360px);
+    margin-top: clamp(32px, 4vh, 48px);
+    margin-bottom: clamp(32px, 4vh, 48px);
   }
 }
+
 
 

@@ -5,6 +5,7 @@ import { FaceTracker } from "../../core/ar/FaceTracker";
 import { MouthOpenDetector } from "../../core/ar/MouthOpenDetector";
 import { GameLoop } from "../../core/engine/GameLoop";
 import { loadItemSprites } from "../../core/engine/Assets";
+import { BackgroundMusic } from "../../core/engine/Audio";
 import { mouthTrigger, resetMouthTrigger } from "../../core/game/mouthTrigger";
 import type { Vec2 } from "../../utils/types";
 
@@ -18,14 +19,8 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   const el = document.createElement('div');
   el.className = 'screen text-center gap-6 bg-[#243b78]';
   el.innerHTML = `
-    <!-- Logotipo sempre em cima -->
-    <div class="absolute top-4 left-1/2 -translate-x-1/2 z-[50] w-full flex justify-center">
-      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[120px] sm:w-[150px] md:w-[180px] h-auto ab-logo-white"/>
-    </div>
-    
-    <!-- Conteúdo principal com espaçamento para o logotipo -->
-    <div class="pt-20 flex flex-col items-center justify-center min-h-screen">
-      <div class="text-6xl font-bold text-white mb-4">Preparar...</div>
+    <!-- Conteúdo principal -->
+    <div class="flex flex-col items-center justify-center min-h-screen">
       <div class="text-white text-center px-4 text-lg">Coloca o teu rosto visível e centrado. O jogo começa já!</div>
     </div>
     
@@ -168,7 +163,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     // 3-2-1 countdown
     await new Promise<void>((resolve) => {
       const overlay = document.createElement('div');
-      overlay.className = 'fixed inset-0 flex items-center justify-center text-6xl font-bold bg-[#243b78]/80 z-[60]';
+      overlay.className = 'fixed inset-0 flex items-start justify-center pt-32 text-6xl font-bold bg-[#243b78]/80 z-[60]';
       let n = 3;
       const span = document.createElement('div');
       span.className = 'text-white';
@@ -213,7 +208,12 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
         const muted = (localStorage.getItem('ab-muted') === '1');
         img.src = muted ? '/assets/graphics/Icon_Volume-Muted.svg' : '/assets/graphics/icon_Volume-On.svg';
       };
-      const toggle = () => { const cur = (localStorage.getItem('ab-muted') === '1'); try { localStorage.setItem('ab-muted', cur ? '0' : '1'); } catch {} updateIcon(); };
+      const toggle = () => { 
+        const cur = (localStorage.getItem('ab-muted') === '1'); 
+        try { localStorage.setItem('ab-muted', cur ? '0' : '1'); } catch {} 
+        updateIcon(); 
+        try { BackgroundMusic.syncFromStorage(); } catch {} 
+      };
       updateIcon();
       b.onclick = () => toggle();
       b.addEventListener('touchstart', (e) => { try { e.preventDefault(); } catch {} toggle(); }, { passive: false });

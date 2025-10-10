@@ -1,5 +1,7 @@
  
 
+import { BackgroundMusic } from '../../core/engine/Audio';
+
 export function ResultSummary(score: number, onSubmit: () => void, onRetry: () => void) {
   const el = document.createElement('div');
   el.className = 'screen p-0 overflow-hidden';
@@ -93,7 +95,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   cancelModal.onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
   confirmAgain.onclick = () => onRetry();
   el.querySelector<HTMLButtonElement>('#share')!.onclick = async () => {
-    const title = '🏆 Alves Bandeira — Desafio de Pontos';
+    const title = '🏆 Alves Bandeira — 50 Anos, 50 Prémios! 🥳🎉';
     // Usar sempre a URL de produção para partilha
     const shareUrl = 'https://saboresdeportugal.vercel.app/?utm_source=share&utm_medium=game&utm_campaign=abgame';
     let handle = '';
@@ -103,8 +105,8 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
       if (u?.username) handle = ` (@${u.username})`;
     } catch {}
     const pts = `${score} ponto${score===1?'':'s'}`;
-    const line1 = `🏁 Fiz ${pts} no jogo Alves Bandeira${handle}!`;
-    const line2 = `🔥 Consegues bater-me?`;
+    const line1 = `🏁 Fiz ${pts} no jogo da Alves Bandeira — Sabores de Portugal${handle}!`;
+    const line2 = `🔥 Consegues fazer mais?`;
     const line3 = `🎯 Joga aqui: ${shareUrl}`;
     const full = `${title}\n\n${line1}\n${line2}\n${line3}`;
     try {
@@ -153,7 +155,12 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     soundIcon.src = muted ? '/assets/graphics/Icon_Volume-Muted.svg' : '/assets/graphics/icon_Volume-On.svg';
   };
   updateSoundIcon();
-  const toggleMute = () => { const cur = (localStorage.getItem('ab-muted')==='1'); try{localStorage.setItem('ab-muted', cur?'0':'1');}catch{} updateSoundIcon(); };
+  const toggleMute = () => { 
+    const cur = (localStorage.getItem('ab-muted')==='1'); 
+    try{localStorage.setItem('ab-muted', cur?'0':'1');}catch{} 
+    try { BackgroundMusic.syncFromStorage(); } catch {}
+    updateSoundIcon(); 
+  };
   soundBtn.onclick = () => toggleMute();
   soundBtn.addEventListener('touchstart', (e)=>{ try{e.preventDefault();}catch{} toggleMute(); }, {passive:false});
 
