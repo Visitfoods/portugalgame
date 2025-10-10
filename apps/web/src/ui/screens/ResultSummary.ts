@@ -176,12 +176,46 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   // Partilhar no Instagram
   el.querySelector<HTMLButtonElement>('#share-instagram')!.onclick = async () => {
     const { full } = await generateShareText();
-    try {
-      await navigator.clipboard.writeText(full);
-      alert('Texto copiado! Abre o Instagram e cola o texto numa mensagem direta (DM) ou Story.');
-    } catch {
-      alert('Abre o Instagram e cola esta mensagem numa DM ou Story:\n\n' + full);
+    
+    // Tentar diferentes deep links do Instagram
+    const instagramLinks = [
+      'instagram://direct',
+      'instagram://send',
+      'instagram://dm',
+      'instagram://camera'
+    ];
+    
+    let linkWorked = false;
+    
+    for (const link of instagramLinks) {
+      try {
+        // Tentar abrir o deep link
+        window.location.href = link;
+        linkWorked = true;
+        break;
+      } catch (e) {
+        // Continuar para o próximo link
+        continue;
+      }
     }
+    
+    // Se nenhum deep link funcionou, copiar para clipboard
+    if (!linkWorked) {
+      try {
+        await navigator.clipboard.writeText(full);
+        alert('Texto copiado! Abre o Instagram e cola o texto numa mensagem direta (DM).');
+      } catch {
+        alert('Abre o Instagram e cola esta mensagem numa DM:\n\n' + full);
+      }
+    } else {
+      // Se o deep link funcionou, copiar o texto também
+      setTimeout(async () => {
+        try {
+          await navigator.clipboard.writeText(full);
+        } catch {}
+      }, 1000);
+    }
+    
     const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
     modal.classList.add('hidden');
     modal.classList.remove('flex');
