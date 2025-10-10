@@ -14,15 +14,15 @@ transactionalApi.setApiKey(SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey, api
 function buildHtml(code, ttl) {
   return `
     <div style="font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;color:#0a2960">
-      <h2 style="margin:0 0 12px 0;color:#0a2960">Codigo de login</h2>
-      <p style="margin:0 0 8px 0">O teu codigo e:</p>
+      <h2 style="margin:0 0 12px 0;color:#0a2960">Código de login</h2>
+      <p style="margin:0 0 8px 0">O teu código é:</p>
       <div style="font-size:28px;font-weight:800;letter-spacing:6px;color:#1f4590">${code}</div>
-      <p style="margin:12px 0 0 0">Valido por ${ttl} minutos.</p>
+      <p style="margin:12px 0 0 0">Válido por ${ttl} minutos.</p>
     </div>`;
 }
 
 function buildText(code, ttl) {
-  return `Codigo de login: ${code}\nValido por ${ttl} minutos.`;
+  return `Código de login: ${code}\nVálido por ${ttl} minutos.`;
 }
 
 async function sendOtpEmail(toEmail, code, ttlMinutes) {
@@ -38,7 +38,7 @@ async function sendOtpEmail(toEmail, code, ttlMinutes) {
     sendSmtpEmail.templateId = Number(templateIdRaw);
     sendSmtpEmail.params = { code, ttl };
   } else {
-    sendSmtpEmail.subject = 'O teu codigo de login';
+    sendSmtpEmail.subject = 'O teu código de login';
     sendSmtpEmail.htmlContent = buildHtml(code, ttl);
   }
 
