@@ -51,7 +51,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
         </div>
         
         <!-- Prémios em grid 2x2 para evitar sobreposição -->
-        <div class="grid grid-cols-2 gap-1 p-2">
+        <div class="grid grid-cols-2 gap-1.5 p-3">
           <!-- 1º Prémio -->
           <div class="flex items-center justify-center gap-1 bg-gradient-to-br from-[#ffd04a]/20 to-[#ffb347]/20 border border-[#ffd04a]/30 rounded px-2 py-1">
             <span class="text-[#0a2960] font-[800] text-xs">1º</span>
@@ -78,7 +78,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
         </div>
         
         <!-- Nota sobre combustível -->
-        <div class="px-3 pb-2 pt-1">
+        <div class="px-3 pb-3 pt-2">
           <p class="text-[#0a2960]/70 text-[10px] text-center font-[500]">
             * Prémios em combustível
           </p>
