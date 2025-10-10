@@ -178,9 +178,9 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     const { full } = await generateShareText();
     try {
       await navigator.clipboard.writeText(full);
-      alert('Texto copiado! Abre o Instagram e cola o texto num Story ou post.');
+      alert('Texto copiado! Abre o Instagram e cola o texto numa mensagem direta (DM) ou Story.');
     } catch {
-      alert('Abre o Instagram e cola esta mensagem num Story ou post:\n\n' + full);
+      alert('Abre o Instagram e cola esta mensagem numa DM ou Story:\n\n' + full);
     }
     const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
     modal.classList.add('hidden');
