@@ -141,10 +141,6 @@ export function TermsAndConditions(onBack: () => void) {
         </div>
       </div>
 
-      <!-- Botão Voltar -->
-      <div class="mt-4 sm:mt-6 w-9/12 max-w-[420px] flex justify-center">
-        <button id="back" class="home-glass-btn px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-white font-semibold text-sm sm:text-base border border-white/60 bg-white/15 backdrop-blur-sm shadow-[0_6px_16px_rgba(2,20,60,0.25)] active:scale-[.98]">VOLTAR</button>
-      </div>
     </div>
 
     <!-- Nuvens base + elemento gráfico -->
@@ -158,10 +154,17 @@ export function TermsAndConditions(onBack: () => void) {
     <button id="sound" class="ab-icon-btn fixed left-5 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px)" aria-label="Som">
       <img id="sound-icon" src="/assets/graphics/icon_Volume-On.svg" alt=""/>
     </button>
+
+    <!-- Botão Home (centro inferior) -->
+    <button id="home" class="ab-icon-btn fixed left-1/2 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); transform: translateX(-50%);" aria-label="Início">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#243a79" d="M12 3.2l8 6.4v10a1 1 0 0 1-1 1h-4.5a.5.5 0 0 1-.5-.5V14H10v6.1a.5.5 0 0 1-.5.5H5a1 1 0 0 1-1-1V9.6l8-6.4zM3.6 9L2 10.3l.8 1 .8-.6V9zm18.4 1.3L20.4 9v1.7l.8.6.8-1z"/>
+      </svg>
+    </button>
   `;
 
   // Event listeners
-  el.querySelector<HTMLButtonElement>('#back')!.onclick = () => onBack();
+  el.querySelector<HTMLButtonElement>('#home')!.onclick = () => onBack();
 
   // Som on/off com persistência
   const soundBtn = el.querySelector<HTMLButtonElement>('#sound')!;
