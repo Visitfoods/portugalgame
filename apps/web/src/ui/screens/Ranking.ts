@@ -51,35 +51,35 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
         </div>
         
         <!-- Prémios em grid 2x2 para evitar sobreposição -->
-        <div class="grid grid-cols-2 gap-1.5 p-3">
+        <div class="grid grid-cols-2 gap-1 p-1.5">
           <!-- 1º Prémio -->
-          <div class="flex items-center justify-center gap-1 bg-gradient-to-br from-[#ffd04a]/20 to-[#ffb347]/20 border border-[#ffd04a]/30 rounded px-2 py-1">
-            <span class="text-[#0a2960] font-[800] text-xs">1º</span>
-            <span class="text-[#0a2960] font-[600] text-xs">500€</span>
+          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#ffd04a]/20 to-[#ffb347]/20 border border-[#ffd04a]/30 rounded px-1.5 py-0.5">
+            <span class="text-[#0a2960] font-[800] text-[10px]">1º</span>
+            <span class="text-[#0a2960] font-[600] text-[10px]">500€</span>
           </div>
           
           <!-- 2º Prémio -->
-          <div class="flex items-center justify-center gap-1 bg-gradient-to-br from-[#243b78]/20 to-[#1a2d5a]/20 border border-[#243b78]/30 rounded px-2 py-1">
-            <span class="text-[#0a2960] font-[800] text-xs">2º</span>
-            <span class="text-[#0a2960] font-[600] text-xs">250€</span>
+          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#243b78]/20 to-[#1a2d5a]/20 border border-[#243b78]/30 rounded px-1.5 py-0.5">
+            <span class="text-[#0a2960] font-[800] text-[10px]">2º</span>
+            <span class="text-[#0a2960] font-[600] text-[10px]">250€</span>
           </div>
           
           <!-- 3º Prémio -->
-          <div class="flex items-center justify-center gap-1 bg-gradient-to-br from-[#1a2d5a]/20 to-[#0f1a3a]/20 border border-[#1a2d5a]/30 rounded px-2 py-1">
-            <span class="text-[#0a2960] font-[800] text-xs">3º</span>
-            <span class="text-[#0a2960] font-[600] text-xs">150€</span>
+          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#1a2d5a]/20 to-[#0f1a3a]/20 border border-[#1a2d5a]/30 rounded px-1.5 py-0.5">
+            <span class="text-[#0a2960] font-[800] text-[10px]">3º</span>
+            <span class="text-[#0a2960] font-[600] text-[10px]">150€</span>
           </div>
           
           <!-- 4º ao 50º Prémio -->
-          <div class="flex items-center justify-center gap-1 bg-gradient-to-br from-[#2472ba]/20 to-[#1c5a9a]/20 border border-[#2472ba]/30 rounded px-2 py-1">
-            <span class="text-[#0a2960] font-[800] text-xs">4º-50º</span>
-            <span class="text-[#0a2960] font-[600] text-xs">10€</span>
+          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#2472ba]/20 to-[#1c5a9a]/20 border border-[#2472ba]/30 rounded px-1.5 py-0.5">
+            <span class="text-[#0a2960] font-[800] text-[10px]">4º-50º</span>
+            <span class="text-[#0a2960] font-[600] text-[10px]">10€</span>
           </div>
         </div>
         
         <!-- Nota sobre combustível -->
-        <div class="px-3 pb-3 pt-2">
-          <p class="text-[#0a2960]/70 text-[10px] text-center font-[500]">
+        <div class="px-2 pb-1.5 pt-1">
+          <p class="text-[#0a2960]/70 text-[9px] text-center font-[500]">
             * Prémios em combustível
           </p>
         </div>
