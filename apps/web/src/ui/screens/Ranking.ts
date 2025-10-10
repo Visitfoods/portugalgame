@@ -24,12 +24,12 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[120px] sm:w-[150px] md:w-[180px] h-auto ab-logo-white"/>
     </div>
 
-    <div class="ranking-container relative z-10 w-full flex flex-col items-center pb-[160px] min-h-screen justify-start pt-[240px] sm:pt-[280px] md:pt-[320px]">
+    <div class="ranking-container relative z-10 w-full flex flex-col items-center pb-[160px] min-h-screen justify-start pt-[200px] sm:pt-[240px] md:pt-[280px]">
       <!-- Título -->
       <div class="ranking-title mt-1 sm:mt-2 text-white text-base sm:text-lg md:text-xl font-[800] tracking-[0.06em]">CLASSIFICAÇÃO</div>
 
       <!-- Quadro -->
-      <div class="ranking-card mt-2 sm:mt-3 w-10/12 sm:w-11/12 max-w-[580px] sm:max-w-[640px] bg-white/90 text-[#0a2960] rounded-[16px] sm:rounded-[20px] shadow-[0_8px_20px_rgba(2,20,60,0.18)] overflow-hidden">
+      <div class="ranking-card mt-3 sm:mt-4 w-10/12 sm:w-11/12 max-w-[580px] sm:max-w-[640px] bg-white/90 text-[#0a2960] rounded-[16px] sm:rounded-[20px] shadow-[0_8px_20px_rgba(2,20,60,0.18)] overflow-hidden">
         <!-- Barra de pesquisa -->
         <div class="flex items-center justify-center px-3 sm:px-4 py-2 sm:py-3 border-b-2 border-[#1f4590]/30 text-[#1f4590]">
           <div class="flex items-center gap-2">
@@ -43,7 +43,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       </div>
 
       <!-- Secção de Prémios Compacta -->
-      <div class="prizes-section mt-2 sm:mt-3 w-10/12 sm:w-11/12 max-w-[580px] sm:max-w-[640px] bg-gradient-to-r from-[#ffd04a]/15 to-[#ffb347]/10 backdrop-blur-sm rounded-[12px] border border-[#ffd04a]/20 shadow-[0_4px_12px_rgba(255,208,74,0.08)] overflow-hidden">
+      <div class="prizes-section mt-3 sm:mt-4 w-10/12 sm:w-11/12 max-w-[580px] sm:max-w-[640px] bg-gradient-to-r from-[#ffd04a]/15 to-[#ffb347]/10 backdrop-blur-sm rounded-[12px] border border-[#ffd04a]/20 shadow-[0_4px_12px_rgba(255,208,74,0.08)] overflow-hidden">
         <!-- Header compacto -->
         <div class="flex items-center justify-center px-2 py-1.5 border-b border-[#ffd04a]/20">
           <img src="/assets/graphics/trophy.svg" alt="Troféu" class="w-4 h-4"/>
@@ -86,9 +86,9 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       </div>
 
       <!-- Ações -->
-      <div class="actions-section mt-2 sm:mt-3 w-9/12 max-w-[420px] flex flex-col items-center gap-2 sm:gap-3">
+      <div class="actions-section mt-4 sm:mt-5 w-9/12 max-w-[420px] flex flex-col items-center gap-3 sm:gap-4">
         <button id="view-all" class="home-glass-btn px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-white font-semibold text-sm sm:text-base border border-white/60 bg-white/15 backdrop-blur-sm shadow-[0_6px_16px_rgba(2,20,60,0.25)] active:scale-[.98]">VER TODOS</button>
-        <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play w-7/12 max-w-[300px] h-auto cursor-pointer active:scale-[.98] transition"/>
+        <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play w-6/12 max-w-[200px] h-auto cursor-pointer active:scale-[.98] transition"/>
       </div>
     </div>
 
