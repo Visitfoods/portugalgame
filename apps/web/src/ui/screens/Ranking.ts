@@ -24,7 +24,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[120px] sm:w-[150px] md:w-[180px] h-auto ab-logo-white"/>
     </div>
 
-    <div class="ranking-container relative z-10 w-full flex flex-col items-center pb-[160px] min-h-screen justify-start pt-[180px] sm:pt-[220px] md:pt-[260px]">
+    <div class="ranking-container relative z-10 w-full flex flex-col items-center pb-[160px] min-h-screen justify-start pt-[240px] sm:pt-[280px] md:pt-[320px]">
       <!-- Título -->
       <div class="ranking-title mt-1 sm:mt-2 text-white text-base sm:text-lg md:text-xl font-[800] tracking-[0.06em]">CLASSIFICAÇÃO</div>
 
