@@ -57,6 +57,40 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
         <button id="again" class="px-8 py-3 rounded-full bg-white/15 text-white/90 font-semibold border border-white/60 w-full active:scale-[.98]">JOGAR NOVAMENTE</button>
       </div>
 
+      <!-- Modal de opções de partilha -->
+      <div id="share-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div class="w-10/12 max-w-[420px] bg-white/95 text-[#0a2960] rounded-2xl p-5 shadow-xl">
+          <div class="font-[800] text-lg mb-4 text-center">Partilhar Pontuação</div>
+          <div class="grid grid-cols-2 gap-3">
+            <button id="share-whatsapp" class="flex flex-col items-center gap-2 p-3 rounded-xl bg-green-50 border border-green-200 active:scale-[.98]">
+              <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <span class="text-white font-bold text-sm">W</span>
+              </div>
+              <span class="text-xs font-semibold">WhatsApp</span>
+            </button>
+            <button id="share-instagram" class="flex flex-col items-center gap-2 p-3 rounded-xl bg-pink-50 border border-pink-200 active:scale-[.98]">
+              <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                <span class="text-white font-bold text-sm">IG</span>
+              </div>
+              <span class="text-xs font-semibold">Instagram</span>
+            </button>
+            <button id="share-facebook" class="flex flex-col items-center gap-2 p-3 rounded-xl bg-blue-50 border border-blue-200 active:scale-[.98]">
+              <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                <span class="text-white font-bold text-sm">f</span>
+              </div>
+              <span class="text-xs font-semibold">Facebook</span>
+            </button>
+            <button id="share-copy" class="flex flex-col items-center gap-2 p-3 rounded-xl bg-gray-50 border border-gray-200 active:scale-[.98]">
+              <div class="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
+                <span class="text-white font-bold text-sm">📋</span>
+              </div>
+              <span class="text-xs font-semibold">Copiar</span>
+            </button>
+          </div>
+          <button id="close-share-modal" class="mt-4 w-full px-4 py-2 rounded-full bg-gray-200 text-[#0a2960] font-semibold">Cancelar</button>
+        </div>
+      </div>
+
       <!-- Modal confirmar jogar novamente -->
       <div id="confirm-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/50 backdrop-blur-sm">
         <div class="w-10/12 max-w-[420px] bg-white/95 text-[#0a2960] rounded-2xl p-5 shadow-xl">
@@ -94,9 +128,9 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   againBtn.onclick = () => { modal.classList.remove('hidden'); modal.classList.add('flex'); };
   cancelModal.onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
   confirmAgain.onclick = () => onRetry();
-  el.querySelector<HTMLButtonElement>('#share')!.onclick = async () => {
+  // Função para gerar texto de partilha
+  const generateShareText = async () => {
     const title = '🏆 Alves Bandeira — 50 Anos, 50 Prémios! 🥳🎉';
-    // Usar sempre a URL de produção para partilha
     const shareUrl = 'https://saboresdeportugal.vercel.app/?utm_source=share&utm_medium=game&utm_campaign=abgame';
     let handle = '';
     try {
@@ -108,34 +142,73 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     const line1 = `🏁 Fiz ${pts} no jogo da Alves Bandeira — Sabores de Portugal${handle}!`;
     const line2 = `🔥 Consegues fazer mais?`;
     const line3 = `🎯 Joga aqui: ${shareUrl}`;
-    const full = `${title}\n\n${line1}\n${line2}\n${line3}`;
+    return {
+      title,
+      full: `${title}\n\n${line1}\n${line2}\n${line3}`,
+      url: shareUrl
+    };
+  };
+
+  // Abrir modal de partilha
+  el.querySelector<HTMLButtonElement>('#share')!.onclick = () => {
+    const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  };
+
+  // Fechar modal de partilha
+  el.querySelector<HTMLButtonElement>('#close-share-modal')!.onclick = () => {
+    const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  };
+
+  // Partilhar no WhatsApp
+  el.querySelector<HTMLButtonElement>('#share-whatsapp')!.onclick = async () => {
+    const { full } = await generateShareText();
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(full)}`;
+    window.open(whatsappUrl, '_blank');
+    const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  };
+
+  // Partilhar no Instagram
+  el.querySelector<HTMLButtonElement>('#share-instagram')!.onclick = async () => {
+    const { full } = await generateShareText();
     try {
-      // Tentar usar a API nativa de partilha do browser
-      const ns: any = navigator as any;
-      if (ns.share && ns.canShare && ns.canShare({ text: full })) {
-        await ns.share({ 
-          title: title,
-          text: full
-        });
-        return;
-      }
-      
-      // Fallback: copiar para clipboard
       await navigator.clipboard.writeText(full);
-      alert('Mensagem de partilha copiada para a área de transferência! Cola no teu app favorito (WhatsApp, Telegram, Email, etc.)');
-    } catch (error) {
-      // Se o utilizador cancelar a partilha, não mostrar erro
-      if (error instanceof Error && error.name === 'AbortError') {
-        return;
-      }
-      // Fallback: copiar para clipboard
-      try {
-        await navigator.clipboard.writeText(full);
-        alert('Mensagem de partilha copiada para a área de transferência! Cola no teu app favorito.');
-      } catch {
-        alert('Não foi possível partilhar. Tenta novamente.');
-      }
+      alert('Texto copiado! Abre o Instagram e cola o texto num Story ou post.');
+    } catch {
+      alert('Abre o Instagram e cola esta mensagem num Story ou post:\n\n' + full);
     }
+    const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  };
+
+  // Partilhar no Facebook
+  el.querySelector<HTMLButtonElement>('#share-facebook')!.onclick = async () => {
+    const { url, title } = await generateShareText();
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(title)}`;
+    window.open(facebookUrl, '_blank');
+    const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  };
+
+  // Copiar texto
+  el.querySelector<HTMLButtonElement>('#share-copy')!.onclick = async () => {
+    const { full } = await generateShareText();
+    try {
+      await navigator.clipboard.writeText(full);
+      alert('Mensagem de partilha copiada para a área de transferência! Cola no teu app favorito.');
+    } catch {
+      alert('Não foi possível copiar. Tenta novamente.');
+    }
+    const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
   };
 
   // Count-up animation
