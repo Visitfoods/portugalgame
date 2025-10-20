@@ -9,9 +9,13 @@ export type Diff = {
 };
 
 export const DIFF_STAGES: { t: number; v: Diff }[] = [
-  { t: 0,  v: { spawnMs: [1200, 900], vy: [220, 280], fakeRatio: 0.40, scale: 1.0, maxSimul: 3, drift: 0,  sideSpawns: false } },
-  { t: 20, v: { spawnMs: [1000, 750], vy: [260, 340], fakeRatio: 0.55, scale: 0.9, maxSimul: 4, drift: 10, sideSpawns: false } },
-  { t: 40, v: { spawnMs: [800, 600], vy: [320, 420], fakeRatio: 0.70, scale: 0.8, maxSimul: 5, drift: 20, sideSpawns: true } },
+  // INÍCIO: Rápido e intenso
+  { t: 0,  v: { spawnMs: [400, 250], vy: [350, 450], fakeRatio: 0.35, scale: 1.2, maxSimul: 5, drift: 0,  sideSpawns: false } },
+  { t: 8,  v: { spawnMs: [350, 200], vy: [400, 500], fakeRatio: 0.45, scale: 1.1, maxSimul: 6, drift: 5, sideSpawns: false } },
+  { t: 20, v: { spawnMs: [300, 180], vy: [450, 550], fakeRatio: 0.55, scale: 1.0, maxSimul: 7, drift: 15, sideSpawns: false } },
+  { t: 35, v: { spawnMs: [250, 150], vy: [500, 600], fakeRatio: 0.65, scale: 0.9, maxSimul: 8, drift: 25, sideSpawns: false } },
+  // FINAL: Intenso mas controlado
+  { t: 50, v: { spawnMs: [280, 180], vy: [520, 580], fakeRatio: 0.70, scale: 0.85, maxSimul: 8, drift: 30, sideSpawns: false } },
 ];
 
 const clamp = (x: number, a: number, b: number) => Math.max(a, Math.min(b, x));

@@ -384,8 +384,6 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 /* HowTo responsive spacing */
 .howto-content {
   gap: clamp(16px, 2.3vh, 26px);
-  /* Reservar mais espaço na base para nunca colidir com botões fixos */
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(200px, 28vh, 320px));
 }
 
 /* Ranking page - optimize for small screens */
@@ -493,13 +491,11 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 /* Extra small screens - reduce padding significantly */
 @media (max-height: 680px) and (max-width: 400px) {
   .howto-content {
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 140px) !important;
   }
 }
 
 @media (max-height: 500px) {
   .howto-content {
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 160px) !important;
   }
 }
 
@@ -525,7 +521,6 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 @media (max-height: 720px) {
   .howto-content {
     gap: clamp(12px, 2vh, 20px);
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(190px, 26vh, 260px));
   }
   .howto-play {
     margin-top: clamp(28px, 3.5vh, 40px);
@@ -536,7 +531,6 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 @media (max-height: 640px) {
   .howto-content {
     gap: clamp(10px, 1.6vh, 18px);
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(170px, 24vh, 220px));
   }
   .howto-play {
     margin-top: clamp(24px, 3vh, 32px);
@@ -547,7 +541,6 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 @media (max-height: 560px) {
   .howto-content {
     gap: clamp(8px, 1.4vh, 16px);
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(160px, 26vh, 220px));
   }
   .howto-play {
     margin-top: clamp(20px, 2.5vh, 28px);
@@ -559,7 +552,6 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 /* Reforço para alturas < 540px */
 @media (max-height: 540px) {
   .howto-content {
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 230px);
   }
   .howto-play {
     margin-top: clamp(18px, 2.2vh, 24px);
@@ -571,7 +563,6 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 /* Reforço para alturas < 520px */
 @media (max-height: 520px) {
   .howto-content {
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 250px);
   }
   .howto-play {
     margin-top: clamp(16px, 2vh, 22px);

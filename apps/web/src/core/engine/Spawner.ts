@@ -8,10 +8,10 @@ export class Spawner {
   private w: number;
   private h: number;
   private acc = 0;
-  private nextIn = 0.8; // seconds
+  private nextIn = 0.2; // seconds - começar ainda mais cedo
   private sprites: ItemSprites;
   private lastSpawn = 0; // ms timeline
-  private nextSpawn = 800; // ms
+  private nextSpawn = 150; // ms - primeiro spawn muito rápido
 
   constructor(w: number, h: number, sprites: ItemSprites) {
     this.w = w; this.h = h; this.sprites = sprites;
@@ -21,7 +21,7 @@ export class Spawner {
   resize(w: number, h: number) { this.w = w; this.h = h; }
 
   private scheduleNext() {
-    this.nextIn = rng(0.6, 1.1);
+    this.nextIn = rng(0.1, 0.5); // intervalos muito curtos para intensidade
     this.acc = 0;
   }
 
@@ -33,9 +33,22 @@ export class Spawner {
     // schedule next spawn
     this.nextSpawn = rng(diff.spawnMs[0], diff.spawnMs[1]);
 
-    // choose kind
+    // choose kind - equilibrar melhor entre bons e maus
     const hasBad = this.sprites.bad.length > 0;
-    const kind: ItemKind = (Math.random() < diff.fakeRatio && hasBad) ? 'bad' : 'good';
+    const hasGood = this.sprites.good.length > 0;
+    
+    let kind: ItemKind = 'good'; // default para bons
+    if (hasBad && hasGood) {
+      // Usar fakeRatio mas com lógica mais equilibrada
+      const random = Math.random();
+      if (random < diff.fakeRatio) {
+        kind = 'bad';
+      } else {
+        kind = 'good';
+      }
+    } else if (hasBad && !hasGood) {
+      kind = 'bad';
+    }
 
     // side/top spawn
     const sideSpawn = diff.sideSpawns && Math.random() < 0.25;

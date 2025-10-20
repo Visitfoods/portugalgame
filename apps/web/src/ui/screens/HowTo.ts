@@ -2,7 +2,7 @@ import { BackgroundMusic } from '../../core/engine/Audio';
 
 export function HowTo(onPlay: () => void, onBack: () => void) {
   const el = document.createElement('div');
-  el.className = 'home-screen fixed inset-0 flex flex-col items-center justify-start p-0 overflow-hidden';
+  el.className = 'home-screen fixed inset-0 flex flex-col items-center justify-center p-0 overflow-hidden';
   el.innerHTML = `
     <!-- Fundo -->
     <img src="/assets/graphics/Background.svg" alt="" class="absolute inset-0 -z-20 w-full h-full object-cover min-h-screen"/>
@@ -14,13 +14,9 @@ export function HowTo(onPlay: () => void, onBack: () => void) {
     <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-10 right-0 w-[30%] max-w-[230px] -z-10 opacity-60 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 40s; --ab-delay: -20s;"/>
 
     <div class="relative z-10 w-full max-w-[400px] mx-auto flex flex-col items-center howto-content howto-shell">
-      <!-- Logo -->
-      <div class="relative mt-4 w-full h-[50px] flex items-start justify-center overflow-visible">
-        <img id="ab-logo" src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[120px] md:w-[140px] h-auto ab-logo-white"/>
-      </div>
 
       <!-- TÃ­tulo -->
-      <h1 class="howto-title w-10/12 max-w-[350px] mx-auto text-center text-white font-[800] uppercase tracking-[0.09em] leading-tight mt-2 text-[clamp(18px,6vw,32px)]">COMO JOGAR</h1>
+      <h1 class="howto-title w-10/12 max-w-[350px] mx-auto text-center text-white font-[800] uppercase tracking-[0.09em] leading-tight text-[clamp(18px,6vw,32px)]">COMO JOGAR</h1>
 
       <!-- Regras (SVGs) -->
       <div class="w-10/12 max-w-[350px] mx-auto mt-2 flex flex-col items-stretch gap-2 md:gap-3 howto-rules">
@@ -48,8 +44,8 @@ export function HowTo(onPlay: () => void, onBack: () => void) {
       <img id="sound-icon" src="/assets/graphics/icon_Volume-On.svg" alt=""/>
     </button>
 
-    <!-- BotÃ£o Home (centro inferior) -->
-    <button id="home" class="ab-icon-btn fixed left-1/2 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); transform: translateX(-50%);" aria-label="InÃ­cio">
+    <!-- BotÃ£o Home (canto inferior direito) -->
+    <button id="home" class="ab-icon-btn fixed right-5 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);" aria-label="InÃ­cio">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path fill="#243a79" d="M12 3.2l8 6.4v10a1 1 0 0 1-1 1h-4.5a.5.5 0 0 1-.5-.5V14H10v6.1a.5.5 0 0 1-.5.5H5a1 1 0 0 1-1-1V9.6l8-6.4zM3.6 9L2 10.3l.8 1 .8-.6V9zm18.4 1.3L20.4 9v1.7l.8.6.8-1z"/>
       </svg>

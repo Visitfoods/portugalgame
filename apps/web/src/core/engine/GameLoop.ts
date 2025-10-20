@@ -23,7 +23,7 @@ export class GameLoop {
   private items: SpawnedItem[] = [];
   private spawner: Spawner;
   private score = new Score();
-  private timer = new Timer60s(60);
+  private timer = new Timer60s(61); // 61 segundos para garantir que 00:00 seja visível
   private hud: GameHUD;
   private sfx = new Sfx();
 
@@ -102,8 +102,11 @@ export class GameLoop {
     if (this.state === 'running') {
       this.update(dt);
       this.render();
-      this.hud.onTimeUpdate(this.timer.timeLeft(now));
-      if (this.timer.done(now)) {
+      const timeLeft = this.timer.timeLeft(now);
+      this.hud.onTimeUpdate(timeLeft);
+      
+      // Terminar o jogo quando o tempo chegar a 0 (agora com 61s, termina no 00:00)
+      if (timeLeft <= 0) {
         this.stop();
       }
     }
