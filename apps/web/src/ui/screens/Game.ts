@@ -138,7 +138,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       tracker.init().catch(()=>{})
     ]);
 
-    loading.show('A iniciar câmara...');
+    loading.show('A CARREGAR SABORES DE PORTUGAL');
     await feed.startFrontCamera();
     try { await tracker.start(video); } catch {}
     loading.hide();
