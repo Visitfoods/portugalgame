@@ -206,16 +206,16 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   function showGuide({ platform, message }: { platform: string; message: string }) {
     const stepsIOS = [
       'Texto copiado ✅',
-      'Abrir o Instagram',
-      'Ir a Mensagens (DM)',
+      'Instagram deve abrir nas Mensagens',
+      'Se não, vai a Mensagens (DM)',
       'Escolher contacto',
       'Colar e enviar'
     ];
     const stepsAND = [
-      'Se a DM não abrir, tudo ok',
+      'Tentando abrir direto nas DMs...',
       'Texto copiado ✅',
-      'Abre o Instagram',
-      'Ir a Mensagens (DM)',
+      'Se não abriu nas DMs, vai a Mensagens',
+      'Escolher contacto',
       'Colar e enviar'
     ];
     const steps = platform === 'ios' ? stepsIOS : stepsAND;
@@ -261,30 +261,83 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
 
     // 2) Fluxo específico por plataforma
     if (isAndroid) {
-      // Tenta abrir a área de DMs (parcialmente suportado em alguns Android)
-      tryOpen(
-        'instagram://direct',
-        async () => {
-          // Fallback: copiar + abrir app/site + guia
+      // Android: Tenta múltiplas estratégias para ir direto às DMs
+      const dmLinks = [
+        'instagram://direct',           // Melhor opção (funciona em alguns Android)
+        'instagram://messages',         // Alternativa
+        'instagram://app'               // Fallback para homepage
+      ];
+      
+      let linkIndex = 0;
+      const tryNextLink = async () => {
+        if (linkIndex >= dmLinks.length) {
+          // Todos os deep links falharam, usar fallback
           await copyToClipboard(full);
-          // abrir app genérica ou web
           window.location.href = 'instagram://app';
-          // como extra fallback, abre web numa nova aba
           setTimeout(() => window.open('https://instagram.com/', '_blank'), 300);
           showGuide({ platform: 'android', message: full });
+          return;
         }
-      );
+        
+        const currentLink = dmLinks[linkIndex];
+        linkIndex++;
+        
+        tryOpen(
+          currentLink,
+          () => tryNextLink(), // Se falhar, tenta o próximo
+          800 // Timeout mais curto para tentar múltiplos links
+        );
+      };
+      
+      tryNextLink();
+      
     } else if (isIOS) {
-      // iOS: sem DM direta → copiar + abrir app + guia
-      await copyToClipboard(full);
-      window.location.href = 'instagram://app';
-      setTimeout(() => window.open('https://instagram.com/', '_blank'), 300);
-      showGuide({ platform: 'ios', message: full });
+      // iOS: Tenta ir direto às DMs (pode não funcionar, mas tentamos)
+      const iosDmLinks = [
+        'instagram://direct',           // Pode funcionar em iOS mais recentes
+        'instagram://app'               // Fallback para homepage
+      ];
+      
+      let linkIndex = 0;
+      const tryNextLink = async () => {
+        if (linkIndex >= iosDmLinks.length) {
+          // Fallback final
+          await copyToClipboard(full);
+          window.location.href = 'instagram://app';
+          setTimeout(() => window.open('https://instagram.com/', '_blank'), 300);
+          showGuide({ platform: 'ios', message: full });
+          return;
+        }
+        
+        const currentLink = iosDmLinks[linkIndex];
+        linkIndex++;
+        
+        tryOpen(
+          currentLink,
+          () => tryNextLink(),
+          800
+        );
+      };
+      
+      tryNextLink();
+      
     } else {
-      // Desktop/Outros: copiar + abrir web
+      // Desktop/Outros: Tentar ir direto às DMs via web
       await copyToClipboard(full);
-      window.open('https://instagram.com/', '_blank');
-      alert('Texto copiado! Abre o Instagram, cola numa DM e envia.');
+      
+      // Tenta abrir direto nas mensagens via web
+      const webDmUrl = 'https://www.instagram.com/direct/inbox/';
+      try {
+        window.open(webDmUrl, '_blank');
+        // Se falhar, abre homepage normal
+        setTimeout(() => {
+          window.open('https://instagram.com/', '_blank');
+        }, 1000);
+      } catch {
+        window.open('https://instagram.com/', '_blank');
+      }
+      
+      alert('Texto copiado! Abre o Instagram, vai a Mensagens (DM), cola e envia.');
     }
   }
 
