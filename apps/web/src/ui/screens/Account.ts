@@ -174,6 +174,19 @@ export function Account(onBack: () => void) {
   }
 
   render();
+  
+  // Escutar mudanças no userStore para atualizar automaticamente
+  const unsubscribe = userStore.subscribe(() => {
+    render();
+  });
+  
+  // Cleanup quando o elemento for removido
+  const originalRemove = el.remove;
+  el.remove = function() {
+    unsubscribe();
+    originalRemove.call(this);
+  };
+  
   return el;
 }
 
