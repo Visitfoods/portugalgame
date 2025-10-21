@@ -15,9 +15,9 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
         <input id="email" type="email" autocomplete="email" placeholder="EMAIL" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#0a2960]/30"/>
         <input id="code" type="tel" inputmode="numeric" maxlength="6" placeholder="CÓDIGO (6 DÍGITOS)" class="hidden w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#0a2960]/30"/>
         <div class="flex gap-3">
-          <button id="cancel" class="home-glass-btn flex-1 px-4 py-2 rounded-full text-[#0a2960] border border-[#0a2960]/30 bg-white/70">CANCELAR</button>
+          <button id="cancel" class="home-glass-btn flex-1 px-4 py-2 rounded-full text-[#0a2960] border border-[#0a2960]/30 bg-white/70 text-xs">CANCELAR</button>
           <button id="send" class="flex-1 px-3 py-2 rounded-full bg-[#1f4590] text-white font-semibold text-sm">ENVIAR</button>
-          <button id="verify" class="hidden flex-1 px-3 py-2 rounded-full bg-[#1f4590] text-white font-semibold text-sm">CONFIRMAR CÓDIGO</button>
+          <button id="verify" class="hidden flex-1 px-3 py-2 rounded-full bg-[#1f4590] text-white font-semibold text-xs">CONFIRMAR CÓDIGO</button>
         </div>
         <div id="hint" class="text-[11px] leading-4 opacity-70">O CÓDIGO EXPIRA EM ALGUNS MINUTOS.</div>
         <div class="flex items-center gap-3">
