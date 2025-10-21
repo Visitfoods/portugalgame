@@ -100,10 +100,26 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
     const remain = Math.max(0, Math.ceil((nextResendAt - now) / 1000));
     if (remain > 0) {
       btnSend.disabled = true;
-      btnSend.textContent = `ENVIAR NOVAMENTE (${remain}S)`;
+      btnSend.textContent = `REENVIAR (${remain}S)`;
     } else {
       btnSend.disabled = false;
-      btnSend.textContent = 'ENVIAR NOVAMENTE';
+      btnSend.textContent = 'REENVIAR';
+    }
+  };
+
+  const updateResendLink = () => {
+    const resendLink = wrap.querySelector<HTMLSpanElement>('#resend-link');
+    if (!resendLink) return;
+    const now = Date.now();
+    const remain = Math.max(0, Math.ceil((nextResendAt - now) / 1000));
+    if (remain > 0) {
+      resendLink.textContent = `NÃO RECEBESTE O CÓDIGO? ENVIAR NOVAMENTE (${remain}S)`;
+      resendLink.style.pointerEvents = 'none';
+      resendLink.style.opacity = '0.5';
+    } else {
+      resendLink.textContent = 'NÃO RECEBESTE O CÓDIGO? ENVIAR NOVAMENTE';
+      resendLink.style.pointerEvents = 'auto';
+      resendLink.style.opacity = '1';
     }
   };
 
@@ -164,11 +180,14 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
     try {
       handlePendingScore();
       await AuthService.sendMagicLink(email);
-      msg.textContent = 'CÓDIGO ENVIADO. VERIFICA O TEU E-MAIL E INTRODUZ O CÓDIGO.';
+      msg.innerHTML = 'CÓDIGO ENVIADO. VERIFICA O TEU E-MAIL E INTRODUZ O CÓDIGO. <span id="resend-link" class="underline cursor-pointer text-[#1f4590]">NÃO RECEBESTE O CÓDIGO? ENVIAR NOVAMENTE</span>';
       step = 'code';
       nextResendAt = Date.now() + RESEND_COOLDOWN_SECONDS * 1000;
       clearResendTimer();
-      resendTimer = window.setInterval(updateResendButton, 500) as unknown as number;
+      resendTimer = window.setInterval(() => {
+        updateResendButton();
+        updateResendLink();
+      }, 500) as unknown as number;
       updateStepUI();
     } catch (e: any) {
       const code = (e?.code || e?.message || String(e)) as string;
@@ -218,6 +237,38 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
   btnVerify.onclick = () => { void verify(); };
   codeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); void verify(); } });
 
+  // Event listener para o link de reenvio
+  const handleResendLinkClick = () => {
+    const resendLink = wrap.querySelector<HTMLSpanElement>('#resend-link');
+    if (resendLink) {
+      resendLink.onclick = async () => {
+        const email = input.value.trim();
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { 
+          msg.textContent = 'INTRODUZ UM EMAIL VÁLIDO.'; 
+          return; 
+        }
+        setBusy(true); 
+        msg.textContent = 'A ENVIAR...';
+        try {
+          await AuthService.sendMagicLink(email);
+          msg.innerHTML = 'CÓDIGO ENVIADO. VERIFICA O TEU E-MAIL E INTRODUZ O CÓDIGO. <span id="resend-link" class="underline cursor-pointer text-[#1f4590]">NÃO RECEBESTE O CÓDIGO? ENVIAR NOVAMENTE</span>';
+          nextResendAt = Date.now() + RESEND_COOLDOWN_SECONDS * 1000;
+          clearResendTimer();
+          resendTimer = window.setInterval(() => {
+        updateResendButton();
+        updateResendLink();
+      }, 500) as unknown as number;
+          updateResendLink();
+        } catch (e: any) {
+          const code = (e?.code || e?.message || String(e)) as string;
+          msg.textContent = `FALHA AO ENVIAR CÓDIGO. ${mapError(code)}`;
+        } finally { 
+          setBusy(false); 
+        }
+      };
+    }
+  };
+
   const tearDown: Cleanup = () => {
     wrap.remove();
   };
@@ -232,5 +283,11 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
 
   showForm();
   updateStepUI();
+  
+  // Configurar o link de reenvio
+  setTimeout(() => {
+    handleResendLinkClick();
+  }, 100);
+  
   return wrap;
 }
