@@ -137,7 +137,9 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
 
     <!-- Botão de voltar à home (canto inferior direito) -->
     <button id="home" class="ab-icon-btn fixed right-5 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px)" aria-label="Voltar à Home">
-      <img src="/assets/graphics/profile-icon.svg" alt="Home"/>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#243a79" d="M12 3.2l8 6.4v10a1 1 0 0 1-1 1h-4.5a.5.5 0 0 1-.5-.5V14H10v6.1a.5.5 0 0 1-.5.5H5a1 1 0 0 1-1-1V9.6l8-6.4zM3.6 9L2 10.3l.8 1 .8-.6V9zm18.4 1.3L20.4 9v1.7l.8.6.8-1z"/>
+      </svg>
     </button>
   `;
 
