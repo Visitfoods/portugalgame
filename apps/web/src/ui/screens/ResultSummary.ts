@@ -101,8 +101,8 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
       <div id="confirm-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/50 backdrop-blur-sm">
         <div class="w-10/12 max-w-[420px] bg-white/95 text-[#0a2960] rounded-2xl p-5 shadow-xl">
           <div class="font-[800] text-sm md:text-base mb-1 whitespace-nowrap">JOGAR NOVAMENTE?</div>
-          <div class="text-sm opacity-80">SE VOLTARES A JOGAR SEM SUBMETER, ESTA PONTUAÇÃO NÃO SERÁ GUARDADA.</div>
-          <div class="mt-4 flex gap-3">
+          <div class="text-xs opacity-80">SE VOLTARES A JOGAR SEM SUBMETER, ESTA PONTUAÇÃO NÃO SERÁ GUARDADA.</div>
+          <div class="mt-6 flex gap-3">
             <button id="cancel-modal" class="home-glass-btn flex-1 px-4 py-2 rounded-full text-[#0a2960] border border-[#0a2960]/30 bg-white/70 text-xs whitespace-nowrap">CANCELAR</button>
             <button id="confirm-again" class="flex-1 px-4 py-2 rounded-full bg-[#1f4590] text-white font-semibold text-xs whitespace-nowrap">JOGAR SEM SUBMETER</button>
           </div>
