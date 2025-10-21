@@ -17,15 +17,6 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
 
     <!-- Conteúdo principal -->
     <div class="relative z-10 w-full flex flex-col items-center">
-      <!-- Logo com parallax de nuvens (algumas atrás e outras à frente) -->
-      <div class="relative mt-6 w-full h-[70px] flex items-start justify-center overflow-visible">
-        <!-- Nuvem atrás do logotipo -->
-        <img src="/assets/graphics/Nuvem-01.svg" alt="" class="absolute top-2 left-0 w-[16%] max-w-[120px] opacity-70 z-[5] ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 56s; --ab-delay: 0s;"/>
-        <!-- Logotipo -->
-        <img id="ab-logo" src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="relative z-[10] w-[150px] md:w-[180px] h-auto ab-logo-white"/>
-        <!-- Nuvem à frente do logotipo -->
-        <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-4 right-0 w-[14%] max-w-[110px] opacity-80 z-[20] ab-cloud-marquee-right" style="--ab-cloud-scroll-dur: 50s; --ab-delay: -28s;"/>
-      </div>
 
       <!-- Container único para ambas as animações (mesmo espaço) -->
       <div class="home-title-slot relative mt-4 w-8/12 max-w-[480px] h-[180px] md:h-[220px] overflow-visible">
@@ -84,6 +75,11 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
     <button id="sound" class="ab-icon-btn fixed left-5 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px)" aria-label="Som">
       <img id="sound-icon" src="/assets/graphics/icon_Volume-On.svg" alt=""/>
     </button>
+
+    <!-- Logotipo Alves Bandeira (canto inferior direito) -->
+    <div class="fixed right-5 z-[40] pointer-events-none" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px)">
+      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[80px] md:w-[100px] h-auto ab-logo-white opacity-90"/>
+    </div>
 
   `;
 

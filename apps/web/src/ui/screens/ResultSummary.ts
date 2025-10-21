@@ -179,48 +179,118 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     modal.classList.remove('flex');
   };
 
+  // --- deteção de plataforma ---
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  // --- copy robusto (com fallback) ---
+  async function copyToClipboard(text: string): Promise<boolean> {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus(); 
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return ok;
+    }
+  }
+
+  // --- guia rápido em popup/modal (ajusta ao teu UI) ---
+  function showGuide({ platform, message }: { platform: string; message: string }) {
+    const stepsIOS = [
+      'Texto copiado ✅',
+      'Abrir o Instagram',
+      'Ir a Mensagens (DM)',
+      'Escolher contacto',
+      'Colar e enviar'
+    ];
+    const stepsAND = [
+      'Se a DM não abrir, tudo ok',
+      'Texto copiado ✅',
+      'Abre o Instagram',
+      'Ir a Mensagens (DM)',
+      'Colar e enviar'
+    ];
+    const steps = platform === 'ios' ? stepsIOS : stepsAND;
+
+    alert(`Partilhar no Instagram\n\n${steps.map(s => '• ' + s).join('\n')}`);
+  }
+
+  // --- tentativa de abrir deep link, com fallback por tempo ---
+  function tryOpen(uri: string, fallback: () => void, timeout = 1200) {
+    let done = false;
+    const t = setTimeout(() => {
+      if (done) return;
+      done = true;
+      if (typeof fallback === 'function') fallback();
+    }, timeout);
+
+    // Tenta abrir a app
+    window.location.href = uri;
+
+    // nota: não há forma 100% fiável de saber se abriu.
+    // usamos apenas o timeout para acionar fallback.
+    setTimeout(() => { if (!done) { done = true; clearTimeout(t); } }, timeout + 50);
+  }
+
+  // --- Web Share API primeiro (melhor UX iOS/Android) ---
+  async function shareViaSystem(full: string, url: string): Promise<boolean> {
+    if (!navigator.share) return false;
+    try {
+      await navigator.share({ title: 'Sabores de Portugal', text: full, url });
+      return true; // utilizador escolhe app (às vezes inclui IG)
+    } catch {
+      return false; // cancelou ou não disponível
+    }
+  }
+
+  // --- handler principal para Instagram ---
+  async function shareToInstagram() {
+    const { full, url } = await generateShareText();
+
+    // 1) Tenta o menu nativo (melhor experiência)
+    const usedSystem = await shareViaSystem(full, url);
+    if (usedSystem) return; // já partilhou via folha do sistema
+
+    // 2) Fluxo específico por plataforma
+    if (isAndroid) {
+      // Tenta abrir a área de DMs (parcialmente suportado em alguns Android)
+      tryOpen(
+        'instagram://direct',
+        async () => {
+          // Fallback: copiar + abrir app/site + guia
+          await copyToClipboard(full);
+          // abrir app genérica ou web
+          window.location.href = 'instagram://app';
+          // como extra fallback, abre web numa nova aba
+          setTimeout(() => window.open('https://instagram.com/', '_blank'), 300);
+          showGuide({ platform: 'android', message: full });
+        }
+      );
+    } else if (isIOS) {
+      // iOS: sem DM direta → copiar + abrir app + guia
+      await copyToClipboard(full);
+      window.location.href = 'instagram://app';
+      setTimeout(() => window.open('https://instagram.com/', '_blank'), 300);
+      showGuide({ platform: 'ios', message: full });
+    } else {
+      // Desktop/Outros: copiar + abrir web
+      await copyToClipboard(full);
+      window.open('https://instagram.com/', '_blank');
+      alert('Texto copiado! Abre o Instagram, cola numa DM e envia.');
+    }
+  }
+
   // Partilhar no Instagram
   el.querySelector<HTMLButtonElement>('#share-instagram')!.onclick = async () => {
-    const { full } = await generateShareText();
-    
-    // Tentar diferentes deep links do Instagram
-    const instagramLinks = [
-      'instagram://direct',
-      'instagram://send',
-      'instagram://dm',
-      'instagram://camera'
-    ];
-    
-    let linkWorked = false;
-    
-    for (const link of instagramLinks) {
-      try {
-        // Tentar abrir o deep link
-        window.location.href = link;
-        linkWorked = true;
-        break;
-      } catch (e) {
-        // Continuar para o próximo link
-        continue;
-      }
-    }
-    
-    // Se nenhum deep link funcionou, copiar para clipboard
-    if (!linkWorked) {
-      try {
-        await navigator.clipboard.writeText(full);
-        alert('Texto copiado! Abre o Instagram e cola o texto numa mensagem direta (DM).');
-      } catch {
-        alert('Abre o Instagram e cola esta mensagem numa DM:\n\n' + full);
-      }
-    } else {
-      // Se o deep link funcionou, copiar o texto também
-      setTimeout(async () => {
-        try {
-          await navigator.clipboard.writeText(full);
-        } catch {}
-      }, 1000);
-    }
+    await shareToInstagram();
     
     const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
     modal.classList.add('hidden');

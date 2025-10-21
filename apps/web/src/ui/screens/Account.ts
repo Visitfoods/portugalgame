@@ -20,14 +20,15 @@ export function Account(onBack: () => void) {
     <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-20 right-0 w-[36%] max-w-[280px] -z-10 opacity-85 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 52s; --ab-delay: -26s;"/>
     <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-10 right-0 w-[30%] max-w-[230px] -z-10 opacity-60 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 40s; --ab-delay: -20s;"/>
 
-    <!-- Logo independente -->
-    <div class="absolute top-4 left-1/2 -translate-x-1/2 z-[10] w-full flex justify-center">
-      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[150px] md:w-[180px] h-auto ab-logo-white"/>
-    </div>
 
     <div class="relative z-10 w-full min-h-screen flex items-center justify-center pt-28 pb-24">
       <div class="flex flex-col items-center">
-        <div class="text-white text-xl md:text-2xl font-[800] tracking-[0.06em] whitespace-nowrap">A MINHA CONTA</div>
+        <!-- Ícone de utilizador -->
+        <div class="mb-4 w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+          <img src="/assets/graphics/profile-icon.svg" alt="Perfil" class="w-8 h-8 brightness-0 invert"/>
+        </div>
+        <!-- Título maior e mais grosso -->
+        <div class="text-white text-2xl md:text-3xl font-[800] tracking-[0.06em] whitespace-nowrap">A MINHA CONTA</div>
 
         <div id="card" class="mt-3 w-11/12 max-w-[680px] min-w-[320px] sm:min-w-[360px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden p-4 sm:p-5">
           <div id="content" class="space-y-2 sm:space-y-3 text-center"></div>
@@ -55,6 +56,11 @@ export function Account(onBack: () => void) {
         <path fill="#243a79" d="M12 3.2l8 6.4v10a1 1 0 0 1-1 1h-4.5a.5.5 0 0 1-.5-.5V14H10v6.1a.5.5 0 0 1-.5.5H5a1 1 0 0 1-1-1V9.6l8-6.4zM3.6 9L2 10.3l.8 1 .8-.6V9zm18.4 1.3L20.4 9v1.7l.8.6.8-1z"/>
       </svg>
     </button>
+
+    <!-- Logotipo Alves Bandeira (canto inferior direito) -->
+    <div class="fixed right-5 z-[40] pointer-events-none" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px)">
+      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[80px] md:w-[100px] h-auto ab-logo-white opacity-90"/>
+    </div>
   `;
 
   const content = el.querySelector<HTMLDivElement>('#content')!;
@@ -87,9 +93,12 @@ export function Account(onBack: () => void) {
     if (!cached?.uid) {
       content.innerHTML = `
         <div class="space-y-3">
-          <div class="text-base">Não estás autenticado.</div>
+          <div class="text-sm text-center">
+            <div>ENTRA OU CRIA UMA CONTA</div>
+            <div class="text-xs">PARA SUBMETER A TUA PONTUAÇÃO.</div>
+          </div>
           <div class="flex justify-center gap-3">
-            <button id="login" class="px-6 py-2 rounded-full bg-[#1f4590] text-white font-semibold whitespace-nowrap min-w-[190px]">Entrar / Registar</button>
+            <button id="login" class="px-6 py-2 rounded-full bg-[#1f4590] text-white font-semibold whitespace-nowrap min-w-[190px]">ENTRAR / REGISTAR</button>
           </div>
         </div>`;
       content.querySelector<HTMLButtonElement>('#login')!.onclick = () => {
