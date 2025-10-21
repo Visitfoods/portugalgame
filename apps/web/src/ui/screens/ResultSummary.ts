@@ -280,6 +280,10 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
         }
         
         const currentLink = dmLinks[linkIndex];
+        if (!currentLink) {
+          tryNextLink();
+          return;
+        }
         linkIndex++;
         
         tryOpen(
@@ -310,6 +314,10 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
         }
         
         const currentLink = iosDmLinks[linkIndex];
+        if (!currentLink) {
+          tryNextLink();
+          return;
+        }
         linkIndex++;
         
         tryOpen(
