@@ -82,7 +82,7 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
       codeInput.classList.remove('hidden');
       btnVerify.classList.remove('hidden');
       btnSend.classList.add('hidden'); // Esconder botão ENVIAR na fase de código
-      hint.textContent = 'CÓDIGO ENVIADO. VERIFICA O TEU E-MAIL E INTRODUZ O CÓDIGO. NÃO RECEBESTE O CÓDIGO? ENVIAR NOVAMENTE';
+      hint.textContent = 'NÃO RECEBESTE O CÓDIGO? ENVIAR NOVAMENTE';
       updateResendButton();
     }
   };
@@ -111,9 +111,9 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
     const now = Date.now();
     const remain = Math.max(0, Math.ceil((nextResendAt - now) / 1000));
     if (remain > 0) {
-      hint.textContent = `CÓDIGO ENVIADO. VERIFICA O TEU E-MAIL E INTRODUZ O CÓDIGO. NÃO RECEBESTE O CÓDIGO? ENVIAR NOVAMENTE (${remain}S)`;
+      hint.textContent = `NÃO RECEBESTE O CÓDIGO? ENVIAR NOVAMENTE (${remain}S)`;
     } else {
-      hint.textContent = 'CÓDIGO ENVIADO. VERIFICA O TEU E-MAIL E INTRODUZ O CÓDIGO. NÃO RECEBESTE O CÓDIGO? ENVIAR NOVAMENTE';
+      hint.textContent = 'NÃO RECEBESTE O CÓDIGO? ENVIAR NOVAMENTE';
     }
   };
 
@@ -174,7 +174,7 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
     try {
       handlePendingScore();
       await AuthService.sendMagicLink(email);
-      msg.textContent = 'CÓDIGO ENVIADO. VERIFICA O TEU E-MAIL E INTRODUZ O CÓDIGO.';
+      msg.textContent = '';
       step = 'code';
       nextResendAt = Date.now() + RESEND_COOLDOWN_SECONDS * 1000;
       clearResendTimer();
