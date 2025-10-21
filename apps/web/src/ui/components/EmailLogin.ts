@@ -66,7 +66,7 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
 
   type Step = 'email' | 'code';
   let step: Step = 'email';
-  const RESEND_COOLDOWN_SECONDS = 30;
+  const RESEND_COOLDOWN_SECONDS = 60;
   let nextResendAt = 0;
   let resendTimer: number | null = null;
 
@@ -111,9 +111,9 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
     const now = Date.now();
     const remain = Math.max(0, Math.ceil((nextResendAt - now) / 1000));
     if (remain > 0) {
-      hint.textContent = `NÃO RECEBESTE O CÓDIGO? ENVIAR NOVAMENTE (${remain}S)`;
+      hint.innerHTML = `NÃO RECEBESTE O CÓDIGO? <span id="resend-link" class="underline cursor-pointer text-[#1f4590]">ENVIAR NOVAMENTE (${remain}S)</span>`;
     } else {
-      hint.textContent = 'NÃO RECEBESTE O CÓDIGO? ENVIAR NOVAMENTE';
+      hint.innerHTML = `NÃO RECEBESTE O CÓDIGO? <span id="resend-link" class="underline cursor-pointer text-[#1f4590]">ENVIAR NOVAMENTE</span>`;
     }
   };
 
@@ -231,6 +231,40 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
   btnVerify.onclick = () => { void verify(); };
   codeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); void verify(); } });
 
+  // Configurar link de reenvio clicável
+  const setupResendLink = () => {
+    const resendLink = wrap.querySelector<HTMLSpanElement>('#resend-link');
+    if (resendLink) {
+      resendLink.onclick = async () => {
+        const email = input.value.trim();
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { 
+          msg.textContent = 'INTRODUZ UM EMAIL VÁLIDO.'; 
+          return; 
+        }
+        setBusy(true); 
+        msg.textContent = 'A ENVIAR...';
+        try {
+          await AuthService.sendMagicLink(email);
+          msg.textContent = '';
+          nextResendAt = Date.now() + RESEND_COOLDOWN_SECONDS * 1000;
+          clearResendTimer();
+          resendTimer = window.setInterval(() => {
+            updateResendButton();
+            updateResendLink();
+            setupResendLink(); // Reconfigurar o link após atualização
+          }, 500) as unknown as number;
+          updateResendLink();
+          setupResendLink(); // Configurar o link inicial
+        } catch (e: any) {
+          const code = (e?.code || e?.message || String(e)) as string;
+          msg.textContent = `FALHA AO ENVIAR CÓDIGO. ${mapError(code)}`;
+        } finally { 
+          setBusy(false); 
+        }
+      };
+    }
+  };
+
 
   const tearDown: Cleanup = () => {
     wrap.remove();
@@ -246,5 +280,11 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
 
   showForm();
   updateStepUI();
+  
+  // Configurar o link de reenvio após um pequeno delay
+  setTimeout(() => {
+    setupResendLink();
+  }, 100);
+  
   return wrap;
 }
