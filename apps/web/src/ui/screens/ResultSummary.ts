@@ -108,6 +108,18 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
           </div>
         </div>
       </div>
+
+      <!-- Modal confirmar sair sem submeter -->
+      <div id="exit-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div class="w-10/12 max-w-[420px] bg-white/95 text-[#0a2960] rounded-2xl p-5 shadow-xl">
+          <div class="font-[800] text-sm md:text-base mb-1 whitespace-nowrap">PRETENDES SAIR SEM SUBMETER?</div>
+          <div class="text-xs opacity-80">SE SAÍRES AGORA SEM SUBMETER, ESTA PONTUAÇÃO NÃO SERÁ GUARDADA.</div>
+          <div class="mt-6 flex gap-3">
+            <button id="cancel-exit-modal" class="home-glass-btn flex-1 px-4 py-2 rounded-full text-[#0a2960] border border-[#0a2960]/30 bg-white/70 text-xs whitespace-nowrap">CANCELAR</button>
+            <button id="confirm-exit" class="flex-1 px-4 py-2 rounded-full bg-[#1f4590] text-white font-semibold text-xs whitespace-nowrap">SAIR SEM SUBMETER</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Nuvens base + elemento gráfico -->
@@ -122,11 +134,17 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     <button id="sound" class="ab-icon-btn fixed left-5 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px)" aria-label="Som">
       <img id="sound-icon" src="/assets/graphics/icon_Volume-On.svg" alt=""/>
     </button>
+
+    <!-- Botão de voltar à home (canto inferior direito) -->
+    <button id="home" class="ab-icon-btn fixed right-5 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px)" aria-label="Voltar à Home">
+      <img src="/assets/graphics/profile-icon.svg" alt="Home"/>
+    </button>
   `;
 
   // Botões
   el.querySelector<HTMLButtonElement>('#submit')!.onclick = () => onSubmit();
-    // Confirmar jogar novamente
+  
+  // Confirmar jogar novamente
   const againBtn = el.querySelector<HTMLButtonElement>("#again")!;
   const modal = el.querySelector<HTMLDivElement>("#confirm-modal")!;
   const cancelModal = el.querySelector<HTMLButtonElement>("#cancel-modal")!;
@@ -134,6 +152,18 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   againBtn.onclick = () => { modal.classList.remove('hidden'); modal.classList.add('flex'); };
   cancelModal.onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
   confirmAgain.onclick = () => onRetry();
+
+  // Confirmar sair sem submeter
+  const homeBtn = el.querySelector<HTMLButtonElement>("#home")!;
+  const exitModal = el.querySelector<HTMLDivElement>("#exit-modal")!;
+  const cancelExitModal = el.querySelector<HTMLButtonElement>("#cancel-exit-modal")!;
+  const confirmExit = el.querySelector<HTMLButtonElement>("#confirm-exit")!;
+  homeBtn.onclick = () => { exitModal.classList.remove('hidden'); exitModal.classList.add('flex'); };
+  cancelExitModal.onclick = () => { exitModal.classList.add('hidden'); exitModal.classList.remove('flex'); };
+  confirmExit.onclick = () => {
+    // Voltar à home sem submeter (mesmo comportamento que jogar novamente)
+    onRetry();
+  };
   // Função para gerar texto de partilha
   const generateShareText = async () => {
     const title = '🏆 Alves Bandeira — 50 Anos, 50 Prémios! 🥳🎉';
