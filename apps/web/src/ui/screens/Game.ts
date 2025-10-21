@@ -101,7 +101,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
 
     // Loading overlay minimalista durante o arranque
     const loading = LoadingOverlay('A preparar...');
-    loading.show('A carregar recursos...');
+    loading.show('A CARREGAR SABORES DE PORTUGAL');
 
     // Bottom decorative element (same as other pages), positioned under mascot
     if (!bottomDecor) {
