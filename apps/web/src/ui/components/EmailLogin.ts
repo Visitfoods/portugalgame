@@ -219,44 +219,24 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
     setBusy(true); msg.textContent = 'A ABRIR GOOGLE...';
     try {
       handlePendingScore();
+      console.log('Iniciando Google login...');
       const user = await AuthService.signInWithGoogle();
+      console.log('Google login resultado:', user ? 'sucesso' : 'redirect');
+      
       if (user) {
         // Login bem-sucedido com popup
+        console.log('Login com popup bem-sucedido');
         notifySent(); wrap.remove();
       } else {
-        // Login com redirect - aguardar o userStore notificar
-        msg.textContent = 'A PROCESSAR LOGIN...';
-        // O userStore vai notificar quando o login for concluído
-        const unsubscribe = (await import('../../services/userStore')).userStore.subscribe((userState) => {
-          if (userState?.uid) {
-            unsubscribe();
-            notifySent(); 
-            wrap.remove();
-          }
-        });
-        
-        // Fallback: verificar periodicamente se o utilizador está autenticado
-        const checkAuth = setInterval(async () => {
-          try {
-            const { getCachedUser } = await import('../../services/auth');
-            const cached = getCachedUser();
-            if (cached?.uid) {
-              clearInterval(checkAuth);
-              unsubscribe();
-              notifySent();
-              wrap.remove();
-            }
-          } catch {}
-        }, 500);
-        
-        // Limpar após 10 segundos
-        setTimeout(() => {
-          clearInterval(checkAuth);
-          unsubscribe();
-        }, 10000);
+        // Login com redirect - a página vai recarregar
+        console.log('Login com redirect - página vai recarregar');
+        msg.textContent = 'A REDIRECIONAR...';
+        // Não precisamos de fazer mais nada aqui, a página vai recarregar
+        // e o sistema de detecção automática vai funcionar
       }
     } catch (e: any) {
       const code = e?.code || e?.message || String(e);
+      console.error('Erro no Google login:', e);
       msg.textContent = `FALHA NO GOOGLE SIGN-IN. ${mapError(code)}`;
       setBusy(false);
     }
