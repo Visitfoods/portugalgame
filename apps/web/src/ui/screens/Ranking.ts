@@ -45,50 +45,30 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
           <span class="text-[#0a2960] font-[700] text-xs ml-1">PRÉMIOS DISPONÍVEIS</span>
         </div>
         
-        <!-- Prémios em lista vertical compacta -->
-        <div class="space-y-1 p-2">
+        <!-- Prémios em grid 2x2 -->
+        <div class="grid grid-cols-2 gap-1 p-1.5">
           <!-- 1º Prémio -->
-          <div class="flex items-center gap-2 bg-gradient-to-r from-[#ffd04a] to-[#ffb347] rounded px-2 py-1 border border-[#ffd04a]">
-            <div class="w-5 h-5 bg-white rounded-full flex items-center justify-center">
-              <span class="text-[#0a2960] font-[800] text-[10px]">1</span>
-            </div>
-            <div class="flex-1">
-              <div class="text-[#0a2960] font-[800] text-[10px]">1º LUGAR</div>
-              <div class="text-[#0a2960] font-[600] text-[9px]">500 €</div>
-            </div>
+          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#ffd04a] to-[#ffb347] border border-[#ffd04a] rounded px-1.5 py-0.5">
+            <span class="text-[#0a2960] font-[800] text-[10px]">1º</span>
+            <span class="text-[#0a2960] font-[600] text-[10px]">500€</span>
           </div>
           
           <!-- 2º Prémio -->
-          <div class="flex items-center gap-2 bg-gradient-to-r from-[#c0c0c0] to-[#a8a8a8] rounded px-2 py-1 border border-[#c0c0c0]">
-            <div class="w-5 h-5 bg-white rounded-full flex items-center justify-center">
-              <span class="text-[#0a2960] font-[800] text-[10px]">2</span>
-            </div>
-            <div class="flex-1">
-              <div class="text-[#0a2960] font-[800] text-[10px]">2º LUGAR</div>
-              <div class="text-[#0a2960] font-[600] text-[9px]">250 €</div>
-            </div>
+          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#243b78] to-[#1a2d5a] border border-[#243b78] rounded px-1.5 py-0.5">
+            <span class="text-white font-[800] text-[10px]">2º</span>
+            <span class="text-white font-[600] text-[10px]">250€</span>
           </div>
           
           <!-- 3º Prémio -->
-          <div class="flex items-center gap-2 bg-gradient-to-r from-[#cd7f32] to-[#b8860b] rounded px-2 py-1 border border-[#cd7f32]">
-            <div class="w-5 h-5 bg-white rounded-full flex items-center justify-center">
-              <span class="text-[#0a2960] font-[800] text-[10px]">3</span>
-            </div>
-            <div class="flex-1">
-              <div class="text-[#0a2960] font-[800] text-[10px]">3º LUGAR</div>
-              <div class="text-[#0a2960] font-[600] text-[9px]">150 €</div>
-            </div>
+          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#1a2d5a] to-[#0f1a3a] border border-[#1a2d5a] rounded px-1.5 py-0.5">
+            <span class="text-white font-[800] text-[10px]">3º</span>
+            <span class="text-white font-[600] text-[10px]">150€</span>
           </div>
           
           <!-- 4º ao 50º Prémio -->
-          <div class="flex items-center gap-2 bg-gradient-to-r from-[#2472ba] to-[#1c5a9a] rounded px-2 py-1 border border-[#2472ba]">
-            <div class="w-5 h-5 bg-white rounded-full flex items-center justify-center">
-              <span class="text-[#0a2960] font-[800] text-[9px]">4-50</span>
-            </div>
-            <div class="flex-1">
-              <div class="text-white font-[800] text-[10px]">4º-50º LUGAR</div>
-              <div class="text-white font-[600] text-[9px]">10 € CADA</div>
-            </div>
+          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#2472ba] to-[#1c5a9a] border border-[#2472ba] rounded px-1.5 py-0.5">
+            <span class="text-white font-[800] text-[10px]">4º-50º</span>
+            <span class="text-white font-[600] text-[10px]">10€</span>
           </div>
         </div>
         
