@@ -19,12 +19,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
     <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-20 right-0 w-[36%] max-w-[280px] -z-10 opacity-85 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 52s; --ab-delay: -26s;"/>
     <img src="/assets/graphics/Nuvem-02.svg" alt="" class="absolute top-10 right-0 w-[30%] max-w-[230px] -z-10 opacity-60 ab-cloud-marquee-right"  style="--ab-cloud-scroll-dur: 40s; --ab-delay: -20s;"/>
 
-    <!-- Logo independente -->
-    <div class="absolute top-2 sm:top-4 left-1/2 -translate-x-1/2 z-[10] w-full flex justify-center">
-      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[120px] sm:w-[150px] md:w-[180px] h-auto ab-logo-white"/>
-    </div>
-
-    <div class="ranking-container relative z-10 w-full flex flex-col items-center pb-[160px] min-h-screen justify-start pt-[200px] sm:pt-[240px] md:pt-[280px]">
+    <div class="ranking-container relative z-10 w-full flex flex-col items-center pb-[160px] min-h-screen justify-start pt-[120px] sm:pt-[140px] md:pt-[160px]">
       <!-- Título -->
       <div class="ranking-title mt-1 sm:mt-2 text-white text-base sm:text-lg md:text-xl font-[800] tracking-[0.06em]">CLASSIFICAÇÃO</div>
 
@@ -105,8 +100,8 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       <img id="sound-icon" src="/assets/graphics/icon_Volume-On.svg" alt=""/>
     </button>
 
-    <!-- Botão Home (centro inferior) -->
-    <button id="home" class="ab-icon-btn fixed left-1/2 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); transform: translateX(-50%);" aria-label="Início">
+    <!-- Botão Home (canto inferior direito) -->
+    <button id="home" class="ab-icon-btn fixed right-5 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px)" aria-label="Início">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path fill="#243a79" d="M12 3.2l8 6.4v10a1 1 0 0 1-1 1h-4.5a.5.5 0 0 1-.5-.5V14H10v6.1a.5.5 0 0 1-.5.5H5a1 1 0 0 1-1-1V9.6l8-6.4zM3.6 9L2 10.3l.8 1 .8-.6V9zm18.4 1.3L20.4 9v1.7l.8.6.8-1z"/>
       </svg>
