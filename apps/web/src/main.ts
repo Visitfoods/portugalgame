@@ -330,6 +330,30 @@ function handleSubmitScoreFlow(score: number, onAfter: () => void) {
   const cached = getCachedUser();
   // Se não autenticado → modal email
   if (!cached?.uid) {
+    // Verificar se há uma pontuação pendente no localStorage (caso tenha voltado de redirect)
+    const pendingScore = localStorage.getItem('ab-pending-score');
+    if (pendingScore && Number(pendingScore) === score) {
+      // Já temos a pontuação guardada, mas ainda não estamos autenticados
+      // Aguardar um pouco para o userStore processar o login
+      setTimeout(() => {
+        const newCached = getCachedUser();
+        if (newCached?.uid) {
+          // Agora estamos autenticados, continuar o fluxo
+          handleSubmitScoreFlow(score, onAfter);
+        } else {
+          // Ainda não autenticado, mostrar modal
+          document.body.appendChild(EmailLogin(() => {
+            // Após login bem-sucedido, submeter automaticamente a pontuação
+            handleSubmitScoreFlow(score, onAfter);
+          }, () => {
+            // Se cancelar, voltar ao fluxo normal
+            onAfter();
+          }, () => score));
+        }
+      }, 1000);
+      return;
+    }
+    
     document.body.appendChild(EmailLogin(() => {
       // Após login bem-sucedido, submeter automaticamente a pontuação
       handleSubmitScoreFlow(score, onAfter);
