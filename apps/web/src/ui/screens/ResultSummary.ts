@@ -27,7 +27,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
 
     <div class="relative z-10 w-full flex flex-col items-center result-summary-container">
       <!-- Parabéns -->
-      <div id="result-summary-title" class="text-center text-white font-[800] tracking-[0.06em] result-summary-title">PARABA%NS!</div>
+      <div id="result-summary-title" class="text-center text-white font-[800] tracking-[0.06em] result-summary-title">PARABÉNS!</div>
 
       <!-- Score com troféu -->
       <div class="relative flex items-center justify-center gap-4 result-summary-score">
