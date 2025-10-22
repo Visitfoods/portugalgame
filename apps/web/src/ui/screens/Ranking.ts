@@ -42,7 +42,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
         <!-- Header compacto -->
         <div class="flex items-center justify-center px-2 py-1.5 border-b border-[#e5e7eb] bg-white">
           <img src="/assets/graphics/trophy.svg" alt="Troféu" class="w-4 h-4"/>
-          <span class="text-[#0a2960] font-[700] text-xs ml-1">PRÉMIOS DISPONÍVEIS</span>
+          <span class="text-[#0a2960] font-[700] text-xs ml-1">50 PRÉMIOS</span>
         </div>
         
         <!-- Prémios em grid 2x2 -->
@@ -83,7 +83,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       <!-- Ações -->
       <div class="actions-section mt-4 sm:mt-5 w-9/12 max-w-[420px] flex flex-col items-center gap-3 sm:gap-4">
         <button id="view-all" class="home-glass-btn px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-white font-semibold text-sm sm:text-base border border-white/60 bg-white/15 backdrop-blur-sm shadow-[0_6px_16px_rgba(2,20,60,0.25)] active:scale-[.98]">VER TODOS</button>
-        <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play w-6/12 max-w-[200px] h-auto cursor-pointer active:scale-[.98] transition"/>
+        <img id="play" src="/assets/graphics/Botao-Jogar_Normal.svg" alt="Jogar" class="btn-play w-5/12 max-w-[160px] h-auto cursor-pointer active:scale-[.98] transition"/>
       </div>
     </div>
 
