@@ -330,7 +330,13 @@ function handleSubmitScoreFlow(score: number, onAfter: () => void) {
   const cached = getCachedUser();
   // Se não autenticado → modal email
   if (!cached?.uid) {
-    document.body.appendChild(EmailLogin(() => {}, () => {}, () => score));
+    document.body.appendChild(EmailLogin(() => {
+      // Após login bem-sucedido, submeter automaticamente a pontuação
+      handleSubmitScoreFlow(score, onAfter);
+    }, () => {
+      // Se cancelar, voltar ao fluxo normal
+      onAfter();
+    }, () => score));
     return;
   }
   // Se autenticado mas sem username → usar o novo ecrã Register (que já cria username)
