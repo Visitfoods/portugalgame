@@ -1,5 +1,8 @@
 import { isSecureContext, ensureAutoplayAudioGate } from "../../platform/DeviceGuard";
 
+// Importar funções de modal do main.ts
+declare function showErrorModal(message: string, onClose?: () => void): void;
+
 export function Permissions(onAllow: () => void, onBack: () => void) {
   const el = document.createElement('div');
   el.className = 'screen text-center gap-6 bg-[#243b78]';
@@ -23,7 +26,7 @@ export function Permissions(onAllow: () => void, onBack: () => void) {
       onAllow();
     } catch (e) {
       console.error('Camera permission error:', e);
-      alert('Não foi possível aceder à câmara. Verifica permissões do browser.');
+      showErrorModal('NÃO FOI POSSÍVEL ACEDER À CÂMARA. VERIFICA PERMISSÕES DO BROWSER.');
     }
   };
   el.querySelector<HTMLButtonElement>('#back')!.onclick = () => onBack();

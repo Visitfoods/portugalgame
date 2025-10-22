@@ -2,6 +2,10 @@
 
 import { BackgroundMusic } from '../../core/engine/Audio';
 
+// Importar funções de modal do main.ts
+declare function showInfoModal(message: string, onClose?: () => void): void;
+declare function showErrorModal(message: string, onClose?: () => void): void;
+
 export function ResultSummary(score: number, onSubmit: () => void, onRetry: () => void) {
   const el = document.createElement('div');
   el.className = 'screen p-0 overflow-hidden';
@@ -252,7 +256,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     ];
     const steps = platform === 'ios' ? stepsIOS : stepsAND;
 
-    alert(`Partilhar no Instagram\n\n${steps.map(s => '• ' + s).join('\n')}`);
+    showInfoModal(`PARTILHAR NO INSTAGRAM\n\n${steps.map(s => '• ' + s).join('\n')}`);
   }
 
   // --- tentativa de abrir deep link, com fallback por tempo ---
@@ -377,7 +381,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
         window.open('https://instagram.com/', '_blank');
       }
       
-      alert('Texto copiado! Abre o Instagram, vai a Mensagens (DM), cola e envia.');
+        showInfoModal('TEXTO COPIADO! ABRE O INSTAGRAM, VAI A MENSAGENS (DM), COLA E ENVIA.');
     }
   }
 
@@ -405,9 +409,9 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     const { full } = await generateShareText();
     try {
       await navigator.clipboard.writeText(full);
-      alert('Mensagem de partilha copiada para a área de transferência! Cola no teu app favorito.');
+      showInfoModal('MENSAGEM DE PARTILHA COPIADA PARA A ÁREA DE TRANSFERÊNCIA! COLA NO TEU APP FAVORITO.');
     } catch {
-      alert('Não foi possível copiar. Tenta novamente.');
+      showErrorModal('NÃO FOI POSSÍVEL COPIAR. TENTA NOVAMENTE.');
     }
     const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
     modal.classList.add('hidden');

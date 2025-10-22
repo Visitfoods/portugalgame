@@ -1,5 +1,8 @@
 import { BackgroundMusic } from '../../core/engine/Audio';
 
+// Importar funções de modal do main.ts
+declare function showInfoModal(message: string, onClose?: () => void): void;
+
 export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => void, onTerms?: () => void) {
   const el = document.createElement('div');
   // Full-screen stage; on Home we want content aligned to the top
@@ -96,10 +99,10 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
   playBtn.onpointerleave = () => setPressed(false);
   playBtn.onpointercancel = () => setPressed(false);
   playBtn.onclick = () => onPlay();
-  el.querySelector<HTMLButtonElement>('#how')!.onclick = () => { if (onHow) onHow(); else alert('Como jogar: manter o rosto visivel e centrado. Abre a boca para apanhar os icones. Evita os falsos!'); };
-  el.querySelector<HTMLButtonElement>('#account')!.onclick = () => { const fn = (onHow as any)?.gotoAccount; if (typeof fn === 'function') fn(); else alert('Conta: em breve.'); };
-  el.querySelector<HTMLButtonElement>('#ranking')!.onclick = () => { if (onRanking) onRanking(); else alert('Ranking: em breve.'); };
-  el.querySelector<HTMLButtonElement>('#info')!.onclick = () => { if (onTerms) onTerms(); else alert('Projeto Alves Bandeira — WebAR jogo promocional.'); };
+  el.querySelector<HTMLButtonElement>('#how')!.onclick = () => { if (onHow) onHow(); else showInfoModal('COMO JOGAR: MANTER O ROSTO VISÍVEL E CENTRADO. ABRE A BOCA PARA APANHAR OS ÍCONES. EVITA OS FALSOS!'); };
+  el.querySelector<HTMLButtonElement>('#account')!.onclick = () => { const fn = (onHow as any)?.gotoAccount; if (typeof fn === 'function') fn(); else showInfoModal('CONTA: EM BREVE.'); };
+  el.querySelector<HTMLButtonElement>('#ranking')!.onclick = () => { if (onRanking) onRanking(); else showInfoModal('RANKING: EM BREVE.'); };
+  el.querySelector<HTMLButtonElement>('#info')!.onclick = () => { if (onTerms) onTerms(); else showInfoModal('PROJETO ALVES BANDEIRA — WEBAR JOGO PROMOCIONAL.'); };
   // Som on/off com persistência
   const soundBtn = el.querySelector<HTMLButtonElement>('#sound')!;
   const soundIcon = el.querySelector<HTMLImageElement>('#sound-icon')!;

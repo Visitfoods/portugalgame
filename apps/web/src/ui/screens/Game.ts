@@ -6,6 +6,9 @@ import { MouthOpenDetector } from "../../core/ar/MouthOpenDetector";
 import { GameLoop } from "../../core/engine/GameLoop";
 import { loadItemSprites } from "../../core/engine/Assets";
 import { BackgroundMusic } from "../../core/engine/Audio";
+
+// Importar funções de modal do main.ts
+declare function showErrorModal(message: string, onClose?: () => void): void;
 import { mouthTrigger, resetMouthTrigger } from "../../core/game/mouthTrigger";
 import type { Vec2 } from "../../utils/types";
 
@@ -33,7 +36,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   const canvas = document.getElementById('game') as HTMLCanvasElement;
   const stage = document.getElementById('stage') as HTMLDivElement;
   if (!video || !canvas) {
-    alert('Elemento de jogo em falta. Recarrega a página.');
+    showErrorModal('ELEMENTO DE JOGO EM FALTA. RECARREGA A PÁGINA.');
     onCancel?.();
     return el;
   }
@@ -549,7 +552,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     console.error('Start failed:', err);
     const msg = (err && typeof err === 'object' && 'message' in (err as any)) ? (err as any).message : String(err);
     const hint = location.protocol !== 'https:' ? ' Abre com HTTPS.' : '';
-    alert(`Falha ao iniciar câmara/tracking. ${msg || ''}${hint}`);
+    showErrorModal(`FALHA AO INICIAR CÂMARA/TRACKING. ${msg || ''}${hint}`);
   });
 
   return el;
