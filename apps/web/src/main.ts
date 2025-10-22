@@ -21,6 +21,60 @@ import { TermsAndConditions } from './ui/screens/TermsAndConditions'
 import { FaceTracker } from './core/ar/FaceTracker'
 import { BackgroundMusic } from './core/engine/Audio'
 
+// Função para mostrar modal de sucesso personalizado
+function showSuccessModal(message: string, onClose: () => void) {
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm';
+  
+  modal.innerHTML = `
+    <div class="relative w-full max-w-[90vw] max-w-[420px] bg-white/95 rounded-[22px] shadow-[0_20px_40px_rgba(2,20,60,0.3)] overflow-hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-center p-4 border-b-2 border-[#243b78]/30 bg-[#243b78]">
+        <div class="flex items-center gap-3">
+          <img src="/assets/graphics/trophy.svg" alt="Troféu" class="w-6 h-6"/>
+          <h2 class="text-xl font-[800] text-white">SUCESSO!</h2>
+        </div>
+      </div>
+      
+      <!-- Content -->
+      <div class="p-6 text-center">
+        <div class="text-[#0a2960] font-[600] text-lg mb-4">${message}</div>
+        <div class="text-[#0a2960]/70 text-sm mb-6">A TUA PONTUAÇÃO FOI GUARDADA COM SUCESSO!</div>
+        <button id="close-success-modal" class="w-full px-6 py-3 rounded-full bg-[#1f4590] text-white font-[800] text-lg shadow-[0_8px_20px_rgba(2,20,60,0.35)] border border-white/50 active:scale-[.98] transition">
+          CONTINUAR
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Fechar modal
+  const closeBtn = modal.querySelector<HTMLButtonElement>('#close-success-modal')!;
+  closeBtn.onclick = () => {
+    modal.remove();
+    onClose();
+  };
+  
+  // Fechar ao clicar fora
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      modal.remove();
+      onClose();
+    }
+  };
+
+  // ESC para fechar
+  const handleEsc = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      modal.remove();
+      document.removeEventListener('keydown', handleEsc);
+      onClose();
+    }
+  };
+  document.addEventListener('keydown', handleEsc);
+
+  document.body.appendChild(modal);
+}
+
 const app = document.getElementById('app')!;
 
 function mount(el: HTMLElement) {
@@ -196,8 +250,7 @@ function handleSubmitScoreFlow(score: number, onAfter: () => void) {
   (async () => {
     try {
       await submitScore({ uid: cached.uid, username: cached.username!, displayName: cached.displayName, score });
-      alert('Pontuação submetida!');
-      onAfter();
+      showSuccessModal('Pontuação submetida!', onAfter);
     } catch (e) {
       alert('Falha ao submeter pontuação.');
     }
