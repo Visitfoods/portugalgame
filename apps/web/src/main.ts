@@ -308,6 +308,8 @@ window.addEventListener('load', () => {
       const score = Number(pendingScore);
       if (!isNaN(score)) {
         console.log('Detectado login bem-sucedido com pontuação pendente:', score);
+        // Remover pontuação do localStorage ANTES de submeter para evitar loop
+        try { localStorage.removeItem('ab-pending-score'); } catch {}
         // Remover modal de login se existir
         const existingModal = document.querySelector('[class*="fixed inset-0 z-[70]"]');
         if (existingModal) {
