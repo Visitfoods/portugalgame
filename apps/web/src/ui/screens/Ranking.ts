@@ -117,7 +117,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
     const top3 = rows.slice(0, 3);
     list.innerHTML = top3.map(r => `
       <div class="grid grid-cols-[32px_1fr_auto] sm:grid-cols-[38px_1fr_auto] items-center px-3 sm:px-4 py-2 sm:py-3">
-        <div class="text-[#1f4590] font-[800] text-lg sm:text-xl flex items-center justify-center">${r.pos === 1 ? '<span class=\'w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#ffd04a] text-[#0a2960] flex items-center justify-center text-sm sm:text-base font-[800]\'>1</span>' : r.pos === 2 ? '<span class=\'w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#243b78] text-white flex items-center justify-center text-sm sm:text-base font-[800]\'>2</span>' : r.pos === 3 ? '<span class=\'w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#1a2d5a] text-white flex items-center justify-center text-sm sm:text-base font-[800]\'>3</span>' : r.pos}</div>
+        <div class="text-[#1f4590] font-[800] text-lg sm:text-xl flex items-center justify-center">${r.pos === 1 ? '<span class=\'w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#ffd04a] text-[#0a2960] flex items-center justify-center text-lg sm:text-xl font-[800]\'>1</span>' : r.pos === 2 ? '<span class=\'w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#243b78] text-white flex items-center justify-center text-lg sm:text-xl font-[800]\'>2</span>' : r.pos === 3 ? '<span class=\'w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#1a2d5a] text-white flex items-center justify-center text-lg sm:text-xl font-[800]\'>3</span>' : r.pos}</div>
         <div class="text-[#0a2960] font-[800] pl-1 sm:pl-2 text-sm sm:text-base">${r.name}</div>
         <div class="text-[#0a2960] font-[800] pr-2 sm:pr-3 text-right text-sm sm:text-base">${r.score}</div>
       </div>
