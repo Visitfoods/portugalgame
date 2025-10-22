@@ -38,9 +38,9 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       </div>
 
       <!-- Secção de Prémios Compacta -->
-      <div class="prizes-section mt-3 sm:mt-4 w-10/12 sm:w-11/12 max-w-[580px] sm:max-w-[640px] bg-gradient-to-r from-[#ffd04a]/15 to-[#ffb347]/10 backdrop-blur-sm rounded-[12px] border border-[#ffd04a]/20 shadow-[0_4px_12px_rgba(255,208,74,0.08)] overflow-hidden">
+      <div class="prizes-section mt-3 sm:mt-4 w-10/12 sm:w-11/12 max-w-[580px] sm:max-w-[640px] bg-gradient-to-r from-[#ffd04a] to-[#ffb347] rounded-[12px] border border-[#ffd04a] shadow-[0_4px_12px_rgba(255,208,74,0.3)] overflow-hidden">
         <!-- Header compacto -->
-        <div class="flex items-center justify-center px-2 py-1.5 border-b border-[#ffd04a]/20">
+        <div class="flex items-center justify-center px-2 py-1.5 border-b border-[#ffd04a] bg-white/90">
           <img src="/assets/graphics/trophy.svg" alt="Troféu" class="w-4 h-4"/>
           <span class="text-[#0a2960] font-[700] text-xs ml-1">PRÉMIOS DISPONÍVEIS</span>
         </div>
@@ -48,27 +48,27 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
         <!-- Prémios em grid 2x2 para evitar sobreposição -->
         <div class="grid grid-cols-2 gap-1 p-1.5">
           <!-- 1º Prémio -->
-          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#ffd04a]/20 to-[#ffb347]/20 border border-[#ffd04a]/30 rounded px-1.5 py-0.5">
+          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#ffd04a] to-[#ffb347] border border-[#ffd04a] rounded px-1.5 py-0.5">
             <span class="text-[#0a2960] font-[800] text-[10px]">1º</span>
             <span class="text-[#0a2960] font-[600] text-[10px]">500€</span>
           </div>
           
           <!-- 2º Prémio -->
-          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#243b78]/20 to-[#1a2d5a]/20 border border-[#243b78]/30 rounded px-1.5 py-0.5">
-            <span class="text-[#0a2960] font-[800] text-[10px]">2º</span>
-            <span class="text-[#0a2960] font-[600] text-[10px]">250€</span>
+          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#243b78] to-[#1a2d5a] border border-[#243b78] rounded px-1.5 py-0.5">
+            <span class="text-white font-[800] text-[10px]">2º</span>
+            <span class="text-white font-[600] text-[10px]">250€</span>
           </div>
           
           <!-- 3º Prémio -->
-          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#1a2d5a]/20 to-[#0f1a3a]/20 border border-[#1a2d5a]/30 rounded px-1.5 py-0.5">
-            <span class="text-[#0a2960] font-[800] text-[10px]">3º</span>
-            <span class="text-[#0a2960] font-[600] text-[10px]">150€</span>
+          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#1a2d5a] to-[#0f1a3a] border border-[#1a2d5a] rounded px-1.5 py-0.5">
+            <span class="text-white font-[800] text-[10px]">3º</span>
+            <span class="text-white font-[600] text-[10px]">150€</span>
           </div>
           
           <!-- 4º ao 50º Prémio -->
-          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#2472ba]/20 to-[#1c5a9a]/20 border border-[#2472ba]/30 rounded px-1.5 py-0.5">
-            <span class="text-[#0a2960] font-[800] text-[10px]">4º-50º</span>
-            <span class="text-[#0a2960] font-[600] text-[10px]">10€</span>
+          <div class="flex items-center justify-center gap-0.5 bg-gradient-to-br from-[#2472ba] to-[#1c5a9a] border border-[#2472ba] rounded px-1.5 py-0.5">
+            <span class="text-white font-[800] text-[10px]">4º-50º</span>
+            <span class="text-white font-[600] text-[10px]">10€</span>
           </div>
         </div>
         
