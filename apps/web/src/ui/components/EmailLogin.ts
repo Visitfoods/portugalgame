@@ -234,6 +234,26 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
             wrap.remove();
           }
         });
+        
+        // Fallback: verificar periodicamente se o utilizador está autenticado
+        const checkAuth = setInterval(async () => {
+          try {
+            const { getCachedUser } = await import('../../services/auth');
+            const cached = getCachedUser();
+            if (cached?.uid) {
+              clearInterval(checkAuth);
+              unsubscribe();
+              notifySent();
+              wrap.remove();
+            }
+          } catch {}
+        }, 500);
+        
+        // Limpar após 10 segundos
+        setTimeout(() => {
+          clearInterval(checkAuth);
+          unsubscribe();
+        }, 10000);
       }
     } catch (e: any) {
       const code = e?.code || e?.message || String(e);
