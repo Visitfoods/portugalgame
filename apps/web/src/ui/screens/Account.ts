@@ -123,10 +123,10 @@ export function Account(onBack: () => void) {
           <div>ESTÁS AUTENTICADO MAS FALTA COMPLETAR O PERFIL.</div>
           <div class="text-sm opacity-70">COMPLETA JÁ O TEU PERFIL PARA AVANÇAR.</div>
           <div class="flex justify-center gap-3">
-            <button id="logout" class="px-4 py-2.5 text-xs rounded-full bg-white/20 text-[#0a2960] border border-[#0a2960]/30 hover:bg-white/30 transition whitespace-nowrap">TERMINAR SESSÃO</button>
+            <button id="logout" class="px-3 py-2 text-xs rounded-full bg-white/20 text-[#0a2960] border border-[#0a2960]/30 hover:bg-white/30 transition whitespace-nowrap">TERMINAR SESSÃO</button>
             ${needsBasic
-              ? '<button id="register" class="px-6 py-2.5 rounded-full bg-[#1f4590] text-white font-semibold text-xs whitespace-nowrap">COMPLETAR REGISTO</button>'
-              : '<button id="complete" class="px-6 py-2.5 rounded-full bg-[#1f4590] text-white font-semibold text-xs whitespace-nowrap">ESCOLHER USERNAME</button>'}
+              ? '<button id="register" class="px-4 py-2 rounded-full bg-[#1f4590] text-white font-semibold text-xs whitespace-nowrap">COMPLETAR REGISTO</button>'
+              : '<button id="complete" class="px-4 py-2 rounded-full bg-[#1f4590] text-white font-semibold text-xs whitespace-nowrap">ESCOLHER USERNAME</button>'}
           </div>
         </div>`;
       content.querySelector<HTMLButtonElement>('#logout')!.onclick = async () => { await AuthService.signOut(); setCachedUser(null); render(); };
