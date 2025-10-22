@@ -151,7 +151,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   // Botões
   el.querySelector<HTMLButtonElement>('#submit')!.onclick = () => { cleanupLogoAdjust?.(); onSubmit(); };
   
-  // Confirmar jogar novamente
+    // Confirmar jogar novamente
   const againBtn = el.querySelector<HTMLButtonElement>("#again")!;
   const modal = el.querySelector<HTMLDivElement>("#confirm-modal")!;
   const cancelModal = el.querySelector<HTMLButtonElement>("#cancel-modal")!;
@@ -179,7 +179,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   };
   // Função para gerar texto de partilha
   const generateShareText = async () => {
-    const title = '🏆 Alves Bandeira — 50 Anos, 50 Prémios! 🥳🎉';
+    const title = '🏆 Alves Bandeira — 50 Anos, 50 Prémios! 🎉';
     const shareUrl = 'https://saboresdeportugal.vercel.app/?utm_source=share&utm_medium=game&utm_campaign=abgame';
     let handle = '';
     try {
@@ -188,7 +188,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
       if (u?.username) handle = ` (@${u.username})`;
     } catch {}
     const pts = `${score} ponto${score===1?'':'s'}`;
-    const line1 = `🏁 Fiz ${pts} no jogo da Alves Bandeira — Sabores de Portugal${handle}!`;
+    const line1 = `🎮 Fiz ${pts} no jogo da Alves Bandeira — Sabores de Portugal${handle}!`;
     const line2 = `🔥 Consegues fazer mais?`;
     const line3 = `🎯 Joga aqui: ${shareUrl}`;
     return {
@@ -514,7 +514,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     setTimeout(adaptLogo, 40);
     setTimeout(adaptLogo, 200);
   }
-// Som on/off com persistência
+  // Som on/off com persistência
   const soundBtn = el.querySelector<HTMLButtonElement>('#sound')!;
   const soundIcon = el.querySelector<HTMLImageElement>('#sound-icon')!;
   const updateSoundIcon = () => {
