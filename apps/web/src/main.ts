@@ -298,6 +298,29 @@ AuthService.onAuth(async (u) => {
 
 // Redirect consumption é tratado na userStore.init()
 
+// Verificar se voltamos de um login bem-sucedido
+window.addEventListener('load', () => {
+  // Verificar se há pontuação pendente e utilizador autenticado
+  setTimeout(() => {
+    const pendingScore = localStorage.getItem('ab-pending-score');
+    const cached = getCachedUser();
+    if (pendingScore && cached?.uid) {
+      const score = Number(pendingScore);
+      if (!isNaN(score)) {
+        console.log('Detectado login bem-sucedido com pontuação pendente:', score);
+        // Remover modal de login se existir
+        const existingModal = document.querySelector('[class*="fixed inset-0 z-[70]"]');
+        if (existingModal) {
+          existingModal.remove();
+        }
+        // Submeter automaticamente
+        handleSubmitScoreFlow(score, () => startFlow());
+        return;
+      }
+    }
+  }, 500);
+});
+
 // Auth route handling for email link completion
 window.addEventListener('load', () => {
   const path = new URL(location.href).pathname;
@@ -330,30 +353,6 @@ function handleSubmitScoreFlow(score: number, onAfter: () => void) {
   const cached = getCachedUser();
   // Se não autenticado → modal email
   if (!cached?.uid) {
-    // Verificar se há uma pontuação pendente no localStorage (caso tenha voltado de redirect)
-    const pendingScore = localStorage.getItem('ab-pending-score');
-    if (pendingScore && Number(pendingScore) === score) {
-      // Já temos a pontuação guardada, mas ainda não estamos autenticados
-      // Aguardar um pouco para o userStore processar o login
-      setTimeout(() => {
-        const newCached = getCachedUser();
-        if (newCached?.uid) {
-          // Agora estamos autenticados, continuar o fluxo
-          handleSubmitScoreFlow(score, onAfter);
-        } else {
-          // Ainda não autenticado, mostrar modal
-          document.body.appendChild(EmailLogin(() => {
-            // Após login bem-sucedido, submeter automaticamente a pontuação
-            handleSubmitScoreFlow(score, onAfter);
-          }, () => {
-            // Se cancelar, voltar ao fluxo normal
-            onAfter();
-          }, () => score));
-        }
-      }, 1000);
-      return;
-    }
-    
     document.body.appendChild(EmailLogin(() => {
       // Após login bem-sucedido, submeter automaticamente a pontuação
       handleSubmitScoreFlow(score, onAfter);
