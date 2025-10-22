@@ -38,9 +38,9 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       </div>
 
       <!-- Secção de Prémios Compacta -->
-      <div class="prizes-section mt-3 sm:mt-4 w-10/12 sm:w-11/12 max-w-[580px] sm:max-w-[640px] bg-gradient-to-r from-[#ffd04a] to-[#ffb347] rounded-[12px] border border-[#ffd04a] shadow-[0_4px_12px_rgba(255,208,74,0.3)] overflow-hidden">
+      <div class="prizes-section mt-3 sm:mt-4 w-10/12 sm:w-11/12 max-w-[580px] sm:max-w-[640px] bg-white rounded-[12px] border border-[#e5e7eb] shadow-[0_4px_12px_rgba(0,0,0,0.1)] overflow-hidden">
         <!-- Header compacto -->
-        <div class="flex items-center justify-center px-2 py-1.5 border-b border-[#ffd04a] bg-white/90">
+        <div class="flex items-center justify-center px-2 py-1.5 border-b border-[#e5e7eb] bg-white">
           <img src="/assets/graphics/trophy.svg" alt="Troféu" class="w-4 h-4"/>
           <span class="text-[#0a2960] font-[700] text-xs ml-1">PRÉMIOS DISPONÍVEIS</span>
         </div>
