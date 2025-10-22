@@ -219,9 +219,22 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
     setBusy(true); msg.textContent = 'A ABRIR GOOGLE...';
     try {
       handlePendingScore();
-      await AuthService.signInWithGoogle();
-      // Login com Google não precisa de /auth-complete, já está autenticado
-      notifySent(); wrap.remove();
+      const user = await AuthService.signInWithGoogle();
+      if (user) {
+        // Login bem-sucedido com popup
+        notifySent(); wrap.remove();
+      } else {
+        // Login com redirect - aguardar o userStore notificar
+        msg.textContent = 'A PROCESSAR LOGIN...';
+        // O userStore vai notificar quando o login for concluído
+        const unsubscribe = (await import('../../services/userStore')).userStore.subscribe((userState) => {
+          if (userState?.uid) {
+            unsubscribe();
+            notifySent(); 
+            wrap.remove();
+          }
+        });
+      }
     } catch (e: any) {
       const code = e?.code || e?.message || String(e);
       msg.textContent = `FALHA NO GOOGLE SIGN-IN. ${mapError(code)}`;
