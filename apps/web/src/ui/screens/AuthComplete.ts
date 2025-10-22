@@ -102,14 +102,16 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
     }, 80);
   };
 
-  const readPendingScore = () => {
+  const readPendingScore = (removeAfterRead = false) => {
     let pending: number | undefined;
     try {
       const raw = localStorage.getItem('ab-pending-score');
       if (raw) {
         const parsed = Number(raw);
         if (!Number.isNaN(parsed)) pending = parsed;
-        localStorage.removeItem('ab-pending-score');
+        if (removeAfterRead) {
+          localStorage.removeItem('ab-pending-score');
+        }
       }
     } catch {}
     return pending;
@@ -135,7 +137,7 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
       const user = await AuthService.completeMagicLink(undefined, email);
       const profile = await getUserProfile(user.uid);
       setCachedUser({ uid: user.uid, email: user.email || undefined, username: profile?.username, displayName: profile?.displayName });
-      const pending = readPendingScore();
+      const pending = readPendingScore(true); // Remove porque vamos usar
       trackMagicLinkEvent('magic_link_manual_email_success', { hasProfile: Boolean(profile?.username) });
       if (!profile?.username) { onNeedsProfile(); return; }
       finish(typeof pending === 'number' ? pending : undefined);
@@ -175,14 +177,7 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
     if (resolved || waitingManual) return;
     try {
       const cur = getFirebaseAuth().currentUser;
-      let pending: number | undefined;
-      try {
-        const raw = localStorage.getItem('ab-pending-score');
-        if (raw) {
-          pending = Number(raw);
-          localStorage.removeItem('ab-pending-score');
-        }
-      } catch {}
+      const pending = readPendingScore(true); // Remove porque vamos usar
       if (!cur) { finish(); return; }
       const profile = await getUserProfile(cur.uid);
       if (!profile?.username) { onNeedsProfile(); return; }
@@ -209,7 +204,7 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
         clearFallbackGuard();
         clearFallbackTimer();
         const cached = await import('../../services/auth').then(m => m.getCachedUser());
-        const pending = readPendingScore();
+        const pending = readPendingScore(true); // Remove porque vamos usar
         if (!cached?.username) {
           onNeedsProfile();
           return;
@@ -240,7 +235,7 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
         });
         clearFallbackGuard();
         clearFallbackTimer();
-        const pending = readPendingScore();
+        const pending = readPendingScore(true); // Remove porque vamos usar
         if (!profile?.username) { 
           onNeedsProfile(); 
           return; 
@@ -264,7 +259,7 @@ export function AuthComplete(onNeedsProfile: () => void, onDone: (score?: number
       const profile = await getUserProfile(user.uid);
       setCachedUser({ uid: user.uid, email: user.email || undefined, username: profile?.username, displayName: profile?.displayName });
       clearFallbackGuard();
-      const pending = readPendingScore();
+      const pending = readPendingScore(true); // Remove porque vamos usar
       if (!profile?.username) { clearFallbackTimer(); onNeedsProfile(); return; }
       clearFallbackTimer();
       finish(typeof pending === 'number' ? pending : undefined);
