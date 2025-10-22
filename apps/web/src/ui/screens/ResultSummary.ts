@@ -22,15 +22,15 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
 
     <!-- Logo independente -->
     <div class="absolute top-4 left-1/2 -translate-x-1/2 z-[10] w-full flex justify-center">
-      <img src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="w-[150px] md:w-[180px] h-auto ab-logo-white"/>
+      <img id="result-summary-logo" src="/assets/graphics/Alves_Bandeira_logo.svg" alt="Alves Bandeira" class="h-auto ab-logo-white result-summary-logo"/>
     </div>
 
-    <div class="relative z-10 w-full flex flex-col items-center">
+    <div class="relative z-10 w-full flex flex-col items-center result-summary-container">
       <!-- Parabéns -->
-      <div class="mt-1 text-center text-white font-[800] tracking-[0.06em] text-2xl md:text-3xl">PARABÉNS!</div>
+      <div id="result-summary-title" class="text-center text-white font-[800] tracking-[0.06em] result-summary-title">PARABA%NS!</div>
 
       <!-- Score com troféu -->
-      <div class="relative mt-3 flex items-center justify-center gap-4">
+      <div class="relative flex items-center justify-center gap-4 result-summary-score">
         <img src="/assets/graphics/trophy.svg" class="w-20 h-20 select-none" alt="Troféu"/>
         <div class="flex flex-col items-start leading-none">
           <div id="score-num" class="text-7xl md:text-8xl font-[800] leading-none">0</div>
@@ -52,7 +52,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
       
 
       <!-- Ações -->
-      <div class="mt-5 w-9/12 max-w-[420px] flex flex-col items-center gap-5 md:gap-6">
+      <div class="w-9/12 max-w-[420px] flex flex-col items-center gap-5 md:gap-6 result-summary-actions">
         <button id="submit" class="px-8 py-3 rounded-full bg-[#1f4590] text-white font-[800] text-lg shadow-[0_10px_24px_rgba(2,20,60,0.35)] border border-white/40 w-full active:scale-[.98]">SUBMETER</button>
         <button id="share" class="btn-share relative px-5 py-2 rounded-full bg-white text-[#0a2960] font-semibold text-sm md:text-base border border-white/80 shadow-[0_6px_16px_rgba(2,20,60,0.18)] w-full active:scale-[.98]">
           <img src="/assets/graphics/Share_Icon.svg" alt="" class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4"/>
@@ -146,9 +146,10 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
       </svg>
     </button>
   `;
+  let cleanupLogoAdjust: (() => void) | null = null;
 
   // Botões
-  el.querySelector<HTMLButtonElement>('#submit')!.onclick = () => onSubmit();
+  el.querySelector<HTMLButtonElement>('#submit')!.onclick = () => { cleanupLogoAdjust?.(); onSubmit(); };
   
   // Confirmar jogar novamente
   const againBtn = el.querySelector<HTMLButtonElement>("#again")!;
@@ -157,7 +158,12 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   const confirmAgain = el.querySelector<HTMLButtonElement>("#confirm-again")!;
   againBtn.onclick = () => { modal.classList.remove('hidden'); modal.classList.add('flex'); };
   cancelModal.onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
-  confirmAgain.onclick = () => onRetry();
+  confirmAgain.onclick = () => {
+    cleanupLogoAdjust?.();
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    onRetry();
+  };
 
   // Confirmar sair sem submeter
   const homeBtn = el.querySelector<HTMLButtonElement>("#home")!;
@@ -168,6 +174,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   cancelExitModal.onclick = () => { exitModal.classList.add('hidden'); exitModal.classList.remove('flex'); };
   confirmExit.onclick = () => {
     // Voltar à home sem submeter (mesmo comportamento que jogar novamente)
+    cleanupLogoAdjust?.();
     onRetry();
   };
   // Função para gerar texto de partilha
@@ -425,9 +432,89 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   const step = (now:number)=>{ const p=Math.min(1,(now-t0)/dur); const v=Math.round(score*ease(p)); scoreEl.textContent=v.toLocaleString('pt-PT'); if(p<1&&el.isConnected) requestAnimationFrame(step); };
   requestAnimationFrame(step);
 
-  
+  cleanupLogoAdjust = null;
+  const logo = el.querySelector<HTMLImageElement>('#result-summary-logo');
+  const titleEl = el.querySelector<HTMLDivElement>('#result-summary-title');
+  let resizeRaf = 0;
 
-  // Som on/off com persistência
+  if (logo && titleEl) {
+    const minWidth = 96;
+    const gapPx = 12;
+    const ratioSource = (logo.naturalWidth && logo.naturalHeight)
+      ? logo.naturalHeight / logo.naturalWidth
+      : (() => {
+          const rect = logo.getBoundingClientRect();
+          return rect.width ? rect.height / rect.width : 0.4;
+        })();
+    const ratio = ratioSource || 0.4;
+
+    const readBaseWidth = () => {
+      const prev = logo.style.width;
+      logo.style.width = '';
+      const measured = parseFloat(window.getComputedStyle(logo).width) || logo.getBoundingClientRect().width || minWidth;
+      logo.style.width = prev;
+      return measured;
+    };
+
+    const applyWidth = (width: number, forceMargin: boolean) => {
+      const safeWidth = Math.max(minWidth, Math.round(width * 100) / 100);
+      logo.style.width = `${safeWidth}px`;
+      if (forceMargin) {
+        titleEl.style.marginTop = `${Math.max(8, gapPx)}px`;
+      } else {
+        titleEl.style.marginTop = '';
+      }
+    };
+
+    const adaptLogo = () => {
+      const baseWidth = readBaseWidth();
+      const baseHeight = baseWidth * ratio;
+      const logoRect = logo.getBoundingClientRect();
+      const titleRect = titleEl.getBoundingClientRect();
+      const available = titleRect.top - logoRect.top - gapPx;
+
+      if (!Number.isFinite(available)) return;
+
+      if (available >= baseHeight) {
+        applyWidth(baseWidth, false);
+        return;
+      }
+
+      const targetHeight = Math.max(minWidth * ratio, Math.min(baseHeight, available > 0 ? available : minWidth * ratio));
+      const targetWidth = Math.max(minWidth, Math.min(baseWidth, targetHeight / ratio));
+      applyWidth(targetWidth, true);
+
+      requestAnimationFrame(() => {
+        const afterLogo = logo.getBoundingClientRect();
+        const afterTitle = titleEl.getBoundingClientRect();
+        if (afterLogo.bottom + gapPx > afterTitle.top && targetWidth > minWidth + 1) {
+          const diff = (afterLogo.bottom + gapPx) - afterTitle.top;
+          applyWidth(targetWidth - diff * 1.1, true);
+        }
+      });
+    };
+
+    const scheduleAdapt = () => {
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(adaptLogo);
+    };
+
+    const resizeListener = () => scheduleAdapt();
+    const orientationListener = () => scheduleAdapt();
+
+    window.addEventListener('resize', resizeListener);
+    window.addEventListener('orientationchange', orientationListener);
+
+    cleanupLogoAdjust = () => {
+      window.removeEventListener('resize', resizeListener);
+      window.removeEventListener('orientationchange', orientationListener);
+      cancelAnimationFrame(resizeRaf);
+    };
+
+    setTimeout(adaptLogo, 40);
+    setTimeout(adaptLogo, 200);
+  }
+// Som on/off com persistência
   const soundBtn = el.querySelector<HTMLButtonElement>('#sound')!;
   const soundIcon = el.querySelector<HTMLImageElement>('#sound-icon')!;
   const updateSoundIcon = () => {
@@ -453,4 +540,23 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
 
   return el;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -13,7 +13,7 @@ import { UsernamePicker } from './ui/screens/UsernamePicker'
 import { AuthService, getCachedUser, setCachedUser } from './services/auth'
 import { ensureAutoplayAudioGate } from './platform/DeviceGuard'
 import { getUserProfile } from './services/user'
-import { ensureFirestoreOnline } from './lib/firebase'
+import { ensureFirestoreOnline, getFirebaseAuth } from './lib/firebase'
 import { userStore } from './services/userStore'
 import { submitScore } from './services/score'
 import { Account } from './ui/screens/Account'
@@ -351,12 +351,32 @@ window.addEventListener('load', () => {
   }
 });
 
-function handleSubmitScoreFlow(score: number, onAfter: () => void) {
+function resolveAuthedUser() {
   const cached = getCachedUser();
-  // Se não autenticado → modal email
+  if (cached?.uid) return cached;
+
+  const authUser = getFirebaseAuth().currentUser;
+  if (authUser?.uid) {
+    const fallback = {
+      uid: authUser.uid,
+      email: authUser.email || undefined,
+      username: cached?.username,
+      displayName: authUser.displayName || cached?.displayName,
+    };
+    setCachedUser(fallback);
+    return fallback;
+  }
+
+  return cached;
+}
+
+type SubmitUser = NonNullable<ReturnType<typeof resolveAuthedUser>>;
+
+function handleSubmitScoreFlow(score: number, onAfter: () => void) {
+  const cached = resolveAuthedUser();
   if (!cached?.uid) {
     document.body.appendChild(EmailLogin(() => {
-      // Após login bem-sucedido, submeter automaticamente a pontuação
+      // Apos login bem-sucedido, submeter automaticamente a pontuacao
       handleSubmitScoreFlow(score, onAfter);
     }, () => {
       // Se cancelar, voltar ao fluxo normal
@@ -364,37 +384,61 @@ function handleSubmitScoreFlow(score: number, onAfter: () => void) {
     }, () => score));
     return;
   }
-  // Se autenticado mas sem username → usar o novo ecrã Register (que já cria username)
-  if (!cached.username) {
-    // Guardar pontos no localStorage para preservar durante o registo
-    try { localStorage.setItem('ab-pending-score', String(score)); } catch {}
-    mount(Register(() => {
-      // Depois de registar, submeter os pontos automaticamente
-      handleSubmitScoreFlow(score, onAfter);
-    }, () => {
-      // Se cancelar, limpar pontos pendentes e voltar
-      try { localStorage.removeItem('ab-pending-score'); } catch {}
-      onAfter();
-    }));
+
+  const ensureSubmit = (user: SubmitUser, refreshProfile = true) => {
+    if (refreshProfile) {
+      (async () => {
+        try {
+          const prof = await getUserProfile(user.uid);
+          if (prof?.username) {
+            setCachedUser({ uid: user.uid, email: user.email, username: prof.username, displayName: prof.displayName || user.displayName });
+          }
+        } catch {}
+      })();
+    }
+    (async () => {
+      try {
+        const latest = getCachedUser() || user;
+        try { localStorage.removeItem('ab-pending-score'); } catch {}
+        await submitScore({ uid: user.uid, username: latest.username!, displayName: latest.displayName, score });
+        showSuccessModal('Pontuacao submetida!', onAfter);
+      } catch (e) {
+        showErrorModal('FALHA AO SUBMETER PONTUACAO.');
+      }
+    })();
+  };
+
+  const baseUser = cached as SubmitUser;
+
+  if (!baseUser.username) {
+    (async () => {
+      try {
+        const prof = await getUserProfile(baseUser.uid);
+        if (prof?.username) {
+          const enriched: SubmitUser = {
+            uid: baseUser.uid,
+            email: baseUser.email,
+            username: prof.username,
+            displayName: prof.displayName || baseUser.displayName,
+          };
+          setCachedUser(enriched);
+          ensureSubmit(enriched, false);
+          return;
+        }
+      } catch {}
+      // Guardar pontos no localStorage para preservar durante o registo
+      try { localStorage.setItem('ab-pending-score', String(score)); } catch {}
+      mount(Register(() => {
+        // Depois de registar, submeter os pontos automaticamente
+        handleSubmitScoreFlow(score, onAfter);
+      }, () => {
+        // Se cancelar, limpar pontos pendentes e voltar
+        try { localStorage.removeItem('ab-pending-score'); } catch {}
+        onAfter();
+      }));
+    })();
     return;
   }
-  // (mantemos a tentativa de obter perfil para garantir dados atualizados)
-  (async () => {
-    try {
-      const prof = await getUserProfile(cached.uid);
-      if (prof?.username) {
-        setCachedUser({ uid: cached.uid, email: cached.email, username: prof.username, displayName: prof.displayName || cached.displayName });
-      }
-    } catch {}
-  })();
-  // Já autenticado com username → submeter
-  (async () => {
-    try {
-      await submitScore({ uid: cached.uid, username: cached.username!, displayName: cached.displayName, score });
-      showSuccessModal('Pontuação submetida!', onAfter);
-    } catch (e) {
-      showErrorModal('FALHA AO SUBMETER PONTUAÇÃO.');
-    }
-  })();
-}
 
+  ensureSubmit(baseUser);
+}

@@ -1,4 +1,4 @@
-﻿@tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -43,20 +43,20 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 
 .ab-home-gradient { background: linear-gradient(180deg, #0a2b66 0%, #0d3e91 45%, #107fd2 100%); }
 
-/* Entrada suave do tÃ­tulo */
+/* Entrada suave do título */
 @keyframes ab-fade-zoom-in {
   0% { opacity: 0; transform: scale(0.94); }
   100% { opacity: 1; transform: scale(1); }
 }
 .ab-anim-fade-zoom-in { animation: ab-fade-zoom-in 2000ms cubic-bezier(.2,.7,.2,1) both; }
 
-/* Segunda animaÃ§Ã£o com delay */
+/* Segunda animação com delay */
 .ab-anim-fade-zoom-in-delayed { 
   animation: ab-fade-zoom-in 2000ms cubic-bezier(.2,.7,.2,1) both;
   animation-delay: 3000ms; /* Inicia 3 segundos depois da primeira */
 }
 
-/* AnimaÃ§Ã£o de saÃ­da para a primeira animaÃ§Ã£o */
+/* Animação de saída para a primeira animação */
 @keyframes ab-fade-out {
   0% { opacity: 1; transform: scale(1); }
   100% { opacity: 0; transform: scale(0.96); }
@@ -66,14 +66,14 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   animation-delay: 2500ms; /* Desaparece 2.5s depois (antes da segunda aparecer) */
 }
 
-/* AnimaÃ§Ã£o de vento nas nuvens */
+/* Animação de vento nas nuvens */
 @keyframes ab-cloud-drift {
   0%, 100% { transform: translateX(0); }
   50% { transform: translateX(var(--ab-cloud-dx, 10px)); }
 }
 .ab-cloud { animation: ab-cloud-drift var(--ab-cloud-dur, 12s) ease-in-out infinite; will-change: transform; }
 
-/* Marquee horizontal contÃ­nuo (infinito) */
+/* Marquee horizontal contínuo (infinito) */
 @keyframes ab-cloud-marquee-right {
   0% { transform: translateX(-120vw); }
   100% { transform: translateX(120vw); }
@@ -85,7 +85,7 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 .ab-cloud-marquee-right { animation: ab-cloud-marquee-right var(--ab-cloud-scroll-dur, 40s) linear infinite; animation-delay: var(--ab-delay, 0s); will-change: transform; }
 .ab-cloud-marquee-left  { animation: ab-cloud-marquee-left  var(--ab-cloud-scroll-dur, 40s) linear infinite; animation-delay: var(--ab-delay, 0s); will-change: transform; }
 
-/* ForÃ§ar logotipo a branco mantendo transparÃªncia */
+/* Forçar logotipo a branco mantendo transparência */
 .ab-logo-white { filter: brightness(0) invert(1); }
 /* Icon circle buttons under CTAs */
 .ab-icon-btn { 
@@ -138,7 +138,7 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   box-shadow: 0 6px 16px rgba(2,20,60,0.25), 0 2px 0 rgba(255,255,255,0.4) inset;
 }
 
-/* Revelar tÃ­tulo: nuvens afastam-se do centro */
+/* Revelar título: nuvens afastam-se do centro */
 @keyframes ab-cloud-reveal-left {
   0% { transform: translateX(0) translateY(0) scale(1.05) rotate(0deg); opacity: 1; }
   60% { opacity: 0.92; }
@@ -153,7 +153,7 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 .ab-reveal-cloud-left { animation: ab-cloud-reveal-left 2200ms cubic-bezier(.2,.8,.2,1) forwards; }
 .ab-reveal-cloud-right { animation: ab-cloud-reveal-right 2400ms cubic-bezier(.2,.8,.2,1) forwards; }
 
-/* Segunda animaÃ§Ã£o de nuvens com delay */
+/* Segunda animação de nuvens com delay */
 .ab-reveal-cloud-left-delayed, .ab-reveal-cloud-right-delayed { pointer-events: none; }
 .ab-reveal-cloud-left-delayed { 
   animation: ab-cloud-reveal-left 2200ms cubic-bezier(.2,.8,.2,1) forwards;
@@ -198,7 +198,7 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   .home-screen #ab-logo { width: 96px !important; }
 }
 
-/* Taller portrait devices (e.g., iPads) â€” push CTAs further down */
+/* Taller portrait devices (e.g., iPads) — push CTAs further down */
 @media (min-height: 820px) and (orientation: portrait) {
   .home-screen .home-title-slot { height: 360px !important; }
   .home-screen .btn-play { margin-top: 120px !important; }
@@ -229,7 +229,7 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   .home-screen .bottom-icons { margin-top: 108px !important; }
 }
 
-/* Tall phones (e.g., iPhone 12/13/14 Pro) â€” keep CTAs within viewport */
+/* Tall phones (e.g., iPhone 12/13/14 Pro) — keep CTAs within viewport */
 @media (min-height: 820px) and (max-width: 480px) and (orientation: portrait) {
   .home-screen .home-title-slot { height: 300px !important; }
   .home-screen .btn-play { margin-top: 88px !important; }
@@ -241,17 +241,17 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 .howto-content .btn-play {
   margin-top: 2rem !important;
   margin-bottom: 2rem !important;
-  /* Tornar o botão muito maior e mais visível */
+  /* Tornar o bot�o muito maior e mais vis�vel */
   width: clamp(180px, 40vmin, 360px) !important;
   max-width: 360px !important;
 }
-/* Remover posicionamento sticky problemático - usar layout normal */
+/* Remover posicionamento sticky problem�tico - usar layout normal */
 .howto-content #play {
   position: static;
   z-index: 5;
 }
 
-/* Ajustes para alturas muito baixas - manter botão visível */
+/* Ajustes para alturas muito baixas - manter bot�o vis�vel */
 @media (max-height: 560px) {
   .howto-content .btn-play {
     margin-top: 1.5rem !important;
@@ -549,7 +549,7 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   }
 }
 
-/* Reforço para alturas < 540px */
+/* Refor�o para alturas < 540px */
 @media (max-height: 540px) {
   .howto-content {
   }
@@ -560,7 +560,7 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   }
 }
 
-/* Reforço para alturas < 520px */
+/* Refor�o para alturas < 520px */
 @media (max-height: 520px) {
   .howto-content {
   }
@@ -593,5 +593,69 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   }
 }
 
+
+
+/* Result summary adjustments */
+.result-summary-container {
+  padding-top: clamp(120px, 18vh, 160px);
+  gap: clamp(16px, 4vh, 28px);
+}
+
+.result-summary-title {
+  margin-top: clamp(12px, 2vh, 24px) !important;
+  font-size: clamp(28px, 6vw, 40px) !important;
+}
+
+.result-summary-logo {
+  width: clamp(120px, 26vw, 180px) !important;
+  transition: width 160ms ease;
+}
+
+.result-summary-score {
+  margin-top: clamp(18px, 3vh, 28px) !important;
+}
+
+.result-summary-actions {
+  margin-top: clamp(18px, 4vh, 40px) !important;
+}
+
+@media (max-height: 700px) {
+  .result-summary-container {
+    padding-top: clamp(104px, 22vh, 144px);
+  }
+  .result-summary-logo {
+    width: clamp(110px, 28vw, 168px) !important;
+  }
+  .result-summary-actions {
+    margin-top: clamp(14px, 4vh, 32px) !important;
+  }
+}
+
+@media (max-height: 600px) {
+  .result-summary-container {
+    padding-top: clamp(92px, 24vh, 132px);
+  }
+  .result-summary-logo {
+    width: clamp(102px, 30vw, 152px) !important;
+  }
+  .result-summary-actions {
+    margin-top: clamp(12px, 5vh, 28px) !important;
+  }
+}
+
+@media (max-height: 520px) {
+  .result-summary-container {
+    padding-top: clamp(80px, 26vh, 120px);
+  }
+  .result-summary-logo {
+    width: clamp(96px, 34vw, 140px) !important;
+  }
+  .result-summary-title {
+    font-size: clamp(24px, 6.2vw, 32px) !important;
+  }
+  .result-summary-actions {
+    margin-top: clamp(10px, 6vh, 24px) !important;
+  }
+}
 
 
