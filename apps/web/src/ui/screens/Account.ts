@@ -157,7 +157,7 @@ export function Account(onBack: () => void) {
         <div class="text-sm opacity-80">Jogos submetidos: ${scores.length}</div>
         <div class="mt-2">
           <div class="font-[800] mb-1">Histórico</div>
-          <div class="max-h-[200px] sm:max-h-[280px] md:max-h-[320px] overflow-auto divide-y-2 divide-[#1f4590]/20">
+          <div class="max-h-[200px] sm:max-h-[280px] md:max-h-[320px] overflow-auto divide-y-2 divide-[#1f4590]/20 pr-4">
             ${scores.map(s => `<div class="flex items-center justify-between py-1.5 sm:py-2">
               <div class="text-sm sm:text-base">@${s.username}</div>
               <div class="font-[800] text-sm sm:text-base">${s.score}</div>
