@@ -210,7 +210,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       <div class="relative w-full max-w-[90vw] max-h-[80vh] bg-white/95 rounded-[22px] shadow-[0_20px_40px_rgba(2,20,60,0.3)] overflow-hidden">
         <!-- Header -->
         <div class="flex items-center justify-between p-4 border-b-2 border-[#243b78]/30 bg-[#243b78]">
-          <h2 class="text-xl font-[800] text-white">Classificação Completa</h2>
+          <h2 class="text-xl font-[800] text-white">CLASSIFICAÇÃO COMPLETA</h2>
           <button id="close-modal" class="w-8 h-8 rounded-full bg-white/20 text-white hover:bg-white/30 transition flex items-center justify-center">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path stroke="currentColor" stroke-width="2" d="M18 6L6 18M6 6l12 12"/>
@@ -237,7 +237,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
         <!-- Footer -->
         <div class="p-4 border-t border-[#243b78]/30 bg-[#243b78]">
           <div class="text-xl font-[800] text-white text-center">
-            Total: <span id="total-count">0</span> participantes
+            TOTAL: <span id="total-count">0</span> PARTICIPANTES
           </div>
         </div>
       </div>
