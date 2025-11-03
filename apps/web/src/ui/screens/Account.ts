@@ -90,7 +90,7 @@ export function Account(onBack: () => void) {
         <div class="space-y-3">
           <div class="text-sm text-center">
             <div>ENTRA OU CRIA UMA CONTA</div>
-            <div class="text-xs">PARA SUBMETER A TUA PONTUAÇÃO.</div>
+            <div class="text-xs">PARA SUBMETERES A TUA PONTUAÇÃO.</div>
           </div>
           <div class="flex justify-center gap-3">
             <button id="login" class="px-6 py-2 rounded-full bg-[#1f4590] text-white font-semibold whitespace-nowrap min-w-[190px]">ENTRAR / REGISTAR</button>
