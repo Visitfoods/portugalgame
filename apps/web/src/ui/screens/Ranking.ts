@@ -21,7 +21,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
 
     <div class="ranking-container relative z-10 w-full flex flex-col items-center pb-[160px] min-h-screen justify-start pt-[120px] sm:pt-[140px] md:pt-[160px]">
       <!-- Título -->
-      <div class="ranking-title mt-1 sm:mt-2 text-white text-xl md:text-2xl font-[800] tracking-[0.06em]">CLASSIFICAÇÃO</div>
+      <div class="ranking-title mt-1 sm:mt-2 text-white text-lg md:text-xl font-[800] tracking-[0.06em]">CLASSIFICAÇÃO</div>
 
       <!-- Quadro -->
       <div class="ranking-card mt-3 sm:mt-4 w-10/12 sm:w-11/12 max-w-[580px] sm:max-w-[640px] bg-white/90 text-[#0a2960] rounded-[16px] sm:rounded-[20px] shadow-[0_8px_20px_rgba(2,20,60,0.18)] overflow-hidden">
@@ -210,7 +210,7 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       <div class="relative w-full max-w-[90vw] max-h-[80vh] bg-white/95 rounded-[22px] shadow-[0_20px_40px_rgba(2,20,60,0.3)] overflow-hidden">
         <!-- Header -->
         <div class="flex items-center justify-between p-4 border-b-2 border-[#243b78]/30 bg-[#243b78]">
-          <h2 class="text-xl md:text-2xl font-[800] text-white">CLASSIFICAÇÃO COMPLETA</h2>
+          <h2 class="text-lg md:text-xl font-[800] text-white">CLASSIFICAÇÃO COMPLETA</h2>
           <button id="close-modal" class="w-8 h-8 rounded-full bg-white/20 text-white hover:bg-white/30 transition flex items-center justify-center">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path stroke="currentColor" stroke-width="2" d="M18 6L6 18M6 6l12 12"/>

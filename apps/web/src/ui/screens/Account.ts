@@ -28,7 +28,7 @@ export function Account(onBack: () => void) {
           <img src="/assets/graphics/profile-icon.svg" alt="Perfil" class="w-8 h-8 brightness-0 invert"/>
         </div>
         <!-- Título maior e mais grosso -->
-        <div class="text-white text-xl md:text-2xl font-[800] tracking-[0.06em] whitespace-nowrap">A MINHA CONTA</div>
+        <div class="text-white text-lg md:text-xl font-[800] tracking-[0.06em] whitespace-nowrap">A MINHA CONTA</div>
 
         <div id="card" class="mt-3 w-11/12 max-w-[680px] min-w-[320px] sm:min-w-[360px] bg-white/90 text-[#0a2960] rounded-[22px] shadow-[0_12px_28px_rgba(2,20,60,0.22)] overflow-hidden p-4 sm:p-5">
           <div id="content" class="space-y-2 sm:space-y-3 text-center"></div>
