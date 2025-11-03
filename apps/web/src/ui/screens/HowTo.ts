@@ -20,8 +20,8 @@ export function HowTo(onPlay: () => void, onBack: () => void) {
 
       <!-- Regras (SVGs) -->
       <div class="w-10/12 max-w-[350px] mx-auto mt-2 flex flex-col items-stretch gap-2 md:gap-3 howto-rules">
-        <img src="/assets/graphics/Regra-1.svg" alt="Regra 1" class="block w-full h-auto mx-auto max-w-[300px]"/>
         <img src="/assets/graphics/Regra-3.svg" alt="Regra 3" class="block w-full h-auto mx-auto max-w-[300px]"/>
+        <img src="/assets/graphics/Regra-1.svg" alt="Regra 1" class="block w-full h-auto mx-auto max-w-[300px]"/>
         <img src="/assets/graphics/Regra-4.svg" alt="Regra 4" class="block w-full h-auto mx-auto max-w-[300px]"/>
         <img src="/assets/graphics/Regra-5.svg" alt="Regra 5" class="block w-full h-auto mx-auto max-w-[300px]"/>
         <img src="/assets/graphics/Regra-6.svg" alt="Regra 6" class="block w-full h-auto mx-auto max-w-[300px]"/>
