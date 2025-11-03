@@ -220,10 +220,11 @@ export function Account(onBack: () => void) {
     const scores = await listUserScores(cached.uid, 100);
     
     // Debug: verificar se timestamp está presente
-    if (scores.length > 0) {
-      console.log('Primeiro score:', scores[0]);
-      console.log('Timestamp do primeiro score:', scores[0].timestamp);
-      console.log('Tipo do timestamp:', typeof scores[0].timestamp);
+    const firstScore = scores[0];
+    if (firstScore) {
+      console.log('Primeiro score:', firstScore);
+      console.log('Timestamp do primeiro score:', firstScore.timestamp);
+      console.log('Tipo do timestamp:', typeof firstScore.timestamp);
     }
     
     content.innerHTML = `
