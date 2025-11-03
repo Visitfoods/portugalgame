@@ -240,9 +240,9 @@ export function Account(onBack: () => void) {
               const dateTime = formatDateTime(s.timestamp);
               console.log('Score:', s.score, 'Timestamp:', s.timestamp, 'DateTime formatado:', dateTime);
               return `<div class="flex items-center justify-between py-1.5 sm:py-2">
-                <div class="flex flex-col gap-0.5">
+                <div class="flex flex-col gap-0.5 items-start">
                   <div class="text-sm sm:text-base">@${s.username}</div>
-                  ${dateTime ? `<div class="text-xs opacity-60">${dateTime}</div>` : ''}
+                  ${dateTime ? `<div class="text-xs opacity-60 self-start">${dateTime}</div>` : ''}
                 </div>
                 <div class="font-[800] text-sm sm:text-base">${s.score}</div>
               </div>`;
