@@ -147,6 +147,50 @@ export function Account(onBack: () => void) {
       return;
     }
 
+    // Função para formatar timestamp de forma minimalista
+    const formatDateTime = (timestamp: unknown): string => {
+      if (!timestamp) return '';
+      let date: Date;
+      
+      // Tratar timestamp do Firestore (pode ser Timestamp object ou plain object)
+      if (typeof timestamp === 'object' && timestamp !== null) {
+        const ts = timestamp as any;
+        if (ts.toDate && typeof ts.toDate === 'function') {
+          date = ts.toDate();
+        } else if (ts.seconds) {
+          date = new Date(ts.seconds * 1000);
+        } else if (ts._seconds) {
+          date = new Date(ts._seconds * 1000);
+        } else {
+          return '';
+        }
+      } else if (typeof timestamp === 'number') {
+        date = new Date(timestamp);
+      } else {
+        return '';
+      }
+      
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const scoreDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const timeStr = `${hours}:${minutes}`;
+      
+      if (scoreDate.getTime() === today.getTime()) {
+        return `Hoje, ${timeStr}`;
+      } else if (scoreDate.getTime() === yesterday.getTime()) {
+        return `Ontem, ${timeStr}`;
+      } else {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        return `${day}/${month}, ${timeStr}`;
+      }
+    };
+
     const scores = await listUserScores(cached.uid, 100);
     content.innerHTML = `
       <div class="space-y-4">
@@ -158,10 +202,16 @@ export function Account(onBack: () => void) {
         <div class="mt-2">
           <div class="font-[800] mb-1">Histórico</div>
           <div class="max-h-[200px] sm:max-h-[280px] md:max-h-[320px] overflow-auto divide-y-2 divide-[#1f4590]/20 pr-4">
-            ${scores.map(s => `<div class="flex items-center justify-between py-1.5 sm:py-2">
-              <div class="text-sm sm:text-base">@${s.username}</div>
-              <div class="font-[800] text-sm sm:text-base">${s.score}</div>
-            </div>`).join('')}
+            ${scores.map(s => {
+              const dateTime = formatDateTime(s.timestamp);
+              return `<div class="flex items-center justify-between py-1.5 sm:py-2">
+                <div class="flex flex-col gap-0.5">
+                  <div class="text-sm sm:text-base">@${s.username}</div>
+                  ${dateTime ? `<div class="text-xs opacity-60">${dateTime}</div>` : ''}
+                </div>
+                <div class="font-[800] text-sm sm:text-base">${s.score}</div>
+              </div>`;
+            }).join('')}
           </div>
         </div>
       </div>`;
