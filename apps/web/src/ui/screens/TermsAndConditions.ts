@@ -16,7 +16,7 @@ export function TermsAndConditions(onBack: () => void) {
 
     <div class="relative z-10 w-full flex flex-col items-center pb-[160px] min-h-screen justify-center">
       <!-- Título -->
-      <div class="mt-8 sm:mt-12 md:mt-16 text-white text-2xl md:text-3xl font-[800] tracking-[0.06em] text-center mb-1 sm:mb-2">
+      <div class="mt-8 sm:mt-12 md:mt-16 text-white text-xl md:text-2xl font-[800] tracking-[0.06em] text-center mb-1 sm:mb-2">
         TERMOS E CONDIÇÕES
       </div>
 

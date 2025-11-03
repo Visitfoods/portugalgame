@@ -394,7 +394,7 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   
   .ranking-title {
     margin-top: 0.5rem !important;
-    font-size: 1.5rem !important; /* text-2xl = 1.5rem */
+    font-size: 1.25rem !important; /* text-xl = 1.25rem */
   }
   
   .ranking-card {
@@ -430,7 +430,7 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
   
   .ranking-title {
     margin-top: 0.25rem !important;
-    font-size: 1.5rem !important; /* text-2xl = 1.5rem */
+    font-size: 1.25rem !important; /* text-xl = 1.25rem */
   }
   
   .ranking-card {
@@ -505,11 +505,11 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 
 .howto-shell .howto-title {
   max-width: min(92vw, 360px);
-  font-size: 1.5rem !important; /* text-2xl = 1.5rem */
+  font-size: 1.25rem !important; /* text-xl = 1.25rem */
 }
 @media (min-width: 768px) {
   .howto-shell .howto-title {
-    font-size: 1.875rem !important; /* text-3xl = 1.875rem */
+    font-size: 1.5rem !important; /* text-2xl = 1.5rem */
   }
 }
 
@@ -584,11 +584,11 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 
   .howto-shell .howto-title {
     max-width: min(70vw, 340px);
-    font-size: 1.5rem !important; /* text-2xl = 1.5rem */
+    font-size: 1.25rem !important; /* text-xl = 1.25rem */
   }
   @media (min-width: 768px) {
     .howto-shell .howto-title {
-      font-size: 1.875rem !important; /* text-3xl = 1.875rem */
+      font-size: 1.5rem !important; /* text-2xl = 1.5rem */
     }
   }
 

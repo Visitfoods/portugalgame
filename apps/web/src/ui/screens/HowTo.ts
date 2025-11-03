@@ -16,7 +16,7 @@ export function HowTo(onPlay: () => void, onBack: () => void) {
     <div class="relative z-10 w-full max-w-[400px] mx-auto flex flex-col items-center howto-content howto-shell">
 
       <!-- TÃ­tulo -->
-      <h1 class="howto-title w-10/12 max-w-[350px] mx-auto text-center text-white font-[800] uppercase tracking-[0.09em] leading-tight text-2xl md:text-3xl">COMO JOGAR</h1>
+      <h1 class="howto-title w-10/12 max-w-[350px] mx-auto text-center text-white font-[800] uppercase tracking-[0.09em] leading-tight text-xl md:text-2xl">COMO JOGAR</h1>
 
       <!-- Regras (SVGs) -->
       <div class="w-10/12 max-w-[350px] mx-auto mt-2 flex flex-col items-stretch gap-2 md:gap-3 howto-rules">
