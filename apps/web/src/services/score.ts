@@ -48,7 +48,14 @@ export async function listUserScores(uid: string, limitN = 100): Promise<ScoreEn
     const ref = collection(db, 'scores');
     const q = query(ref, where('uid', '==', uid), orderBy('timestamp', 'desc'), limit(limitN));
     const snap = await getDocsFromServer(q);
-    return snap.docs.map(d => d.data() as ScoreEntry);
+    return snap.docs.map(d => {
+      const data = d.data();
+      // Garantir que o timestamp é preservado
+      return {
+        ...data,
+        timestamp: data.timestamp, // Manter o timestamp original do Firestore
+      } as ScoreEntry;
+    });
   } catch (e: any) {
     const code = e?.code || e?.message || String(e);
     if (String(code).includes('failed-precondition')) {

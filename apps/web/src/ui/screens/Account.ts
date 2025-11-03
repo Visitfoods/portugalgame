@@ -150,48 +150,82 @@ export function Account(onBack: () => void) {
     // Função para formatar timestamp de forma minimalista
     const formatDateTime = (timestamp: unknown): string => {
       if (!timestamp) return '';
-      let date: Date;
+      let date: Date | null = null;
       
-      // Tratar timestamp do Firestore (pode ser Timestamp object ou plain object)
-      if (typeof timestamp === 'object' && timestamp !== null) {
-        const ts = timestamp as any;
-        if (ts.toDate && typeof ts.toDate === 'function') {
-          date = ts.toDate();
-        } else if (ts.seconds) {
-          date = new Date(ts.seconds * 1000);
-        } else if (ts._seconds) {
-          date = new Date(ts._seconds * 1000);
-        } else {
+      try {
+        // Tratar timestamp do Firestore
+        if (typeof timestamp === 'object' && timestamp !== null) {
+          const ts = timestamp as any;
+          
+          // Se tem método toDate (Timestamp object do Firestore v9+)
+          if (typeof ts.toDate === 'function') {
+            date = ts.toDate();
+          }
+          // Se tem seconds e nanoseconds (formato do Firestore)
+          else if (typeof ts.seconds === 'number') {
+            // Timestamp em segundos, converter para milissegundos
+            date = new Date(ts.seconds * 1000);
+            // Se tiver nanoseconds, adicionar precisão
+            if (ts.nanoseconds) {
+              date = new Date(ts.seconds * 1000 + ts.nanoseconds / 1000000);
+            }
+          }
+          // Formato interno do Firestore (com _seconds)
+          else if (typeof ts._seconds === 'number') {
+            date = new Date(ts._seconds * 1000);
+            if (ts._nanoseconds) {
+              date = new Date(ts._seconds * 1000 + ts._nanoseconds / 1000000);
+            }
+          }
+          // Verificar se é um objeto Date
+          else if (ts instanceof Date) {
+            date = ts;
+          }
+        }
+        // Se é um número (timestamp em milissegundos ou segundos)
+        else if (typeof timestamp === 'number') {
+          // Se for muito pequeno, assume-se segundos, senão milissegundos
+          date = timestamp < 10000000000 ? new Date(timestamp * 1000) : new Date(timestamp);
+        }
+        
+        if (!date || isNaN(date.getTime())) {
           return '';
         }
-      } else if (typeof timestamp === 'number') {
-        date = new Date(timestamp);
-      } else {
+        
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const scoreDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const timeStr = `${hours}:${minutes}`;
+        
+        if (scoreDate.getTime() === today.getTime()) {
+          return `Hoje, ${timeStr}`;
+        } else if (scoreDate.getTime() === yesterday.getTime()) {
+          return `Ontem, ${timeStr}`;
+        } else {
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          return `${day}/${month}, ${timeStr}`;
+        }
+      } catch (e) {
+        console.warn('Erro ao formatar timestamp:', e, timestamp);
         return '';
-      }
-      
-      const now = new Date();
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-      const scoreDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const timeStr = `${hours}:${minutes}`;
-      
-      if (scoreDate.getTime() === today.getTime()) {
-        return `Hoje, ${timeStr}`;
-      } else if (scoreDate.getTime() === yesterday.getTime()) {
-        return `Ontem, ${timeStr}`;
-      } else {
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        return `${day}/${month}, ${timeStr}`;
       }
     };
 
     const scores = await listUserScores(cached.uid, 100);
+    
+    // Debug: verificar se timestamp está presente
+    if (scores.length > 0) {
+      console.log('Primeiro score:', scores[0]);
+      console.log('Timestamp do primeiro score:', scores[0].timestamp);
+      console.log('Tipo do timestamp:', typeof scores[0].timestamp);
+    }
+    
     content.innerHTML = `
       <div class="space-y-4">
         <div class="flex items-center justify-between">
@@ -204,6 +238,7 @@ export function Account(onBack: () => void) {
           <div class="max-h-[200px] sm:max-h-[280px] md:max-h-[320px] overflow-auto divide-y-2 divide-[#1f4590]/20 pr-4">
             ${scores.map(s => {
               const dateTime = formatDateTime(s.timestamp);
+              console.log('Score:', s.score, 'Timestamp:', s.timestamp, 'DateTime formatado:', dateTime);
               return `<div class="flex items-center justify-between py-1.5 sm:py-2">
                 <div class="flex flex-col gap-0.5">
                   <div class="text-sm sm:text-base">@${s.username}</div>
