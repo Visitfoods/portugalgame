@@ -401,9 +401,9 @@ function handleSubmitScoreFlow(score: number, onAfter: () => void) {
         const latest = getCachedUser() || user;
         try { localStorage.removeItem('ab-pending-score'); } catch {}
         await submitScore({ uid: user.uid, username: latest.username!, displayName: latest.displayName, score });
-        showSuccessModal('Pontuacao submetida!', onAfter);
+        showSuccessModal('PONTUAÇÃO SUBMETIDA!', onAfter);
       } catch (e) {
-        showErrorModal('FALHA AO SUBMETER PONTUACAO.');
+        showErrorModal('FALHA AO SUBMETER PONTUAÇÃO.');
       }
     })();
   };
