@@ -151,6 +151,64 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
     return code;
   };
 
+  const showCodeErrorModal = () => {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm';
+    
+    modal.innerHTML = `
+      <div class="relative w-full max-w-[90vw] max-w-[420px] bg-white/95 rounded-[22px] shadow-[0_20px_40px_rgba(2,20,60,0.3)] overflow-hidden animate-[fadeIn_0.2s_ease-out]">
+        <!-- Header -->
+        <div class="flex items-center justify-center p-4 border-b-2 border-[#dc2626]/30 bg-[#dc2626]">
+          <div class="flex items-center gap-3">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+            </svg>
+            <h2 class="text-xl font-[800] text-white">CÓDIGO INCORRETO</h2>
+          </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="p-6 text-center">
+          <div class="text-[#0a2960] font-[600] text-lg mb-6">O CÓDIGO QUE INTRODUZISTE ESTÁ INCORRETO.</div>
+          <div class="text-[#0a2960]/70 text-sm mb-6">VERIFICA O CÓDIGO NO TEU EMAIL E TENTA NOVAMENTE.</div>
+          <button id="close-code-error-modal" class="w-full px-6 py-3 rounded-full bg-[#dc2626] text-white font-[800] text-lg shadow-[0_8px_20px_rgba(220,38,38,0.35)] border border-white/50 active:scale-[.98] transition">
+            OK
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Fechar modal
+    const closeBtn = modal.querySelector<HTMLButtonElement>('#close-code-error-modal')!;
+    closeBtn.onclick = () => {
+      modal.remove();
+      codeInput.focus();
+      codeInput.select();
+    };
+    
+    // Fechar ao clicar fora
+    modal.onclick = (e) => {
+      if (e.target === modal) {
+        modal.remove();
+        codeInput.focus();
+        codeInput.select();
+      }
+    };
+
+    // ESC para fechar
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        modal.remove();
+        document.removeEventListener('keydown', handleEsc);
+        codeInput.focus();
+        codeInput.select();
+      }
+    };
+    document.addEventListener('keydown', handleEsc);
+
+    document.body.appendChild(modal);
+  };
+
   const showForm = () => {
     sentCard.classList.add('hidden');
     formCard.classList.remove('hidden');
@@ -211,7 +269,16 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
       wrap.remove();
     } catch (e: any) {
       const c = e?.code || e?.message || String(e);
-      msg.textContent = `FALHA AO VALIDAR. ${mapError(c)}`;
+      const errorCode = String(c).toLowerCase();
+      
+      // Mostrar pop-up visual para código incorreto
+      if (errorCode.includes('code_mismatch') || errorCode.includes('code-mismatch') || errorCode.includes('mismatch')) {
+        msg.textContent = '';
+        showCodeErrorModal();
+      } else {
+        // Para outros erros, mostrar mensagem pequena como antes
+        msg.textContent = `FALHA AO VALIDAR. ${mapError(c)}`;
+      }
     } finally { setBusy(false); }
   };
 
