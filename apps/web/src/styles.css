@@ -373,10 +373,35 @@ body { background: var(--ab-bg); color: var(--ab-fg); }
 /* Star pop + float animations for summary trophy */
 @keyframes ab-star-pop { 0% { transform: scale(0.4); opacity: 0; } 60% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
 @keyframes ab-star-float { 0% { transform: translateY(0); } 50% { transform: translateY(-4px); } 100% { transform: translateY(0); } }
-.ab-star { position: absolute; pointer-events: none; animation: ab-star-pop 420ms ease-out both, ab-star-float var(--dur,6s) ease-in-out infinite; animation-delay: 0s, var(--delay,.2s); filter: drop-shadow(0 2px 2px rgba(0,0,0,0.15)); backface-visibility: hidden; transform: translateZ(0); }
-.ab-star-white { filter: brightness(0) invert(1) drop-shadow(0 2px 2px rgba(0,0,0,0.12)); }
-@keyframes ab-star-burst { 0% { transform: scale(0.4) translate(0,0); opacity: 0; } 60% { opacity: 1; } 100% { transform: scale(1.1) translate(var(--tx,0), var(--ty,0)); opacity: 0; } }
-.ab-star-burst { position: absolute; pointer-events: none; animation: ab-star-burst 820ms cubic-bezier(.2,.8,.2,1) both; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.18)); backface-visibility: hidden; transform: translateZ(0); }
+.ab-star { 
+  position: absolute; 
+  pointer-events: none; 
+  animation: ab-star-pop 420ms ease-out both, ab-star-float var(--dur,6s) ease-in-out infinite; 
+  animation-delay: 0s, var(--delay,.2s); 
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.15)); 
+  backface-visibility: hidden; 
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  contain: layout paint style;
+}
+.ab-star-white { 
+  filter: brightness(0) invert(1) drop-shadow(0 2px 2px rgba(0,0,0,0.12)); 
+}
+@keyframes ab-star-burst { 
+  0% { transform: scale(0.4) translate(0,0); opacity: 0; } 
+  60% { opacity: 1; } 
+  100% { transform: scale(1.1) translate(var(--tx,0), var(--ty,0)); opacity: 0; } 
+}
+.ab-star-burst { 
+  position: absolute; 
+  pointer-events: none; 
+  animation: ab-star-burst 820ms cubic-bezier(.2,.8,.2,1) both; 
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.18)); 
+  backface-visibility: hidden; 
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  contain: layout paint style;
+}
 
 /* Otimizar rendering do container do score/troféu para evitar flicker */
 .result-summary-score {

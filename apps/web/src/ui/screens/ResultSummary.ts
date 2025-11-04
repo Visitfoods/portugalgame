@@ -37,16 +37,16 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
           <div class="mt-1 text-[12px] md:text-sm tracking-[0.24em] font-bold uppercase opacity-90">PONTOS</div>
         </div>
         <!-- Estrelas decorativas -->
-        <img src="/assets/graphics/Estrela_1.svg" class="ab-star" style="top:-10px; left:calc(50% - 90px); --dur:7s; --delay:.2s; width:14px;" alt=""/>
-        <img src="/assets/graphics/Estrela_2.svg" class="ab-star ab-star-white" style="top:-6px; left:calc(50% + 76px); --dur:6.5s; --delay:.6s; width:12px;" alt=""/>
-        <img src="/assets/graphics/Estrela_1.svg" class="ab-star" style="top:22px; left:calc(50% - 70px); --dur:6.2s; --delay:.9s; width:10px;" alt=""/>
-        <img src="/assets/graphics/Estrela_2.svg" class="ab-star ab-star-white" style="top:18px; left:calc(50% + 60px); --dur:7.2s; --delay:1.1s; width:11px;" alt=""/>
-        <img src="/assets/graphics/Estrela_1.svg" class="ab-star" style="top:-18px; left:calc(50% - 40px); --dur:6.8s; --delay:.4s; width:9px;" alt=""/>
+        <img src="/assets/graphics/Estrela_1.svg" class="ab-star" style="top:-10px; left:calc(50% - 90px); --dur:7s; --delay:.2s; width:14px; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" alt=""/>
+        <img src="/assets/graphics/Estrela_2.svg" class="ab-star ab-star-white" style="top:-6px; left:calc(50% + 76px); --dur:6.5s; --delay:.6s; width:12px; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" alt=""/>
+        <img src="/assets/graphics/Estrela_1.svg" class="ab-star" style="top:22px; left:calc(50% - 70px); --dur:6.2s; --delay:.9s; width:10px; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" alt=""/>
+        <img src="/assets/graphics/Estrela_2.svg" class="ab-star ab-star-white" style="top:18px; left:calc(50% + 60px); --dur:7.2s; --delay:1.1s; width:11px; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" alt=""/>
+        <img src="/assets/graphics/Estrela_1.svg" class="ab-star" style="top:-18px; left:calc(50% - 40px); --dur:6.8s; --delay:.4s; width:9px; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" alt=""/>
         <!-- Explosão inicial -->
-        <img src="/assets/graphics/Estrela_1.svg" class="ab-star-burst" style="--tx:-28px; --ty:-22px; width:12px;" alt=""/>
-        <img src="/assets/graphics/Estrela_2.svg" class="ab-star-burst ab-star-white" style="--tx:24px; --ty:-18px; width:11px;" alt=""/>
-        <img src="/assets/graphics/Estrela_1.svg" class="ab-star-burst" style="--tx:-18px; --ty:18px; width:10px;" alt=""/>
-        <img src="/assets/graphics/Estrela_2.svg" class="ab-star-burst ab-star-white" style="--tx:20px; --ty:16px; width:10px;" alt=""/>
+        <img src="/assets/graphics/Estrela_1.svg" class="ab-star-burst" style="--tx:-28px; --ty:-22px; width:12px; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" alt=""/>
+        <img src="/assets/graphics/Estrela_2.svg" class="ab-star-burst ab-star-white" style="--tx:24px; --ty:-18px; width:11px; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" alt=""/>
+        <img src="/assets/graphics/Estrela_1.svg" class="ab-star-burst" style="--tx:-18px; --ty:18px; width:10px; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" alt=""/>
+        <img src="/assets/graphics/Estrela_2.svg" class="ab-star-burst ab-star-white" style="--tx:20px; --ty:16px; width:10px; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" alt=""/>
       </div>
 
       
