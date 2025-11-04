@@ -150,8 +150,25 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       onTimeUpdate: (t) => hud.setTimeLeft(t),
       onStateChange: (state) => {
         if (state === 'finished') {
-          cleanup(true);
-          onFinish(loop.getScore());
+          const finalScore = loop.getScore();
+          
+          // Esconder canvas/video imediatamente para não ver ecrã preto
+          video.classList.add('hidden');
+          canvas.classList.add('hidden');
+          
+          // Chamar onFinish imediatamente para mostrar resultados
+          onFinish(finalScore);
+          
+          // Fazer cleanup pesado de forma não bloqueante (não espera)
+          // Usar requestIdleCallback se disponível, senão setTimeout
+          const doCleanup = () => {
+            cleanup(true);
+          };
+          if ('requestIdleCallback' in window) {
+            (window as any).requestIdleCallback(doCleanup, { timeout: 100 });
+          } else {
+            setTimeout(doCleanup, 0);
+          }
         }
       },
       onPopup: (x, y, delta) => {

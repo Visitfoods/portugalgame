@@ -85,10 +85,12 @@ export class GameLoop {
 
   stop() {
     this.state = 'finished';
+    // Fazer um último render antes de limpar, para evitar ecrã preto
+    this.render();
     this.hud.onStateChange(this.state);
     cancelAnimationFrame(this.req);
-    // Clear items so nothing remains drawn on last frame
-    this.items = [];
+    // Limpar items depois de notificar (para não aparecer ecrã preto)
+    // Os items serão limpos pelo cleanup que acontece depois
   }
 
   getScore(): number { return this.score.value; }
