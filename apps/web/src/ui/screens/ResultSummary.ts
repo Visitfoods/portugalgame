@@ -31,7 +31,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
 
       <!-- Score com troféu -->
       <div class="relative flex items-center justify-center gap-4 result-summary-score">
-        <img src="/assets/graphics/trophy.svg" class="w-20 h-20 select-none" alt="Troféu"/>
+        <img src="/assets/graphics/trophy.svg" class="w-20 h-20 select-none" style="will-change: auto; contain: layout paint; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" alt="Troféu"/>
         <div class="flex flex-col items-start leading-none">
           <div id="score-num" class="text-7xl md:text-8xl font-[800] leading-none">0</div>
           <div class="mt-1 text-[12px] md:text-sm tracking-[0.24em] font-bold uppercase opacity-90">PONTOS</div>

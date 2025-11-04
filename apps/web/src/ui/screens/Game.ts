@@ -169,6 +169,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
           } catch {}
           
           // REMOVER elementos do jogo IMEDIATAMENTE para evitar conflitos
+          try { hud.destroy(); } catch {}
           try { bottomDecor?.remove(); bottomDecor = null; } catch {}
           try { topLogoWrap?.remove(); topLogoWrap = null; } catch {}
           try { soundBtnEl?.remove(); soundBtnEl = null; } catch {}
@@ -187,7 +188,6 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
             prevMouthOpen = false;
             lastMouthWarningAt = 0;
             window.removeEventListener('resize', resize);
-            try { hud.destroy(); } catch {}
             try { mascotCtl?.destroy(); mascotCtl = null; } catch {}
             if (true) {
               try { const ctx = canvas.getContext('2d'); ctx && ctx.clearRect(0,0,canvas.width,canvas.height); } catch {}
