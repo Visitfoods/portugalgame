@@ -168,12 +168,37 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
             video.srcObject = null;
           } catch {}
           
-          // REMOVER elementos do jogo IMEDIATAMENTE para evitar conflitos
+          // REMOVER TODOS os elementos do jogo IMEDIATAMENTE para evitar conflitos
           try { hud.destroy(); } catch {}
+          try { mascotCtl?.destroy(); mascotCtl = null; } catch {}
           try { bottomDecor?.remove(); bottomDecor = null; } catch {}
           try { topLogoWrap?.remove(); topLogoWrap = null; } catch {}
           try { soundBtnEl?.remove(); soundBtnEl = null; } catch {}
           try { devFinishBtn?.remove(); devFinishBtn = null; } catch {}
+          
+          // Remover quaisquer elementos órfãos do DOM que possam estar a causar flicker
+          try {
+            document.querySelectorAll('[id*="meas-"], .ab-star, .ab-star-burst').forEach(el => el.remove());
+          } catch {}
+          
+          // Parar animações CSS específicas que podem causar conflitos durante a transição
+          try {
+            const style = document.createElement('style');
+            style.id = 'pause-conflicting-animations';
+            style.textContent = `
+              .ab-cloud-marquee-right, .ab-cloud-marquee-left, 
+              .ab-cloud, [class*="ab-anim-"], 
+              [class*="ab-reveal-"] { 
+                animation-play-state: paused !important; 
+                will-change: auto !important;
+              }
+            `;
+            document.head.appendChild(style);
+            // Remover após a página estar totalmente carregada
+            setTimeout(() => {
+              try { style.remove(); } catch {}
+            }, 300);
+          } catch {}
           
           // Esconder canvas/video imediatamente
           video.classList.add('hidden');
@@ -188,7 +213,6 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
             prevMouthOpen = false;
             lastMouthWarningAt = 0;
             window.removeEventListener('resize', resize);
-            try { mascotCtl?.destroy(); mascotCtl = null; } catch {}
             if (true) {
               try { const ctx = canvas.getContext('2d'); ctx && ctx.clearRect(0,0,canvas.width,canvas.height); } catch {}
             }
