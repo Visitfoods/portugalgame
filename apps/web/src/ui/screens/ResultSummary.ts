@@ -7,6 +7,7 @@ declare function showInfoModal(message: string, onClose?: () => void): void;
 declare function showErrorModal(message: string, onClose?: () => void): void;
 
 export function ResultSummary(score: number, onSubmit: () => void, onRetry: () => void) {
+  console.log('🎯 ResultSummary recebeu score:', score);
   const el = document.createElement('div');
   el.className = 'screen p-0 overflow-hidden';
 
@@ -427,9 +428,18 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
 
   // Count-up animation
   const scoreEl = el.querySelector<HTMLDivElement>('#score-num')!;
+  console.log('📊 Elemento score encontrado:', scoreEl, 'Score para animar:', score);
   const t0 = performance.now(); const dur = 1200;
   const ease = (t:number)=>1-Math.pow(1-t,3);
-  const step = (now:number)=>{ const p=Math.min(1,(now-t0)/dur); const v=Math.round(score*ease(p)); scoreEl.textContent=v.toLocaleString('pt-PT'); if(p<1&&el.isConnected) requestAnimationFrame(step); };
+  const step = (now:number)=>{ 
+    const p=Math.min(1,(now-t0)/dur); 
+    const v=Math.round(score*ease(p)); 
+    scoreEl.textContent=v.toLocaleString('pt-PT'); 
+    if(p<1&&el.isConnected) requestAnimationFrame(step); 
+    else {
+      console.log('✅ Animação terminada, score final:', v);
+    }
+  };
   requestAnimationFrame(step);
 
   cleanupLogoAdjust = null;
