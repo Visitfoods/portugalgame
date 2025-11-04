@@ -183,23 +183,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
             document.querySelectorAll('[id*="meas-"], .ab-star, .ab-star-burst').forEach(el => el.remove());
           } catch {}
           
-          // SIMPLIFICAR: apenas pausar animações problemáticas sem desarrumações
-          try {
-            const style = document.createElement('style');
-            style.id = 'pause-conflicting-animations';
-            style.textContent = `
-              .ab-cloud-marquee-right, .ab-cloud-marquee-left, 
-              .ab-cloud, [class*="ab-anim-"], 
-              [class*="ab-reveal-"] { 
-                animation-play-state: paused !important;
-              }
-            `;
-            document.head.appendChild(style);
-            // Remover após transição
-            setTimeout(() => {
-              try { style.remove(); } catch {}
-            }, 100);
-          } catch {}
+          // NÃO fazer nada com CSS para evitar interferir com os botões da próxima tela
           
           // Esconder canvas/video imediatamente
           video.classList.add('hidden');
