@@ -426,21 +426,13 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     modal.classList.remove('flex');
   };
 
-  // Count-up animation
+  // MOSTRAR O SCORE DIRETAMENTE SEM ANIMAÇÃO (para debug)
   const scoreEl = el.querySelector<HTMLDivElement>('#score-num')!;
-  console.log('📊 Elemento score encontrado:', scoreEl, 'Score para animar:', score);
-  const t0 = performance.now(); const dur = 1200;
-  const ease = (t:number)=>1-Math.pow(1-t,3);
-  const step = (now:number)=>{ 
-    const p=Math.min(1,(now-t0)/dur); 
-    const v=Math.round(score*ease(p)); 
-    scoreEl.textContent=v.toLocaleString('pt-PT'); 
-    if(p<1&&el.isConnected) requestAnimationFrame(step); 
-    else {
-      console.log('✅ Animação terminada, score final:', v);
-    }
-  };
-  requestAnimationFrame(step);
+  console.log('📊 Elemento score encontrado:', scoreEl, 'Score recebido:', score, typeof score);
+  
+  // Mostrar imediatamente o score correto
+  scoreEl.textContent = String(score);
+  console.log('✅ Score definido diretamente como:', scoreEl.textContent);
 
   cleanupLogoAdjust = null;
   const logo = el.querySelector<HTMLImageElement>('#result-summary-logo');

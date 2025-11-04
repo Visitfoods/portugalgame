@@ -183,7 +183,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
             document.querySelectorAll('[id*="meas-"], .ab-star, .ab-star-burst').forEach(el => el.remove());
           } catch {}
           
-          // Parar animações CSS específicas e DESABILITAR estrelas durante a transição
+          // SIMPLIFICAR: apenas pausar animações problemáticas sem desarrumações
           try {
             const style = document.createElement('style');
             style.id = 'pause-conflicting-animations';
@@ -191,32 +191,14 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
               .ab-cloud-marquee-right, .ab-cloud-marquee-left, 
               .ab-cloud, [class*="ab-anim-"], 
               [class*="ab-reveal-"] { 
-                animation-play-state: paused !important; 
-                will-change: auto !important;
-              }
-              /* DESABILITAR completamente as estrelas durante a transição */
-              .ab-star, .ab-star-burst {
-                display: none !important;
-                opacity: 0 !important;
-                animation: none !important;
+                animation-play-state: paused !important;
               }
             `;
             document.head.appendChild(style);
-            // Remover após a página estar carregada e reativar estrelas
+            // Remover após transição
             setTimeout(() => {
-              try { 
-                style.remove();
-                // Reativar estrelas com uma pequena transição suave
-                const reactivateStyle = document.createElement('style');
-                reactivateStyle.textContent = `
-                  .ab-star, .ab-star-burst {
-                    transition: opacity 0.3s ease-in !important;
-                  }
-                `;
-                document.head.appendChild(reactivateStyle);
-                setTimeout(() => reactivateStyle.remove(), 500);
-              } catch {}
-            }, 500);
+              try { style.remove(); } catch {}
+            }, 100);
           } catch {}
           
           // Esconder canvas/video imediatamente
