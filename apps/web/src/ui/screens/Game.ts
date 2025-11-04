@@ -152,17 +152,48 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
         if (state === 'finished') {
           const finalScore = loop.getScore();
           
-          // Esconder canvas/video imediatamente para não ver ecrã preto
+          // PARAR tracker e feed IMEDIATAMENTE para evitar flicker
+          // Isto deve ser síncrono para não causar conflitos com a nova tela
+          trackingActive = false;
+          try { tracker.stop(); } catch {}
+          try { feed.stop(); } catch {}
+          
+          // Pausar e limpar o video completamente
+          try {
+            video.pause();
+            const stream = video.srcObject as MediaStream | null;
+            if (stream) {
+              stream.getTracks().forEach(t => t.stop());
+            }
+            video.srcObject = null;
+          } catch {}
+          
+          // REMOVER elementos do jogo IMEDIATAMENTE para evitar conflitos
+          try { bottomDecor?.remove(); bottomDecor = null; } catch {}
+          try { topLogoWrap?.remove(); topLogoWrap = null; } catch {}
+          try { soundBtnEl?.remove(); soundBtnEl = null; } catch {}
+          try { devFinishBtn?.remove(); devFinishBtn = null; } catch {}
+          
+          // Esconder canvas/video imediatamente
           video.classList.add('hidden');
           canvas.classList.add('hidden');
           
           // Chamar onFinish imediatamente para mostrar resultados
           onFinish(finalScore);
           
-          // Fazer cleanup pesado de forma não bloqueante (não espera)
-          // Usar requestIdleCallback se disponível, senão setTimeout
+          // Fazer o resto do cleanup de forma não bloqueante
           const doCleanup = () => {
-            cleanup(true);
+            mouthOpenSince = 0;
+            prevMouthOpen = false;
+            lastMouthWarningAt = 0;
+            window.removeEventListener('resize', resize);
+            try { hud.destroy(); } catch {}
+            try { mascotCtl?.destroy(); mascotCtl = null; } catch {}
+            if (true) {
+              try { const ctx = canvas.getContext('2d'); ctx && ctx.clearRect(0,0,canvas.width,canvas.height); } catch {}
+            }
+            try { loop?.stop(); } catch {}
+            resetMouthTrigger();
           };
           if ('requestIdleCallback' in window) {
             (window as any).requestIdleCallback(doCleanup, { timeout: 100 });
