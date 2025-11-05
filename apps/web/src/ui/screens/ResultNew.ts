@@ -47,9 +47,6 @@ export function Result(score: number, onRetry: () => void) {
                 <button type="button" id="consent-toggle" class="underline underline-offset-2 text-white/90">Ver Termos e Condições</button>
               </span>
             </label>
-            <div id="consent-more" class="hidden text-[11px] text-white/70 mt-2 leading-snug">
-              Autorizo a recolha e tratamento dos meus dados pessoais exclusivamente para participação no jogo, apuramento e entrega de prémios e comunicação associada à campanha. Os dados não serão partilhados com terceiros para outros fins e serão eliminados após o término da iniciativa, salvo obrigação legal.
-            </div>
           </div>
 
           <div class="mt-3 flex flex-col items-center gap-2.5">
@@ -77,13 +74,13 @@ export function Result(score: number, onRetry: () => void) {
   const again = el.querySelector<HTMLButtonElement>('#again')!;
   const form = el.querySelector<HTMLFormElement>('#form')!;
   const consentToggle = el.querySelector<HTMLButtonElement>('#consent-toggle')!;
-  const consentMore = el.querySelector<HTMLDivElement>('#consent-more')!;
 
   again.onclick = () => onRetry();
-  consentToggle.onclick = () => {
-    const hidden = consentMore.classList.contains('hidden');
-    consentMore.classList.toggle('hidden', !hidden);
-    consentToggle.textContent = hidden ? 'Esconder termos' : 'Ver Termos e Condições';
+  
+  // Modal de Termos e Condições
+  consentToggle.onclick = async () => {
+    const { showTermsModal } = await import('../components/TermsModal');
+    showTermsModal();
   };
 
   // Count-up animation para o score

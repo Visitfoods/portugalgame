@@ -27,7 +27,7 @@ export function Register(onSaved: () => void, onCancel: () => void) {
               <input id="consent" type="checkbox" class="mt-0.5 accent-[#1c8aff]"/>
               <span>
                 Autorizo o tratamento dos meus dados para participação e contacto.
-                <a href="#" class="underline underline-offset-2">Ver Termos e Condições</a>
+                <button type="button" id="terms-link" class="underline underline-offset-2 text-[#243b78] hover:text-[#1e2f5f] transition-colors">Ver Termos e Condições</button>
               </span>
             </label>
           </div>
@@ -52,8 +52,15 @@ export function Register(onSaved: () => void, onCancel: () => void) {
   const form = el.querySelector<HTMLFormElement>('#form')!;
   const msg = el.querySelector<HTMLDivElement>('#msg')!;
   const cancel = el.querySelector<HTMLButtonElement>('#cancel')!;
+  const termsLink = el.querySelector<HTMLButtonElement>('#terms-link')!;
 
   cancel.onclick = () => onCancel();
+  
+  // Modal de Termos e Condições
+  termsLink.onclick = async () => {
+    const { showTermsModal } = await import('../components/TermsModal');
+    showTermsModal();
+  };
 
   form.onsubmit = async (e) => {
     e.preventDefault();
