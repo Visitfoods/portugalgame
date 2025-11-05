@@ -44,7 +44,7 @@ export function Result(score: number, onRetry: () => void) {
               <input id="consent" type="checkbox" class="mt-0.5 accent-[#1c8aff]"/>
               <span>
                 Autorizo o tratamento dos meus dados para participação e contacto.
-                <button type="button" id="consent-toggle" class="underline underline-offset-2 text-white/90">Ver termos</button>
+                <button type="button" id="consent-toggle" class="underline underline-offset-2 text-white/90">Ver Termos e Condições</button>
               </span>
             </label>
             <div id="consent-more" class="hidden text-[11px] text-white/70 mt-2 leading-snug">
@@ -83,7 +83,7 @@ export function Result(score: number, onRetry: () => void) {
   consentToggle.onclick = () => {
     const hidden = consentMore.classList.contains('hidden');
     consentMore.classList.toggle('hidden', !hidden);
-    consentToggle.textContent = hidden ? 'Esconder termos' : 'Ver termos';
+    consentToggle.textContent = hidden ? 'Esconder termos' : 'Ver Termos e Condições';
   };
 
   // Count-up animation para o score
@@ -113,7 +113,7 @@ export function Result(score: number, onRetry: () => void) {
     if (name.length < 2 || name.length > 50) return alert('Nome inválido');
     if (!emailRe.test(email)) return alert('E-mail inválido');
     if (phone && !/^\+?\d{9,15}$/.test(phone)) return alert('Telemóvel inválido');
-    if (!consent) return alert('Necessário consentimento para registar.');
+    if (!consent) return alert('É necessário aceitares os Termos e Condições');
     console.log('Registo (MVP):', { name, email, phone, score });
     alert('Registo guardado (local).');
   };

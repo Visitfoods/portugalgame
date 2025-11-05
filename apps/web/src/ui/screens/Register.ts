@@ -27,7 +27,7 @@ export function Register(onSaved: () => void, onCancel: () => void) {
               <input id="consent" type="checkbox" class="mt-0.5 accent-[#1c8aff]"/>
               <span>
                 Autorizo o tratamento dos meus dados para participação e contacto.
-                <a href="#" class="underline underline-offset-2">Ver termos</a>
+                <a href="#" class="underline underline-offset-2">Ver Termos e Condições</a>
               </span>
             </label>
           </div>
@@ -63,7 +63,7 @@ export function Register(onSaved: () => void, onCancel: () => void) {
 
     // Validar username
     if (phone && !/^\+?\d{9,15}$/.test(phone)) { msg.textContent = 'Telemóvel inválido.'; msg.style.color = '#a11'; return; }
-    if (!consent) { msg.textContent = 'Necessário consentimento.'; msg.style.color = '#a11'; return; }
+    if (!consent) { msg.textContent = 'É necessário aceitares os Termos e Condições'; msg.style.color = '#a11'; return; }
 
     try {
       msg.textContent = 'A guardar…'; msg.style.color = '#555';
