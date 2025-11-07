@@ -139,50 +139,37 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
   `;
   let cleanupLogoAdjust: (() => void) | null = null;
 
-  // LIMPEZA IMEDIATA E ROBUSTA: Garantir que canvas/video/stage não bloqueiam cliques
-  const cleanupGameElements = () => {
-    try {
-      const canvas = document.getElementById('game') as HTMLCanvasElement;
-      const video = document.getElementById('camera') as HTMLVideoElement;
-      const stage = document.getElementById('stage') as HTMLElement;
-      
-      if (canvas) {
-        canvas.style.pointerEvents = 'none';
-        canvas.style.display = 'none';
-        canvas.style.visibility = 'hidden';
-        canvas.style.opacity = '0';
-        canvas.style.zIndex = '-9999';
-      }
-      if (video) {
-        video.style.pointerEvents = 'none';
-        video.style.display = 'none';
-        video.style.visibility = 'hidden';
-        video.style.opacity = '0';
-        video.style.zIndex = '-9999';
-      }
-      if (stage) {
-        stage.style.pointerEvents = 'none';
-      }
-      
-      // Remover qualquer overlay do countdown que possa ter ficado
-      document.querySelectorAll('.fixed.inset-0.z-\\[60\\]').forEach(el => {
-        const htmlEl = el as HTMLElement;
-        if (htmlEl.textContent?.includes('3') || htmlEl.textContent?.includes('2') || htmlEl.textContent?.includes('1')) {
-          htmlEl.remove();
-        }
-      });
-    } catch (e) {
-      console.warn('Erro ao limpar elementos do jogo:', e);
+  // Limpeza única e síncrona: Garantir que canvas/video/stage não bloqueiam cliques
+  // (sem múltiplos timeouts para evitar flicker)
+  try {
+    const canvas = document.getElementById('game') as HTMLCanvasElement;
+    const video = document.getElementById('camera') as HTMLVideoElement;
+    const stage = document.getElementById('stage') as HTMLElement;
+    
+    if (canvas) {
+      canvas.style.pointerEvents = 'none';
+      canvas.style.display = 'none';
     }
-  };
-  
-  // Limpar imediatamente
-  cleanupGameElements();
-  
-  // Limpar novamente após um pequeno delay para garantir
-  setTimeout(cleanupGameElements, 0);
-  setTimeout(cleanupGameElements, 50);
-  setTimeout(cleanupGameElements, 100);
+    if (video) {
+      video.style.pointerEvents = 'none';
+      video.style.display = 'none';
+    }
+    if (stage) {
+      stage.style.pointerEvents = 'none';
+    }
+    
+    // Remover qualquer overlay do countdown que possa ter ficado (apenas uma vez)
+    const countdownOverlays = document.querySelectorAll('.fixed.inset-0');
+    countdownOverlays.forEach(el => {
+      const htmlEl = el as HTMLElement;
+      const text = htmlEl.textContent || '';
+      if (text.includes('3') || text.includes('2') || text.includes('1')) {
+        htmlEl.remove();
+      }
+    });
+  } catch (e) {
+    console.warn('Erro ao limpar elementos do jogo:', e);
+  }
 
   // Botões com event delegation como fallback
   const handleButtonClick = (buttonId: string, handler: () => void) => {

@@ -186,10 +186,13 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
           // NÃO fazer nada com CSS para evitar interferir com os botões da próxima tela
           
           // Esconder canvas/video imediatamente E desativar pointer-events para não bloquear cliques
+          // Fazer tudo de uma vez para evitar flicker
           video.classList.add('hidden');
           video.style.pointerEvents = 'none';
+          video.style.display = 'none';
           canvas.classList.add('hidden');
           canvas.style.pointerEvents = 'none';
+          canvas.style.display = 'none';
           
           // Remover qualquer elemento que possa estar a bloquear
           try {
@@ -199,7 +202,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
             }
           } catch {}
           
-          // Chamar onFinish imediatamente para mostrar resultados
+          // Chamar onFinish ANTES de qualquer outro cleanup para mostrar resultados imediatamente
           console.log('🚀 Chamando onFinish com score:', finalScore);
           onFinish(finalScore);
           
