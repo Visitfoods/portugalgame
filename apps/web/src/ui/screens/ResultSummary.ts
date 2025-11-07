@@ -144,15 +144,29 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   
     // Confirmar jogar novamente
   const againBtn = el.querySelector<HTMLButtonElement>("#again")!;
-  const modal = el.querySelector<HTMLDivElement>("#confirm-modal")!;
+  const confirmModal = el.querySelector<HTMLDivElement>("#confirm-modal")!;
   const cancelModal = el.querySelector<HTMLButtonElement>("#cancel-modal")!;
   const confirmAgain = el.querySelector<HTMLButtonElement>("#confirm-again")!;
-  againBtn.onclick = () => { modal.classList.remove('hidden'); modal.classList.add('flex'); };
-  cancelModal.onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
+
+  const showOverlay = (overlay: HTMLDivElement) => {
+    overlay.classList.remove('hidden');
+    overlay.classList.add('flex');
+    overlay.style.display = 'flex';
+    overlay.setAttribute('aria-hidden', 'false');
+  };
+
+  const hideOverlay = (overlay: HTMLDivElement) => {
+    overlay.classList.add('hidden');
+    overlay.classList.remove('flex');
+    overlay.style.display = 'none';
+    overlay.setAttribute('aria-hidden', 'true');
+  };
+
+  againBtn.onclick = () => { showOverlay(confirmModal); };
+  cancelModal.onclick = () => { hideOverlay(confirmModal); };
   confirmAgain.onclick = () => {
     cleanupLogoAdjust?.();
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
+    hideOverlay(confirmModal);
     onRetry();
   };
 
@@ -161,11 +175,12 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   const exitModal = el.querySelector<HTMLDivElement>("#exit-modal")!;
   const cancelExitModal = el.querySelector<HTMLButtonElement>("#cancel-exit-modal")!;
   const confirmExit = el.querySelector<HTMLButtonElement>("#confirm-exit")!;
-  homeBtn.onclick = () => { exitModal.classList.remove('hidden'); exitModal.classList.add('flex'); };
-  cancelExitModal.onclick = () => { exitModal.classList.add('hidden'); exitModal.classList.remove('flex'); };
+  homeBtn.onclick = () => { showOverlay(exitModal); };
+  cancelExitModal.onclick = () => { hideOverlay(exitModal); };
   confirmExit.onclick = () => {
     // Voltar à home sem submeter (mesmo comportamento que jogar novamente)
     cleanupLogoAdjust?.();
+    hideOverlay(exitModal);
     onRetry();
   };
   // Função para gerar texto de partilha
@@ -190,27 +205,22 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   };
 
   // Abrir modal de partilha
+  const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
   el.querySelector<HTMLButtonElement>('#share')!.onclick = () => {
-    const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
+    showOverlay(shareModal);
   };
 
   // Fechar modal de partilha
   el.querySelector<HTMLButtonElement>('#close-share-modal')!.onclick = () => {
-    const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
+    hideOverlay(shareModal);
   };
 
   // Partilhar no WhatsApp
   el.querySelector<HTMLButtonElement>('#share-whatsapp')!.onclick = async () => {
     const { full } = await generateShareText();
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(full)}`;
-    window.open(whatsappUrl, '_blank');
-    const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
+    window.location.href = whatsappUrl;
+    hideOverlay(shareModal);
   };
 
   // --- deteção de plataforma ---
@@ -386,10 +396,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   // Partilhar no Instagram
   el.querySelector<HTMLButtonElement>('#share-instagram')!.onclick = async () => {
     await shareToInstagram();
-    
-    const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
+    hideOverlay(shareModal);
   };
 
   // Partilhar no Facebook
@@ -397,9 +404,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     const { url, title } = await generateShareText();
     const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(title)}`;
     window.open(facebookUrl, '_blank');
-    const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
+    hideOverlay(shareModal);
   };
 
   // Copiar texto
@@ -411,9 +416,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
     } catch {
       showErrorModal('NÃO FOI POSSÍVEL COPIAR. TENTA NOVAMENTE.');
     }
-    const modal = el.querySelector<HTMLDivElement>('#share-modal')!;
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
+    hideOverlay(shareModal);
   };
 
   // MOSTRAR O SCORE DIRETAMENTE SEM ANIMAÇÃO (para debug)
