@@ -318,11 +318,38 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
   // Usar capture: false para não interferir com outros eventos
   el.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
-    const button = target.closest('button');
-    if (!button) return;
+    
+    // Encontrar o botão - pode estar dentro de uma imagem, SVG, path, etc.
+    let button: HTMLButtonElement | null = null;
+    
+    // Se o target já é um botão
+    if (target.tagName === 'BUTTON') {
+      button = target as HTMLButtonElement;
+    } else {
+      // Tentar encontrar o botão mais próximo
+      button = target.closest('button') as HTMLButtonElement;
+      
+      // Se não encontrou, pode ser que o clique foi numa imagem dentro do botão
+      // Tentar encontrar pelo ID do elemento pai
+      if (!button) {
+        let current: HTMLElement | null = target;
+        while (current && current !== el) {
+          if (current.id === 'share' || current.id === 'home' || current.id === 'again' || current.id === 'submit') {
+            button = current as HTMLButtonElement;
+            break;
+          }
+          current = current.parentElement;
+        }
+      }
+    }
+    
+    if (!button || !button.id) {
+      console.log('⚠️ Clique não foi num botão:', target.tagName, target.className);
+      return;
+    }
     
     const id = button.id;
-    console.log('🖱️ Clique detectado no elemento:', id, button);
+    console.log('🖱️ Clique detectado no elemento:', id, 'target:', target.tagName, button);
     
     // Submit
     if (id === 'submit') {
@@ -561,11 +588,37 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
     onExit();
   });
 
-  // Fallback listeners individuais para partilha (já tratado no event delegation acima)
+  // Fallback listeners individuais - garantir que funcionam mesmo se delegation falhar
   const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
-  handleButtonClick('#share', () => {
-    showOverlay(shareModal);
+  const shareBtn = el.querySelector<HTMLButtonElement>('#share')!;
+  const homeBtn = el.querySelector<HTMLButtonElement>('#home')!;
+  
+  console.log('🔍 Botões encontrados:', {
+    share: !!shareBtn,
+    home: !!homeBtn,
+    shareModal: !!shareModal
   });
+  
+  // Listener direto no botão share (fallback)
+  if (shareBtn) {
+    shareBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('✅ SHARE clicado (fallback listener)!');
+      showOverlay(shareModal);
+    });
+  }
+  
+  // Listener direto no botão home (fallback)
+  if (homeBtn) {
+    homeBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('✅ HOME clicado (fallback listener)!');
+      const exitModal = el.querySelector<HTMLDivElement>('#exit-modal')!;
+      showOverlay(exitModal);
+    });
+  }
   
   handleButtonClick('#close-share-modal', () => {
     hideOverlay(shareModal);
