@@ -171,45 +171,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
     console.warn('Erro ao limpar elementos do jogo:', e);
   }
 
-  // Botões com event delegation como fallback
-  const handleButtonClick = (buttonId: string, handler: () => void) => {
-    const btn = el.querySelector<HTMLButtonElement>(buttonId);
-    if (!btn) {
-      console.error(`❌ Botão ${buttonId} não encontrado!`);
-      return;
-    }
-    console.log(`✅ Event listener registado para ${buttonId}`);
-    
-    // Usar addEventListener em vez de onclick para permitir múltiplos listeners
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      console.log(`✅ ${buttonId} clicado!`);
-      handler();
-    }, { capture: true });
-    
-    // Fallback com onclick também
-    btn.onclick = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log(`✅ ${buttonId} clicado (onclick)!`);
-      handler();
-    };
-  };
-
-  // Botão Submit
-  handleButtonClick('#submit', () => {
-    cleanupLogoAdjust?.();
-    onSubmit();
-  });
-  
-  // Confirmar jogar novamente
-  const againBtn = el.querySelector<HTMLButtonElement>("#again")!;
-  const confirmModal = el.querySelector<HTMLDivElement>("#confirm-modal")!;
-  const cancelModal = el.querySelector<HTMLButtonElement>("#cancel-modal")!;
-  const confirmAgain = el.querySelector<HTMLButtonElement>("#confirm-again")!;
-
+  // Definir funções de overlay ANTES do event delegation
   const showOverlay = (overlay: HTMLDivElement) => {
     console.log('📱 Mostrando overlay:', overlay.id);
     overlay.classList.remove('hidden');
@@ -230,49 +192,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
     overlay.setAttribute('aria-hidden', 'true');
   };
 
-  // Confirmar sair sem submeter
-  const homeBtn = el.querySelector<HTMLButtonElement>("#home")!;
-  const exitModal = el.querySelector<HTMLDivElement>("#exit-modal")!;
-  const cancelExitModal = el.querySelector<HTMLButtonElement>("#cancel-exit-modal")!;
-  const confirmExit = el.querySelector<HTMLButtonElement>("#confirm-exit")!;
-
-  console.log('🔘 Botões encontrados:', { 
-    againBtn: !!againBtn, 
-    homeBtn: !!homeBtn,
-    submitBtn: !!el.querySelector('#submit'),
-    shareBtn: !!el.querySelector('#share')
-  });
-  
-  // Jogar novamente
-  handleButtonClick('#again', () => {
-    showOverlay(confirmModal);
-  });
-  
-  handleButtonClick('#cancel-modal', () => {
-    hideOverlay(confirmModal);
-  });
-  
-  handleButtonClick('#confirm-again', () => {
-    cleanupLogoAdjust?.();
-    hideOverlay(confirmModal);
-    onPlayAgain();
-  });
-
-  // Home
-  handleButtonClick('#home', () => {
-    showOverlay(exitModal);
-  });
-  
-  handleButtonClick('#cancel-exit-modal', () => {
-    hideOverlay(exitModal);
-  });
-  
-  handleButtonClick('#confirm-exit', () => {
-    cleanupLogoAdjust?.();
-    hideOverlay(exitModal);
-    onExit();
-  });
-  // Função para gerar texto de partilha
+  // Função para gerar texto de partilha (precisa estar antes do event delegation)
   const generateShareText = async () => {
     const title = '🏆 Alves Bandeira — 50 Anos, 50 Prémios! 🎉';
     const shareUrl = 'https://saboresdeportugal.vercel.app/?utm_source=share&utm_medium=game&utm_campaign=abgame';
@@ -291,25 +211,6 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
       full: `${title}\n\n${line1}\n${line2}\n${line3}`,
       url: shareUrl
     };
-  };
-
-  // Abrir modal de partilha
-  const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
-  handleButtonClick('#share', () => {
-    showOverlay(shareModal);
-  });
-
-  // Fechar modal de partilha
-  handleButtonClick('#close-share-modal', () => {
-    hideOverlay(shareModal);
-  });
-
-  // Partilhar no WhatsApp
-  el.querySelector<HTMLButtonElement>('#share-whatsapp')!.onclick = async () => {
-    const { full } = await generateShareText();
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(full)}`;
-    window.location.href = whatsappUrl;
-    hideOverlay(shareModal);
   };
 
   // --- deteção de plataforma ---
@@ -335,7 +236,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
     }
   }
 
-  // --- guia rápido em popup/modal (ajusta ao teu UI) ---
+  // --- guia rápido em popup/modal ---
   function showGuide({ platform, message }: { platform: string; message: string }) {
     const stepsIOS = [
       'Texto copiado ✅',
@@ -352,7 +253,6 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
       'Colar e enviar'
     ];
     const steps = platform === 'ios' ? stepsIOS : stepsAND;
-
     showInfoModal(`PARTILHAR NO INSTAGRAM\n\n${steps.map(s => '• ' + s).join('\n')}`);
   }
 
@@ -364,12 +264,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
       done = true;
       if (typeof fallback === 'function') fallback();
     }, timeout);
-
-    // Tenta abrir a app
     window.location.href = uri;
-
-    // nota: não há forma 100% fiável de saber se abriu.
-    // usamos apenas o timeout para acionar fallback.
     setTimeout(() => { if (!done) { done = true; clearTimeout(t); } }, timeout + 50);
   }
 
@@ -378,135 +273,319 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
     if (!navigator.share) return false;
     try {
       await navigator.share({ title: 'Sabores de Portugal', text: full, url });
-      return true; // utilizador escolhe app (às vezes inclui IG)
+      return true;
     } catch {
-      return false; // cancelou ou não disponível
+      return false;
     }
   }
 
   // --- handler principal para Instagram ---
   async function shareToInstagram() {
     const { full, url } = await generateShareText();
-
-    // 1) Tenta o menu nativo (melhor experiência)
     const usedSystem = await shareViaSystem(full, url);
-    if (usedSystem) return; // já partilhou via folha do sistema
+    if (usedSystem) return;
 
-    // 2) Fluxo específico por plataforma
     if (isAndroid) {
-      // Android: Tenta múltiplas estratégias para ir direto às DMs
-      const dmLinks = [
-        'instagram://direct',           // Melhor opção (funciona em alguns Android)
-        'instagram://messages',         // Alternativa
-        'instagram://app'               // Fallback para homepage
-      ];
-      
+      const dmLinks = ['instagram://direct', 'instagram://messages', 'instagram://app'];
       let linkIndex = 0;
       const tryNextLink = async () => {
         if (linkIndex >= dmLinks.length) {
-          // Todos os deep links falharam, usar fallback
           await copyToClipboard(full);
           window.location.href = 'instagram://app';
           setTimeout(() => window.open('https://instagram.com/', '_blank'), 300);
           showGuide({ platform: 'android', message: full });
           return;
         }
-        
-        const currentLink = dmLinks[linkIndex];
-        if (!currentLink) {
-          tryNextLink();
-          return;
-        }
-        linkIndex++;
-        
-        tryOpen(
-          currentLink,
-          () => tryNextLink(), // Se falhar, tenta o próximo
-          800 // Timeout mais curto para tentar múltiplos links
-        );
+        const currentLink = dmLinks[linkIndex++];
+        if (currentLink) tryOpen(currentLink, () => tryNextLink(), 800);
+        else tryNextLink();
       };
-      
       tryNextLink();
-      
     } else if (isIOS) {
-      // iOS: Tenta ir direto às DMs (pode não funcionar, mas tentamos)
-      const iosDmLinks = [
-        'instagram://direct',           // Pode funcionar em iOS mais recentes
-        'instagram://app'               // Fallback para homepage
-      ];
-      
+      const iosDmLinks = ['instagram://direct', 'instagram://app'];
       let linkIndex = 0;
       const tryNextLink = async () => {
         if (linkIndex >= iosDmLinks.length) {
-          // Fallback final
           await copyToClipboard(full);
           window.location.href = 'instagram://app';
           setTimeout(() => window.open('https://instagram.com/', '_blank'), 300);
           showGuide({ platform: 'ios', message: full });
           return;
         }
-        
-        const currentLink = iosDmLinks[linkIndex];
-        if (!currentLink) {
-          tryNextLink();
-          return;
-        }
-        linkIndex++;
-        
-        tryOpen(
-          currentLink,
-          () => tryNextLink(),
-          800
-        );
+        const currentLink = iosDmLinks[linkIndex++];
+        if (currentLink) tryOpen(currentLink, () => tryNextLink(), 800);
+        else tryNextLink();
       };
-      
       tryNextLink();
-      
     } else {
-      // Desktop/Outros: Tentar ir direto às DMs via web
       await copyToClipboard(full);
-      
-      // Tenta abrir direto nas mensagens via web
       const webDmUrl = 'https://www.instagram.com/direct/inbox/';
       try {
         window.open(webDmUrl, '_blank');
-        // Se falhar, abre homepage normal
-        setTimeout(() => {
-          window.open('https://instagram.com/', '_blank');
-        }, 1000);
+        setTimeout(() => window.open('https://instagram.com/', '_blank'), 1000);
       } catch {
         window.open('https://instagram.com/', '_blank');
       }
-      
-        showInfoModal('TEXTO COPIADO! ABRE O INSTAGRAM, VAI A MENSAGENS (DM), COLA E ENVIA.');
+      showInfoModal('TEXTO COPIADO! ABRE O INSTAGRAM, VAI A MENSAGENS (DM), COLA E ENVIA.');
     }
   }
 
-  // Partilhar no Instagram
-  el.querySelector<HTMLButtonElement>('#share-instagram')!.onclick = async () => {
-    await shareToInstagram();
-    hideOverlay(shareModal);
-  };
-
-  // Partilhar no Facebook
-  el.querySelector<HTMLButtonElement>('#share-facebook')!.onclick = async () => {
-    const { url, title } = await generateShareText();
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(title)}`;
-    window.open(facebookUrl, '_blank');
-    hideOverlay(shareModal);
-  };
-
-  // Copiar texto
-  el.querySelector<HTMLButtonElement>('#share-copy')!.onclick = async () => {
-    const { full } = await generateShareText();
-    try {
-      await navigator.clipboard.writeText(full);
-      showInfoModal('MENSAGEM DE PARTILHA COPIADA PARA A ÁREA DE TRANSFERÊNCIA! COLA NO TEU APP FAVORITO.');
-    } catch {
-      showErrorModal('NÃO FOI POSSÍVEL COPIAR. TENTA NOVAMENTE.');
+  // EVENT DELEGATION no elemento raiz - funciona mesmo antes do mount
+  // Isto garante que os cliques são capturados independentemente de quando o elemento é montado
+  el.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const button = target.closest('button');
+    if (!button) return;
+    
+    const id = button.id;
+    console.log('🖱️ Clique detectado no elemento:', id, button);
+    
+    // Submit
+    if (id === 'submit') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      console.log('✅ SUBMIT clicado via delegation!');
+      cleanupLogoAdjust?.();
+      onSubmit();
+      return;
     }
-    hideOverlay(shareModal);
+    
+    // Share
+    if (id === 'share') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      console.log('✅ SHARE clicado via delegation!');
+      const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
+      showOverlay(shareModal);
+      return;
+    }
+    
+    // Again (Jogar novamente)
+    if (id === 'again') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      console.log('✅ AGAIN clicado via delegation!');
+      const confirmModal = el.querySelector<HTMLDivElement>('#confirm-modal')!;
+      showOverlay(confirmModal);
+      return;
+    }
+    
+    // Home
+    if (id === 'home') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      console.log('✅ HOME clicado via delegation!');
+      const exitModal = el.querySelector<HTMLDivElement>('#exit-modal')!;
+      showOverlay(exitModal);
+      return;
+    }
+    
+    // Cancel modal
+    if (id === 'cancel-modal') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      console.log('✅ CANCEL MODAL clicado via delegation!');
+      const confirmModal = el.querySelector<HTMLDivElement>('#confirm-modal')!;
+      hideOverlay(confirmModal);
+      return;
+    }
+    
+    // Confirm again
+    if (id === 'confirm-again') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      console.log('✅ CONFIRM AGAIN clicado via delegation!');
+      const confirmModal = el.querySelector<HTMLDivElement>('#confirm-modal')!;
+      hideOverlay(confirmModal);
+      cleanupLogoAdjust?.();
+      onPlayAgain();
+      return;
+    }
+    
+    // Cancel exit modal
+    if (id === 'cancel-exit-modal') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      console.log('✅ CANCEL EXIT MODAL clicado via delegation!');
+      const exitModal = el.querySelector<HTMLDivElement>('#exit-modal')!;
+      hideOverlay(exitModal);
+      return;
+    }
+    
+    // Confirm exit
+    if (id === 'confirm-exit') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      console.log('✅ CONFIRM EXIT clicado via delegation!');
+      const exitModal = el.querySelector<HTMLDivElement>('#exit-modal')!;
+      hideOverlay(exitModal);
+      cleanupLogoAdjust?.();
+      onExit();
+      return;
+    }
+    
+    // Close share modal
+    if (id === 'close-share-modal') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      console.log('✅ CLOSE SHARE MODAL clicado via delegation!');
+      const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
+      hideOverlay(shareModal);
+      return;
+    }
+    
+    // Share WhatsApp
+    if (id === 'share-whatsapp') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      console.log('✅ SHARE WHATSAPP clicado via delegation!');
+      generateShareText().then(({ full }) => {
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(full)}`;
+        window.location.href = whatsappUrl;
+        const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
+        hideOverlay(shareModal);
+      });
+      return;
+    }
+    
+    // Share Instagram
+    if (id === 'share-instagram') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      console.log('✅ SHARE INSTAGRAM clicado via delegation!');
+      shareToInstagram().then(() => {
+        const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
+        hideOverlay(shareModal);
+      });
+      return;
+    }
+    
+    // Share Facebook
+    if (id === 'share-facebook') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      console.log('✅ SHARE FACEBOOK clicado via delegation!');
+      generateShareText().then(({ url, title }) => {
+        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(title)}`;
+        window.open(facebookUrl, '_blank');
+        const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
+        hideOverlay(shareModal);
+      });
+      return;
+    }
+    
+    // Share Copy
+    if (id === 'share-copy') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      console.log('✅ SHARE COPY clicado via delegation!');
+      generateShareText().then(({ full }) => {
+        navigator.clipboard.writeText(full).then(() => {
+          showInfoModal('MENSAGEM DE PARTILHA COPIADA PARA A ÁREA DE TRANSFERÊNCIA! COLA NO TEU APP FAVORITO.');
+        }).catch(() => {
+          showErrorModal('NÃO FOI POSSÍVEL COPIAR. TENTA NOVAMENTE.');
+        });
+        const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
+        hideOverlay(shareModal);
+      });
+      return;
+    }
+  }, { capture: true });
+
+  // Também manter os listeners individuais como fallback
+  const handleButtonClick = (buttonId: string, handler: () => void) => {
+    const btn = el.querySelector<HTMLButtonElement>(buttonId);
+    if (!btn) {
+      console.error(`❌ Botão ${buttonId} não encontrado!`);
+      return;
+    }
+    console.log(`✅ Event listener registado para ${buttonId}`);
+    
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log(`✅ ${buttonId} clicado (individual)!`);
+      handler();
+    }, { capture: false });
   };
+
+  // Botão Submit
+  handleButtonClick('#submit', () => {
+    cleanupLogoAdjust?.();
+    onSubmit();
+  });
+  
+  // Confirmar jogar novamente
+  const againBtn = el.querySelector<HTMLButtonElement>("#again")!;
+  const confirmModal = el.querySelector<HTMLDivElement>("#confirm-modal")!;
+  const cancelModal = el.querySelector<HTMLButtonElement>("#cancel-modal")!;
+  const confirmAgain = el.querySelector<HTMLButtonElement>("#confirm-again")!;
+
+  // Confirmar sair sem submeter
+  const homeBtn = el.querySelector<HTMLButtonElement>("#home")!;
+  const exitModal = el.querySelector<HTMLDivElement>("#exit-modal")!;
+  const cancelExitModal = el.querySelector<HTMLButtonElement>("#cancel-exit-modal")!;
+  const confirmExit = el.querySelector<HTMLButtonElement>("#confirm-exit")!;
+
+  console.log('🔘 Botões encontrados:', { 
+    againBtn: !!againBtn, 
+    homeBtn: !!homeBtn,
+    submitBtn: !!el.querySelector('#submit'),
+    shareBtn: !!el.querySelector('#share')
+  });
+  
+  // Jogar novamente (fallback listeners individuais)
+  handleButtonClick('#again', () => {
+    showOverlay(confirmModal);
+  });
+  
+  handleButtonClick('#cancel-modal', () => {
+    hideOverlay(confirmModal);
+  });
+  
+  handleButtonClick('#confirm-again', () => {
+    cleanupLogoAdjust?.();
+    hideOverlay(confirmModal);
+    onPlayAgain();
+  });
+
+  // Home (fallback listeners individuais)
+  handleButtonClick('#home', () => {
+    showOverlay(exitModal);
+  });
+  
+  handleButtonClick('#cancel-exit-modal', () => {
+    hideOverlay(exitModal);
+  });
+  
+  handleButtonClick('#confirm-exit', () => {
+    cleanupLogoAdjust?.();
+    hideOverlay(exitModal);
+    onExit();
+  });
+
+  // Fallback listeners individuais para partilha (já tratado no event delegation acima)
+  const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
+  handleButtonClick('#share', () => {
+    showOverlay(shareModal);
+  });
+  
+  handleButtonClick('#close-share-modal', () => {
+    hideOverlay(shareModal);
+  });
 
   // MOSTRAR O SCORE DIRETAMENTE SEM ANIMAÇÃO (para debug)
   const scoreEl = el.querySelector<HTMLDivElement>('#score-num')!;
