@@ -6,7 +6,7 @@ import { BackgroundMusic } from '../../core/engine/Audio';
 declare function showInfoModal(message: string, onClose?: () => void): void;
 declare function showErrorModal(message: string, onClose?: () => void): void;
 
-export function ResultSummary(score: number, onSubmit: () => void, onRetry: () => void) {
+export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: () => void, onExit: () => void) {
   console.log('🎯 ResultSummary recebeu score:', score);
   const el = document.createElement('div');
   el.className = 'screen p-0 overflow-hidden';
@@ -167,7 +167,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   confirmAgain.onclick = () => {
     cleanupLogoAdjust?.();
     hideOverlay(confirmModal);
-    onRetry();
+    onPlayAgain();
   };
 
   // Confirmar sair sem submeter
@@ -178,10 +178,10 @@ export function ResultSummary(score: number, onSubmit: () => void, onRetry: () =
   homeBtn.onclick = () => { showOverlay(exitModal); };
   cancelExitModal.onclick = () => { hideOverlay(exitModal); };
   confirmExit.onclick = () => {
-    // Voltar à home sem submeter (mesmo comportamento que jogar novamente)
+    // Voltar à home sem submeter
     cleanupLogoAdjust?.();
     hideOverlay(exitModal);
-    onRetry();
+    onExit();
   };
   // Função para gerar texto de partilha
   const generateShareText = async () => {

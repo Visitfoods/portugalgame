@@ -230,7 +230,8 @@ async function startGameDirect() {
       mount(ResultSummary(
         score,
         () => handleSubmitScoreFlow(score, () => startFlow()),
-        () => startGameDirect()
+        () => startGameDirect(),
+        () => startFlow()
       ));
     }, () => startFlow()));
   } catch (e) {
@@ -247,7 +248,8 @@ function askPermissions() {
         mount(ResultSummary(
           score,
           () => handleSubmitScoreFlow(score, () => startFlow()),
-          () => startGameDirect()
+          () => startGameDirect(),
+          () => startFlow()
         ));
       }, () => startFlow()));
     } catch (e) {
