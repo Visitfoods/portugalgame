@@ -185,9 +185,19 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
           
           // NÃO fazer nada com CSS para evitar interferir com os botões da próxima tela
           
-          // Esconder canvas/video imediatamente
+          // Esconder canvas/video imediatamente E desativar pointer-events para não bloquear cliques
           video.classList.add('hidden');
+          video.style.pointerEvents = 'none';
           canvas.classList.add('hidden');
+          canvas.style.pointerEvents = 'none';
+          
+          // Remover qualquer elemento que possa estar a bloquear
+          try {
+            const stage = document.getElementById('stage');
+            if (stage) {
+              stage.style.pointerEvents = 'none';
+            }
+          } catch {}
           
           // Chamar onFinish imediatamente para mostrar resultados
           console.log('🚀 Chamando onFinish com score:', finalScore);

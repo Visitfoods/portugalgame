@@ -43,17 +43,17 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
       
 
       <!-- Ações -->
-      <div class="w-9/12 max-w-[420px] flex flex-col items-center gap-5 md:gap-6 result-summary-actions">
-        <button id="submit" class="px-8 py-3 rounded-full bg-[#1f4590] text-white font-[800] text-lg shadow-[0_10px_24px_rgba(2,20,60,0.35)] border border-white/40 w-full active:scale-[.98]">SUBMETER</button>
-        <button id="share" class="btn-share relative px-5 py-2 rounded-full bg-white text-[#0a2960] font-semibold text-sm md:text-base border border-white/80 shadow-[0_6px_16px_rgba(2,20,60,0.18)] w-full active:scale-[.98]">
+      <div class="w-9/12 max-w-[420px] flex flex-col items-center gap-5 md:gap-6 result-summary-actions" style="position: relative; z-index: 50;">
+        <button id="submit" type="button" class="px-8 py-3 rounded-full bg-[#1f4590] text-white font-[800] text-lg shadow-[0_10px_24px_rgba(2,20,60,0.35)] border border-white/40 w-full active:scale-[.98]" style="position: relative; z-index: 51; cursor: pointer;">SUBMETER</button>
+        <button id="share" type="button" class="btn-share relative px-5 py-2 rounded-full bg-white text-[#0a2960] font-semibold text-sm md:text-base border border-white/80 shadow-[0_6px_16px_rgba(2,20,60,0.18)] w-full active:scale-[.98]" style="position: relative; z-index: 51; cursor: pointer;">
           <img src="/assets/graphics/Share_Icon.svg" alt="" class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4"/>
           <span class="pl-3">Partilhar Pontuação</span>
         </button>
-        <button id="again" class="px-8 py-3 rounded-full bg-white/15 text-white/90 font-semibold border border-white/60 w-full active:scale-[.98]">JOGAR NOVAMENTE</button>
+        <button id="again" type="button" class="px-8 py-3 rounded-full bg-white/15 text-white/90 font-semibold border border-white/60 w-full active:scale-[.98]" style="position: relative; z-index: 51; cursor: pointer;">JOGAR NOVAMENTE</button>
       </div>
 
       <!-- Modal de opções de partilha -->
-      <div id="share-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div id="share-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/50 backdrop-blur-sm" style="display: none; pointer-events: none;">
         <div class="w-10/12 max-w-[420px] bg-white/95 text-[#0a2960] rounded-2xl p-5 shadow-xl">
           <div class="font-[800] text-lg mb-4 text-center">PARTILHAR PONTUAÇÃO</div>
           <div class="grid grid-cols-2 gap-3">
@@ -93,7 +93,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
       </div>
 
       <!-- Modal confirmar jogar novamente -->
-      <div id="confirm-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div id="confirm-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/50 backdrop-blur-sm" style="display: none; pointer-events: none;">
         <div class="w-10/12 max-w-[420px] bg-white/95 text-[#0a2960] rounded-2xl p-5 shadow-xl">
           <div class="font-[800] text-sm md:text-base mb-1 whitespace-nowrap">JOGAR NOVAMENTE?</div>
           <div class="text-xs opacity-80">SE VOLTARES A JOGAR SEM SUBMETER, ESTA PONTUAÇÃO NÃO SERÁ GUARDADA.</div>
@@ -105,7 +105,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
       </div>
 
       <!-- Modal confirmar sair sem submeter -->
-      <div id="exit-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div id="exit-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/50 backdrop-blur-sm" style="display: none; pointer-events: none;">
         <div class="w-10/12 max-w-[420px] bg-white/95 text-[#0a2960] rounded-2xl p-5 shadow-xl">
           <div class="font-[800] text-sm md:text-base mb-1 whitespace-nowrap">PRETENDES SAIR SEM SUBMETER?</div>
           <div class="text-xs opacity-80">SE SAÍRES AGORA SEM SUBMETER, ESTA PONTUAÇÃO NÃO SERÁ GUARDADA.</div>
@@ -131,7 +131,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
     </button>
 
     <!-- Botão de voltar à home (canto inferior direito) -->
-    <button id="home" class="ab-icon-btn fixed right-5 z-[40] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px)" aria-label="Voltar à Home">
+    <button id="home" type="button" class="ab-icon-btn fixed right-5 z-[50] pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); cursor: pointer;" aria-label="Voltar à Home">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path fill="#243a79" d="M12 3.2l8 6.4v10a1 1 0 0 1-1 1h-4.5a.5.5 0 0 1-.5-.5V14H10v6.1a.5.5 0 0 1-.5.5H5a1 1 0 0 1-1-1V9.6l8-6.4zM3.6 9L2 10.3l.8 1 .8-.6V9zm18.4 1.3L20.4 9v1.7l.8.6.8-1z"/>
       </svg>
@@ -139,35 +139,108 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
   `;
   let cleanupLogoAdjust: (() => void) | null = null;
 
-  // Botões
-  el.querySelector<HTMLButtonElement>('#submit')!.onclick = () => { cleanupLogoAdjust?.(); onSubmit(); };
+  // LIMPEZA IMEDIATA E ROBUSTA: Garantir que canvas/video/stage não bloqueiam cliques
+  const cleanupGameElements = () => {
+    try {
+      const canvas = document.getElementById('game') as HTMLCanvasElement;
+      const video = document.getElementById('camera') as HTMLVideoElement;
+      const stage = document.getElementById('stage') as HTMLElement;
+      
+      if (canvas) {
+        canvas.style.pointerEvents = 'none';
+        canvas.style.display = 'none';
+        canvas.style.visibility = 'hidden';
+        canvas.style.opacity = '0';
+        canvas.style.zIndex = '-9999';
+      }
+      if (video) {
+        video.style.pointerEvents = 'none';
+        video.style.display = 'none';
+        video.style.visibility = 'hidden';
+        video.style.opacity = '0';
+        video.style.zIndex = '-9999';
+      }
+      if (stage) {
+        stage.style.pointerEvents = 'none';
+      }
+      
+      // Remover qualquer overlay do countdown que possa ter ficado
+      document.querySelectorAll('.fixed.inset-0.z-\\[60\\]').forEach(el => {
+        const htmlEl = el as HTMLElement;
+        if (htmlEl.textContent?.includes('3') || htmlEl.textContent?.includes('2') || htmlEl.textContent?.includes('1')) {
+          htmlEl.remove();
+        }
+      });
+    } catch (e) {
+      console.warn('Erro ao limpar elementos do jogo:', e);
+    }
+  };
   
-    // Confirmar jogar novamente
+  // Limpar imediatamente
+  cleanupGameElements();
+  
+  // Limpar novamente após um pequeno delay para garantir
+  setTimeout(cleanupGameElements, 0);
+  setTimeout(cleanupGameElements, 50);
+  setTimeout(cleanupGameElements, 100);
+
+  // Botões com event delegation como fallback
+  const handleButtonClick = (buttonId: string, handler: () => void) => {
+    const btn = el.querySelector<HTMLButtonElement>(buttonId);
+    if (!btn) {
+      console.error(`❌ Botão ${buttonId} não encontrado!`);
+      return;
+    }
+    console.log(`✅ Event listener registado para ${buttonId}`);
+    
+    // Usar addEventListener em vez de onclick para permitir múltiplos listeners
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      console.log(`✅ ${buttonId} clicado!`);
+      handler();
+    }, { capture: true });
+    
+    // Fallback com onclick também
+    btn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log(`✅ ${buttonId} clicado (onclick)!`);
+      handler();
+    };
+  };
+
+  // Botão Submit
+  handleButtonClick('#submit', () => {
+    cleanupLogoAdjust?.();
+    onSubmit();
+  });
+  
+  // Confirmar jogar novamente
   const againBtn = el.querySelector<HTMLButtonElement>("#again")!;
   const confirmModal = el.querySelector<HTMLDivElement>("#confirm-modal")!;
   const cancelModal = el.querySelector<HTMLButtonElement>("#cancel-modal")!;
   const confirmAgain = el.querySelector<HTMLButtonElement>("#confirm-again")!;
 
   const showOverlay = (overlay: HTMLDivElement) => {
+    console.log('📱 Mostrando overlay:', overlay.id);
     overlay.classList.remove('hidden');
     overlay.classList.add('flex');
     overlay.style.display = 'flex';
+    overlay.style.pointerEvents = 'auto';
+    overlay.style.visibility = 'visible';
     overlay.setAttribute('aria-hidden', 'false');
   };
 
   const hideOverlay = (overlay: HTMLDivElement) => {
+    console.log('📱 Escondendo overlay:', overlay.id);
     overlay.classList.add('hidden');
     overlay.classList.remove('flex');
     overlay.style.display = 'none';
+    overlay.style.pointerEvents = 'none';
+    overlay.style.visibility = 'hidden';
     overlay.setAttribute('aria-hidden', 'true');
-  };
-
-  againBtn.onclick = () => { showOverlay(confirmModal); };
-  cancelModal.onclick = () => { hideOverlay(confirmModal); };
-  confirmAgain.onclick = () => {
-    cleanupLogoAdjust?.();
-    hideOverlay(confirmModal);
-    onPlayAgain();
   };
 
   // Confirmar sair sem submeter
@@ -175,14 +248,43 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
   const exitModal = el.querySelector<HTMLDivElement>("#exit-modal")!;
   const cancelExitModal = el.querySelector<HTMLButtonElement>("#cancel-exit-modal")!;
   const confirmExit = el.querySelector<HTMLButtonElement>("#confirm-exit")!;
-  homeBtn.onclick = () => { showOverlay(exitModal); };
-  cancelExitModal.onclick = () => { hideOverlay(exitModal); };
-  confirmExit.onclick = () => {
-    // Voltar à home sem submeter
+
+  console.log('🔘 Botões encontrados:', { 
+    againBtn: !!againBtn, 
+    homeBtn: !!homeBtn,
+    submitBtn: !!el.querySelector('#submit'),
+    shareBtn: !!el.querySelector('#share')
+  });
+  
+  // Jogar novamente
+  handleButtonClick('#again', () => {
+    showOverlay(confirmModal);
+  });
+  
+  handleButtonClick('#cancel-modal', () => {
+    hideOverlay(confirmModal);
+  });
+  
+  handleButtonClick('#confirm-again', () => {
+    cleanupLogoAdjust?.();
+    hideOverlay(confirmModal);
+    onPlayAgain();
+  });
+
+  // Home
+  handleButtonClick('#home', () => {
+    showOverlay(exitModal);
+  });
+  
+  handleButtonClick('#cancel-exit-modal', () => {
+    hideOverlay(exitModal);
+  });
+  
+  handleButtonClick('#confirm-exit', () => {
     cleanupLogoAdjust?.();
     hideOverlay(exitModal);
     onExit();
-  };
+  });
   // Função para gerar texto de partilha
   const generateShareText = async () => {
     const title = '🏆 Alves Bandeira — 50 Anos, 50 Prémios! 🎉';
@@ -206,14 +308,14 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
 
   // Abrir modal de partilha
   const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
-  el.querySelector<HTMLButtonElement>('#share')!.onclick = () => {
+  handleButtonClick('#share', () => {
     showOverlay(shareModal);
-  };
+  });
 
   // Fechar modal de partilha
-  el.querySelector<HTMLButtonElement>('#close-share-modal')!.onclick = () => {
+  handleButtonClick('#close-share-modal', () => {
     hideOverlay(shareModal);
-  };
+  });
 
   // Partilhar no WhatsApp
   el.querySelector<HTMLButtonElement>('#share-whatsapp')!.onclick = async () => {
