@@ -139,36 +139,20 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
   `;
   let cleanupLogoAdjust: (() => void) | null = null;
 
-  // Limpeza única e síncrona: Garantir que canvas/video/stage não bloqueiam cliques
-  // (sem múltiplos timeouts para evitar flicker)
+  // Limpeza mínima e não bloqueante: apenas desativar pointer-events
+  // NÃO fazer alterações visuais aqui para evitar flicker
+  // O Game.ts já escondeu os elementos visualmente
   try {
     const canvas = document.getElementById('game') as HTMLCanvasElement;
     const video = document.getElementById('camera') as HTMLVideoElement;
     const stage = document.getElementById('stage') as HTMLElement;
     
-    if (canvas) {
-      canvas.style.pointerEvents = 'none';
-      canvas.style.display = 'none';
-    }
-    if (video) {
-      video.style.pointerEvents = 'none';
-      video.style.display = 'none';
-    }
-    if (stage) {
-      stage.style.pointerEvents = 'none';
-    }
-    
-    // Remover qualquer overlay do countdown que possa ter ficado (apenas uma vez)
-    const countdownOverlays = document.querySelectorAll('.fixed.inset-0');
-    countdownOverlays.forEach(el => {
-      const htmlEl = el as HTMLElement;
-      const text = htmlEl.textContent || '';
-      if (text.includes('3') || text.includes('2') || text.includes('1')) {
-        htmlEl.remove();
-      }
-    });
+    // Apenas desativar pointer-events, SEM alterar display/visibility
+    if (canvas) canvas.style.pointerEvents = 'none';
+    if (video) video.style.pointerEvents = 'none';
+    if (stage) stage.style.pointerEvents = 'none';
   } catch (e) {
-    console.warn('Erro ao limpar elementos do jogo:', e);
+    // Ignorar erros silenciosamente
   }
 
   // Definir funções de overlay ANTES do event delegation
@@ -331,7 +315,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
   }
 
   // EVENT DELEGATION no elemento raiz - funciona mesmo antes do mount
-  // Isto garante que os cliques são capturados independentemente de quando o elemento é montado
+  // Usar capture: false para não interferir com outros eventos
   el.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
     const button = target.closest('button');
@@ -503,7 +487,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
       });
       return;
     }
-  }, { capture: true });
+  }, { capture: false });
 
   // Também manter os listeners individuais como fallback
   const handleButtonClick = (buttonId: string, handler: () => void) => {
