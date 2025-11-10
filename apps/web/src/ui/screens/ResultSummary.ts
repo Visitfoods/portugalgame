@@ -314,313 +314,176 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
     }
   }
 
-  // EVENT DELEGATION no elemento raiz - funciona mesmo antes do mount
-  // Usar capture: false para não interferir com outros eventos
+  // EVENT DELEGATION SIMPLIFICADO - apenas como fallback se listeners individuais falharem
+  // NÃO usar stopImmediatePropagation para não bloquear outros listeners
   el.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
+    const button = target.closest('button') as HTMLButtonElement;
     
-    // Encontrar o botão - pode estar dentro de uma imagem, SVG, path, etc.
-    let button: HTMLButtonElement | null = null;
-    
-    // Se o target já é um botão
-    if (target.tagName === 'BUTTON') {
-      button = target as HTMLButtonElement;
-    } else {
-      // Tentar encontrar o botão mais próximo
-      button = target.closest('button') as HTMLButtonElement;
-      
-      // Se não encontrou, pode ser que o clique foi numa imagem dentro do botão
-      // Tentar encontrar pelo ID do elemento pai
-      if (!button) {
-        let current: HTMLElement | null = target;
-        while (current && current !== el) {
-          if (current.id === 'share' || current.id === 'home' || current.id === 'again' || current.id === 'submit') {
-            button = current as HTMLButtonElement;
-            break;
-          }
-          current = current.parentElement;
-        }
-      }
-    }
-    
-    if (!button || !button.id) {
-      console.log('⚠️ Clique não foi num botão:', target.tagName, target.className);
-      return;
-    }
+    if (!button || !button.id) return;
     
     const id = button.id;
-    console.log('🖱️ Clique detectado no elemento:', id, 'target:', target.tagName, button);
     
-    // Submit
-    if (id === 'submit') {
+    // Apenas processar se for um botão que não tem listener individual
+    // Os botões principais têm listeners individuais abaixo
+    if (id === 'share-whatsapp' || id === 'share-instagram' || id === 'share-facebook' || id === 'share-copy') {
       e.preventDefault();
       e.stopPropagation();
-      e.stopImmediatePropagation();
-      console.log('✅ SUBMIT clicado via delegation!');
-      cleanupLogoAdjust?.();
-      onSubmit();
-      return;
-    }
-    
-    // Share
-    if (id === 'share') {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      console.log('✅ SHARE clicado via delegation!');
-      const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
-      showOverlay(shareModal);
-      return;
-    }
-    
-    // Again (Jogar novamente)
-    if (id === 'again') {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      console.log('✅ AGAIN clicado via delegation!');
-      const confirmModal = el.querySelector<HTMLDivElement>('#confirm-modal')!;
-      showOverlay(confirmModal);
-      return;
-    }
-    
-    // Home
-    if (id === 'home') {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      console.log('✅ HOME clicado via delegation!');
-      const exitModal = el.querySelector<HTMLDivElement>('#exit-modal')!;
-      showOverlay(exitModal);
-      return;
-    }
-    
-    // Cancel modal
-    if (id === 'cancel-modal') {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      console.log('✅ CANCEL MODAL clicado via delegation!');
-      const confirmModal = el.querySelector<HTMLDivElement>('#confirm-modal')!;
-      hideOverlay(confirmModal);
-      return;
-    }
-    
-    // Confirm again
-    if (id === 'confirm-again') {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      console.log('✅ CONFIRM AGAIN clicado via delegation!');
-      const confirmModal = el.querySelector<HTMLDivElement>('#confirm-modal')!;
-      hideOverlay(confirmModal);
-      cleanupLogoAdjust?.();
-      onPlayAgain();
-      return;
-    }
-    
-    // Cancel exit modal
-    if (id === 'cancel-exit-modal') {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      console.log('✅ CANCEL EXIT MODAL clicado via delegation!');
-      const exitModal = el.querySelector<HTMLDivElement>('#exit-modal')!;
-      hideOverlay(exitModal);
-      return;
-    }
-    
-    // Confirm exit
-    if (id === 'confirm-exit') {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      console.log('✅ CONFIRM EXIT clicado via delegation!');
-      const exitModal = el.querySelector<HTMLDivElement>('#exit-modal')!;
-      hideOverlay(exitModal);
-      cleanupLogoAdjust?.();
-      onExit();
-      return;
-    }
-    
-    // Close share modal
-    if (id === 'close-share-modal') {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      console.log('✅ CLOSE SHARE MODAL clicado via delegation!');
-      const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
-      hideOverlay(shareModal);
-      return;
-    }
-    
-    // Share WhatsApp
-    if (id === 'share-whatsapp') {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      console.log('✅ SHARE WHATSAPP clicado via delegation!');
-      generateShareText().then(({ full }) => {
-        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(full)}`;
-        window.location.href = whatsappUrl;
-        const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
-        hideOverlay(shareModal);
-      });
-      return;
-    }
-    
-    // Share Instagram
-    if (id === 'share-instagram') {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      console.log('✅ SHARE INSTAGRAM clicado via delegation!');
-      shareToInstagram().then(() => {
-        const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
-        hideOverlay(shareModal);
-      });
-      return;
-    }
-    
-    // Share Facebook
-    if (id === 'share-facebook') {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      console.log('✅ SHARE FACEBOOK clicado via delegation!');
-      generateShareText().then(({ url, title }) => {
-        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(title)}`;
-        window.open(facebookUrl, '_blank');
-        const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
-        hideOverlay(shareModal);
-      });
-      return;
-    }
-    
-    // Share Copy
-    if (id === 'share-copy') {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      console.log('✅ SHARE COPY clicado via delegation!');
-      generateShareText().then(({ full }) => {
-        navigator.clipboard.writeText(full).then(() => {
-          showInfoModal('MENSAGEM DE PARTILHA COPIADA PARA A ÁREA DE TRANSFERÊNCIA! COLA NO TEU APP FAVORITO.');
-        }).catch(() => {
-          showErrorModal('NÃO FOI POSSÍVEL COPIAR. TENTA NOVAMENTE.');
+      
+      if (id === 'share-whatsapp') {
+        generateShareText().then(({ full }) => {
+          const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(full)}`;
+          window.location.href = whatsappUrl;
+          const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
+          hideOverlay(shareModal);
         });
-        const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
-        hideOverlay(shareModal);
-      });
-      return;
+      } else if (id === 'share-instagram') {
+        shareToInstagram().then(() => {
+          const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
+          hideOverlay(shareModal);
+        });
+      } else if (id === 'share-facebook') {
+        generateShareText().then(({ url, title }) => {
+          const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(title)}`;
+          window.open(facebookUrl, '_blank');
+          const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
+          hideOverlay(shareModal);
+        });
+      } else if (id === 'share-copy') {
+        generateShareText().then(({ full }) => {
+          navigator.clipboard.writeText(full).then(() => {
+            showInfoModal('MENSAGEM DE PARTILHA COPIADA PARA A ÁREA DE TRANSFERÊNCIA! COLA NO TEU APP FAVORITO.');
+          }).catch(() => {
+            showErrorModal('NÃO FOI POSSÍVEL COPIAR. TENTA NOVAMENTE.');
+          });
+          const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
+          hideOverlay(shareModal);
+        });
+      }
     }
   }, { capture: false });
 
-  // Também manter os listeners individuais como fallback
-  const handleButtonClick = (buttonId: string, handler: () => void) => {
-    const btn = el.querySelector<HTMLButtonElement>(buttonId);
-    if (!btn) {
-      console.error(`❌ Botão ${buttonId} não encontrado!`);
-      return;
-    }
-    console.log(`✅ Event listener registado para ${buttonId}`);
+  // LISTENERS INDIVIDUAIS - sistema principal e único para garantir consistência
+  // Aguardar um frame para garantir que o DOM está completamente montado
+  requestAnimationFrame(() => {
+    // Obter referências aos elementos
+    const submitBtn = el.querySelector<HTMLButtonElement>('#submit')!;
+    const shareBtn = el.querySelector<HTMLButtonElement>('#share')!;
+    const againBtn = el.querySelector<HTMLButtonElement>('#again')!;
+    const homeBtn = el.querySelector<HTMLButtonElement>('#home')!;
+    const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
+    const confirmModal = el.querySelector<HTMLDivElement>('#confirm-modal')!;
+    const exitModal = el.querySelector<HTMLDivElement>('#exit-modal')!;
+    const cancelModal = el.querySelector<HTMLButtonElement>('#cancel-modal')!;
+    const confirmAgain = el.querySelector<HTMLButtonElement>('#confirm-again')!;
+    const cancelExitModal = el.querySelector<HTMLButtonElement>('#cancel-exit-modal')!;
+    const confirmExit = el.querySelector<HTMLButtonElement>('#confirm-exit')!;
+    const closeShareModal = el.querySelector<HTMLButtonElement>('#close-share-modal')!;
     
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log(`✅ ${buttonId} clicado (individual)!`);
-      handler();
-    }, { capture: false });
-  };
-
-  // Botão Submit
-  handleButtonClick('#submit', () => {
-    cleanupLogoAdjust?.();
-    onSubmit();
-  });
-  
-  // Confirmar jogar novamente
-  const againBtn = el.querySelector<HTMLButtonElement>("#again")!;
-  const confirmModal = el.querySelector<HTMLDivElement>("#confirm-modal")!;
-  const cancelModal = el.querySelector<HTMLButtonElement>("#cancel-modal")!;
-  const confirmAgain = el.querySelector<HTMLButtonElement>("#confirm-again")!;
-
-  // Confirmar sair sem submeter
-  const homeBtn = el.querySelector<HTMLButtonElement>("#home")!;
-  const exitModal = el.querySelector<HTMLDivElement>("#exit-modal")!;
-  const cancelExitModal = el.querySelector<HTMLButtonElement>("#cancel-exit-modal")!;
-  const confirmExit = el.querySelector<HTMLButtonElement>("#confirm-exit")!;
-
-  console.log('🔘 Botões encontrados:', { 
-    againBtn: !!againBtn, 
-    homeBtn: !!homeBtn,
-    submitBtn: !!el.querySelector('#submit'),
-    shareBtn: !!el.querySelector('#share')
-  });
-  
-  // Jogar novamente (fallback listeners individuais)
-  handleButtonClick('#again', () => {
-    showOverlay(confirmModal);
-  });
-  
-  handleButtonClick('#cancel-modal', () => {
-    hideOverlay(confirmModal);
-  });
-  
-  handleButtonClick('#confirm-again', () => {
-    cleanupLogoAdjust?.();
-    hideOverlay(confirmModal);
-    onPlayAgain();
-  });
-
-  // Home (fallback listeners individuais)
-  handleButtonClick('#home', () => {
-    showOverlay(exitModal);
-  });
-  
-  handleButtonClick('#cancel-exit-modal', () => {
-    hideOverlay(exitModal);
-  });
-  
-  handleButtonClick('#confirm-exit', () => {
-    cleanupLogoAdjust?.();
-    hideOverlay(exitModal);
-    onExit();
-  });
-
-  // Fallback listeners individuais - garantir que funcionam mesmo se delegation falhar
-  // Usar as variáveis já declaradas acima (shareModal, shareBtn, homeBtn)
-  const shareModalEl = el.querySelector<HTMLDivElement>('#share-modal')!;
-  const shareBtnEl = el.querySelector<HTMLButtonElement>('#share')!;
-  
-  console.log('🔍 Botões encontrados (fallback):', {
-    share: !!shareBtnEl,
-    home: !!homeBtn,
-    shareModal: !!shareModalEl
-  });
-  
-  // Listener direto no botão share (fallback)
-  if (shareBtnEl) {
-    shareBtnEl.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log('✅ SHARE clicado (fallback listener)!');
-      showOverlay(shareModalEl);
+    console.log('🔘 Botões encontrados:', {
+      submit: !!submitBtn,
+      share: !!shareBtn,
+      again: !!againBtn,
+      home: !!homeBtn,
+      shareModal: !!shareModal,
+      confirmModal: !!confirmModal,
+      exitModal: !!exitModal
     });
-  }
-  
-  // Listener direto no botão home (fallback) - usar homeBtn já declarado acima
-  if (homeBtn) {
-    homeBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log('✅ HOME clicado (fallback listener)!');
-      showOverlay(exitModal);
-    });
-  }
-  
-  handleButtonClick('#close-share-modal', () => {
-    hideOverlay(shareModalEl);
+    
+    // Submit
+    if (submitBtn) {
+      submitBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('✅ SUBMIT clicado!');
+        cleanupLogoAdjust?.();
+        onSubmit();
+      });
+    }
+    
+    // Share
+    if (shareBtn) {
+      shareBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('✅ SHARE clicado!');
+        showOverlay(shareModal);
+      });
+    }
+    
+    // Again (Jogar novamente)
+    if (againBtn) {
+      againBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('✅ AGAIN clicado!');
+        showOverlay(confirmModal);
+      });
+    }
+    
+    // Home
+    if (homeBtn) {
+      homeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('✅ HOME clicado!');
+        showOverlay(exitModal);
+      });
+    }
+    
+    // Cancel modal (jogar novamente)
+    if (cancelModal) {
+      cancelModal.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('✅ CANCEL MODAL clicado!');
+        hideOverlay(confirmModal);
+      });
+    }
+    
+    // Confirm again
+    if (confirmAgain) {
+      confirmAgain.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('✅ CONFIRM AGAIN clicado!');
+        cleanupLogoAdjust?.();
+        hideOverlay(confirmModal);
+        onPlayAgain();
+      });
+    }
+    
+    // Cancel exit modal
+    if (cancelExitModal) {
+      cancelExitModal.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('✅ CANCEL EXIT MODAL clicado!');
+        hideOverlay(exitModal);
+      });
+    }
+    
+    // Confirm exit
+    if (confirmExit) {
+      confirmExit.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('✅ CONFIRM EXIT clicado!');
+        cleanupLogoAdjust?.();
+        hideOverlay(exitModal);
+        onExit();
+      });
+    }
+    
+    // Close share modal
+    if (closeShareModal) {
+      closeShareModal.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('✅ CLOSE SHARE MODAL clicado!');
+        hideOverlay(shareModal);
+      });
+    }
   });
 
   // MOSTRAR O SCORE DIRETAMENTE SEM ANIMAÇÃO (para debug)
