@@ -69,6 +69,10 @@ export class GameLoop {
   }
 
   start() {
+    // RESETAR o estado para 'idle' se estiver 'finished' (permite reiniciar)
+    if (this.state === 'finished') {
+      this.state = 'idle';
+    }
     if (this.state !== 'idle') return;
     this.state = 'running';
     this.hud.onStateChange(this.state);
@@ -80,6 +84,10 @@ export class GameLoop {
     this.sfx.unlock();
     this.startMs = performance.now();
     this.lastGoodAtMs = this.startMs;
+    // Resetar histórico DDA e estado do jogo
+    this.hist = [];
+    this.ddaBias = 0;
+    this.lastMouthTrigger = 0;
     this.tick(t);
   }
 

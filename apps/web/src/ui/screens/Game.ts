@@ -99,6 +99,18 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   };
 
   const start = async () => {
+    // RESETAR hasFinished quando se inicia um novo jogo
+    hasFinished = false;
+    
+    // Garantir que o loop anterior está completamente parado antes de criar um novo
+    if (loop) {
+      try { 
+        loop.stop(); 
+        // Pequeno delay para garantir que o stop() terminou completamente
+        await new Promise(resolve => setTimeout(resolve, 50));
+      } catch {}
+    }
+    
     // Ensure canvas is visible for a replay (mantemos o vídeo oculto até após o countdown)
     canvas.classList.remove('hidden');
     canvas.classList.add('z-[2]');
@@ -141,11 +153,23 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       loadItemSprites(),
       tracker.init().catch(()=>{})
     ]);
+    
+    // VERIFICAÇÃO: Garantir que os sprites foram carregados corretamente
+    if (!sprites.good.length && !sprites.bad.length) {
+      console.error('❌ Nenhum sprite carregado! Verifica o manifest.json');
+      loading.hide();
+      showErrorModal('ERRO AO CARREGAR ITENS DO JOGO. RECARREGA A PÁGINA.');
+      return;
+    }
+    
+    console.log(`✅ Sprites carregados: ${sprites.good.length} bons, ${sprites.bad.length} maus`);
 
     loading.show('A CARREGAR SABORES DE PORTUGAL');
     await feed.startFrontCamera();
     try { await tracker.start(video); } catch {}
     loading.hide();
+    
+    // Criar NOVO GameLoop com os sprites carregados
     loop = new GameLoop(canvas, {
       onScoreUpdate: (s) => hud.setScore(s),
       onTimeUpdate: (t) => hud.setTimeLeft(t),

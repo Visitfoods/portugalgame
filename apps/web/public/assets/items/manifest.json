@@ -1,12 +1,15 @@
 {
   "good": [
+    "/assets/items/good/Bacalhau.webp",
     "/assets/items/good/Bifana.webp",
+    "/assets/items/good/Bolo-Rei.webp",
     "/assets/items/good/Brisa-Lis.webp",
     "/assets/items/good/chourico.webp",
     "/assets/items/good/Ovos-moles.webp",
     "/assets/items/good/pastel-bacalhau.webp",
     "/assets/items/good/pastel-nata.webp",
-    "/assets/items/good/pastel-tentugal.webp"
+    "/assets/items/good/pastel-tentugal.webp",
+    "/assets/items/good/Sardinha.webp"
   ],
   "bad": [
     "/assets/items/bad/bola-berlim.webp",
