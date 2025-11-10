@@ -40,11 +40,11 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     onCancel?.();
     return el;
   }
-  const hud = new HUD();
+  let hud: HUD | undefined;
   const feed = new CameraFeed(video);
   const tracker = new FaceTracker();
   const mouth = new MouthOpenDetector();
-  let loop: GameLoop;
+  let loop: GameLoop | undefined;
   let trackingActive = true;
   let bottomDecor: HTMLImageElement | null = null;
   let topLogoWrap: HTMLDivElement | null = null;
@@ -83,7 +83,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     try { tracker.stop(); } catch {}
     try { feed.stop(); } catch {}
     window.removeEventListener('resize', resize);
-    try { hud.destroy(); } catch {}
+    try { hud?.destroy(); hud = undefined; } catch {}
     try { mascotCtl?.destroy(); mascotCtl = null; } catch {}
     try { bottomDecor?.remove(); bottomDecor = null; } catch {}
     try { topLogoWrap?.remove(); topLogoWrap = null; } catch {}
@@ -94,13 +94,16 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     }
     video.classList.add('hidden');
     canvas.classList.add('hidden');
-    try { loop?.stop(); } catch {}
+    try { loop?.stop(); loop = undefined; } catch {}
     resetMouthTrigger();
   };
 
   const start = async () => {
     // RESETAR hasFinished quando se inicia um novo jogo
     hasFinished = false;
+    
+    // RESETAR trackingActive para permitir tracking novamente
+    trackingActive = true;
     
     // Garantir que o loop anterior está completamente parado antes de criar um novo
     if (loop) {
@@ -111,15 +114,35 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       } catch {}
     }
     
-    // Ensure canvas is visible for a replay (mantemos o vídeo oculto até após o countdown)
+    // RESETAR estados do vídeo e canvas - remover todos os estilos que possam estar a bloquear
+    video.classList.remove('hidden');
+    video.style.display = '';
+    video.style.pointerEvents = '';
     canvas.classList.remove('hidden');
+    canvas.style.display = '';
+    canvas.style.pointerEvents = '';
     canvas.classList.add('z-[2]');
+    
+    // Garantir que o stage também está ativo
+    if (stage) {
+      stage.style.pointerEvents = '';
+    }
+
+    // Recriar HUD se necessário (pode ter sido destruído no jogo anterior)
+    if (!hud) {
+      hud = new HUD();
+    }
 
     // Loading overlay minimalista durante o arranque
     const loading = LoadingOverlay('A preparar...');
     loading.show('A CARREGAR SABORES DE PORTUGAL');
-
+    
     // Bottom decorative element (same as other pages), positioned under mascot
+    // Remover e recriar para garantir estado limpo
+    if (bottomDecor) {
+      try { bottomDecor.remove(); } catch {}
+      bottomDecor = null;
+    }
     if (!bottomDecor) {
       bottomDecor = document.createElement('img');
       bottomDecor.src = '/assets/graphics/Graphic-Element01.svg';
@@ -131,6 +154,11 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     }
 
     // Top centered Alves Bandeira logo, persistent during gameplay
+    // Remover e recriar para garantir estado limpo
+    if (topLogoWrap) {
+      try { topLogoWrap.remove(); } catch {}
+      topLogoWrap = null;
+    }
     if (!topLogoWrap) {
       const wrap = document.createElement('div');
       wrap.className = 'absolute top-3 left-1/2 -translate-x-1/2 z-[4] pointer-events-none';
@@ -183,7 +211,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
           hasFinished = true;
           
           // IMPORTANTE: Capturar o score ANTES de fazer qualquer cleanup
-          const finalScore = loop.getScore();
+          const finalScore = loop?.getScore() ?? 0;
           console.log('🏆 Score final capturado:', finalScore);
           
           // PARAR tracker e feed IMEDIATAMENTE para evitar flicker
@@ -203,7 +231,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
           } catch {}
           
           // REMOVER TODOS os elementos do jogo IMEDIATAMENTE para evitar conflitos
-          try { hud.destroy(); } catch {}
+          try { hud?.destroy(); hud = undefined; } catch {}
           try { mascotCtl?.destroy(); mascotCtl = null; } catch {}
           try { bottomDecor?.remove(); bottomDecor = null; } catch {}
           try { topLogoWrap?.remove(); topLogoWrap = null; } catch {}
@@ -292,8 +320,18 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
 
     // Só mostrar a câmara após o countdown (evita "zoom"/autoexposição antes do jogo)
     video.classList.remove('hidden');
+    video.style.display = '';
+    video.style.pointerEvents = '';
     video.classList.add('fixed','inset-0','w-full','h-full','object-cover','transform','-scale-x-100','z-[1]');
 
+    // Garantir que o loop foi criado antes de iniciar
+    if (!loop) {
+      console.error('❌ GameLoop não foi criado!');
+      loading.hide();
+      showErrorModal('ERRO AO INICIAR O JOGO. RECARREGA A PÁGINA.');
+      return;
+    }
+    
     loop.start();
     // Developer helper: finish button visible during countdown/gameplay
     if (!devFinishBtn) {
