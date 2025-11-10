@@ -218,6 +218,11 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
           }
           hasFinished = true;
           
+          // ESCONDER IMEDIATAMENTE o elemento principal do Game para evitar mostrar o texto inicial
+          el.style.display = 'none';
+          el.style.visibility = 'hidden';
+          el.style.opacity = '0';
+          
           // IMPORTANTE: Capturar o score ANTES de fazer qualquer cleanup
           const finalScore = loop?.getScore() ?? 0;
           console.log('🏆 Score final capturado:', finalScore);
