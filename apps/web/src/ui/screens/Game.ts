@@ -53,6 +53,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   let mouthOpenSince = 0;
   let prevMouthOpen = false;
   let lastMouthWarningAt = 0;
+  let hasFinished = false; // Flag para garantir que onFinish só é chamado uma vez
 
   const resize = () => {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -150,6 +151,13 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
       onTimeUpdate: (t) => hud.setTimeLeft(t),
       onStateChange: (state) => {
         if (state === 'finished') {
+          // CRÍTICO: Garantir que onFinish só é chamado UMA VEZ
+          if (hasFinished) {
+            console.warn('⚠️ Tentativa de chamar onFinish novamente - ignorando');
+            return;
+          }
+          hasFinished = true;
+          
           // IMPORTANTE: Capturar o score ANTES de fazer qualquer cleanup
           const finalScore = loop.getScore();
           console.log('🏆 Score final capturado:', finalScore);
