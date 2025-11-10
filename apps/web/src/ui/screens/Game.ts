@@ -203,9 +203,12 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
             } catch {}
           });
           
-          // Chamar onFinish IMEDIATAMENTE para mostrar resultados sem delay
+          // Chamar onFinish após um pequeno delay para garantir que tudo está limpo
+          // O main.ts já tem um requestAnimationFrame duplo, mas adicionamos mais um aqui
           console.log('🚀 Chamando onFinish com score:', finalScore);
-          onFinish(finalScore);
+          requestAnimationFrame(() => {
+            onFinish(finalScore);
+          });
           
           // Fazer o resto do cleanup de forma não bloqueante
           const doCleanup = () => {
