@@ -198,9 +198,17 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     loading.hide();
     
     // Criar NOVO GameLoop com os sprites carregados
+    // Garantir que hud está definido antes de criar o loop
+    if (!hud) {
+      console.error('❌ HUD não foi criado!');
+      loading.hide();
+      showErrorModal('ERRO AO INICIAR O JOGO. RECARREGA A PÁGINA.');
+      return;
+    }
+    
     loop = new GameLoop(canvas, {
-      onScoreUpdate: (s) => hud.setScore(s),
-      onTimeUpdate: (t) => hud.setTimeLeft(t),
+      onScoreUpdate: (s) => hud!.setScore(s),
+      onTimeUpdate: (t) => hud!.setTimeLeft(t),
       onStateChange: (state) => {
         if (state === 'finished') {
           // CRÍTICO: Garantir que onFinish só é chamado UMA VEZ
@@ -290,7 +298,7 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
         }
       },
       onPopup: (x, y, delta) => {
-        hud.popupCanvasPx(x, y, delta, canvas);
+        hud!.popupCanvasPx(x, y, delta, canvas);
         if (!mascotCtl) return;
         if (delta > 0) mascotCtl.onGoodCatch();
         else if (delta < 0) mascotCtl.onBadCatch('wrong');
@@ -645,17 +653,17 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
         }
         // Ellipse capture region (smoothed inside detector)
         const ell = mouth.geometry(lm, canvas.width, canvas.height);
-        if (ell) loop.setMouthMask(ell, open);
+        if (ell && loop) loop.setMouthMask(ell, open);
       } else {
         mouth.update(null);
       }
-      hud.setMouth(open);
+      if (hud) hud.setMouth(open);
       // standby: sem INVERT controls
-      loop.setMouth(pos, open);
+      if (loop) loop.setMouth(pos, open);
       // anti-cheat mouth trigger
       const t = performance.now();
       const firedAt = mouthTrigger(t, open);
-      if (firedAt) loop.registerMouthTrigger(firedAt);
+      if (firedAt && loop) loop.registerMouthTrigger(firedAt);
       const warnCooldownMs = 3500;
       const holdThresholdMs = 2400;
       const justOpened = open && !prevMouthOpen;
