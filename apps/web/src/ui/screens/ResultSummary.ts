@@ -589,39 +589,38 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
   });
 
   // Fallback listeners individuais - garantir que funcionam mesmo se delegation falhar
-  const shareModal = el.querySelector<HTMLDivElement>('#share-modal')!;
-  const shareBtn = el.querySelector<HTMLButtonElement>('#share')!;
-  const homeBtn = el.querySelector<HTMLButtonElement>('#home')!;
+  // Usar as variáveis já declaradas acima (shareModal, shareBtn, homeBtn)
+  const shareModalEl = el.querySelector<HTMLDivElement>('#share-modal')!;
+  const shareBtnEl = el.querySelector<HTMLButtonElement>('#share')!;
   
-  console.log('🔍 Botões encontrados:', {
-    share: !!shareBtn,
+  console.log('🔍 Botões encontrados (fallback):', {
+    share: !!shareBtnEl,
     home: !!homeBtn,
-    shareModal: !!shareModal
+    shareModal: !!shareModalEl
   });
   
   // Listener direto no botão share (fallback)
-  if (shareBtn) {
-    shareBtn.addEventListener('click', (e) => {
+  if (shareBtnEl) {
+    shareBtnEl.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
       console.log('✅ SHARE clicado (fallback listener)!');
-      showOverlay(shareModal);
+      showOverlay(shareModalEl);
     });
   }
   
-  // Listener direto no botão home (fallback)
+  // Listener direto no botão home (fallback) - usar homeBtn já declarado acima
   if (homeBtn) {
     homeBtn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
       console.log('✅ HOME clicado (fallback listener)!');
-      const exitModal = el.querySelector<HTMLDivElement>('#exit-modal')!;
       showOverlay(exitModal);
     });
   }
   
   handleButtonClick('#close-share-modal', () => {
-    hideOverlay(shareModal);
+    hideOverlay(shareModalEl);
   });
 
   // MOSTRAR O SCORE DIRETAMENTE SEM ANIMAÇÃO (para debug)
