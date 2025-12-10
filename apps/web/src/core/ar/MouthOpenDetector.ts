@@ -7,6 +7,9 @@ export const UPPER_LIP = 13;
 export const LOWER_LIP = 14;
 export const MOUTH_LEFT = 61;
 export const MOUTH_RIGHT = 291;
+// Face height references for rotation compensation (Yaw)
+export const FACE_TOP = 10;
+export const FACE_BOTTOM = 152;
 
 export interface MouthConfig {
   thOn: number;  // threshold to turn ON (mouth opens)
@@ -62,10 +65,26 @@ export class MouthOpenDetector {
     const ll = landmarks[LOWER_LIP];
     const ml = landmarks[MOUTH_LEFT];
     const mr = landmarks[MOUTH_RIGHT];
+    const ft = landmarks[FACE_TOP];
+    const fb = landmarks[FACE_BOTTOM];
     if (!ul || !ll || !ml || !mr) return this.lastEllipse;
+    
     const cx = ((ul.x + ll.x) * 0.5) * widthPx;
     const cy = ((ul.y + ll.y) * 0.5) * heightPx;
-    const widthNorm = dist(ml, mr); // normalized [0..1] width between mouth corners
+    
+    let widthNorm = dist(ml, mr); // normalized [0..1] width between mouth corners
+
+    // Compensation for Head Rotation (Yaw):
+    // When user rotates head sideways, projected mouth width shrinks.
+    // We use face height (stable under yaw) to enforce a minimum width.
+    if (ft && fb) {
+      const faceHeight = dist(ft, fb);
+      // A typical mouth width is roughly 35-40% of face height.
+      // We ensure the hit-box width is at least 30% of face height to keep it catchable from side angles.
+      const minWidth = faceHeight * 0.30;
+      widthNorm = Math.max(widthNorm, minWidth);
+    }
+
     const openNorm = dist(ul, ll);  // normalized height between inner lips
     // Full opening: rx ~ half of corner-to-corner width; ry ~ half of vertical opening
     // Expand capture ellipse to facilitar apanhar objetos

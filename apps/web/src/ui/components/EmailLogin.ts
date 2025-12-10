@@ -11,7 +11,7 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
     <div class="w-11/12 max-w-[430px] text-[#0a2960]">
       <div id="state-form" class="bg-white/95 rounded-2xl p-5 shadow-xl space-y-4">
         <div class="font-[800] text-lg">ENTRAR PARA SUBMETER PONTUAÇÃO</div>
-        <div class="text-sm opacity-80">RECEBESTE UM E-MAIL COM UM CÓDIGO DE 6 DÍGITOS PARA CONCLUIR O LOGIN.</div>
+        <div class="text-sm opacity-80">VAIS RECEBER UM E-MAIL COM UM CÓDIGO DE 6 DÍGITOS PARA CONCLUIR O LOGIN.</div>
         <input id="email" type="email" autocomplete="email" placeholder="EMAIL" class="w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#0a2960]/30"/>
         <input id="code" type="tel" inputmode="numeric" maxlength="6" placeholder="CÓDIGO (6 DÍGITOS)" class="hidden w-full px-4 py-2.5 rounded-full bg-white text-[#0a2960] placeholder-[#0a2960]/60 shadow border border-[#0a2960]/30"/>
         <div class="flex gap-3">
@@ -90,8 +90,11 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
       codeInput.classList.remove('hidden');
       btnVerify.classList.remove('hidden');
       btnSend.classList.add('hidden'); // Esconder botão ENVIAR na fase de código
-      hint.textContent = 'NÃO RECEBESTE O CÓDIGO? ENVIAR NOVAMENTE';
-      updateResendButton();
+      
+      // Garantir que o link de reenvio é criado/atualizado
+      updateResendLink();
+      
+      // updateResendButton(); // Removido
     }
   };
 
@@ -118,10 +121,27 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
   const updateResendLink = () => {
     const now = Date.now();
     const remain = Math.max(0, Math.ceil((nextResendAt - now) / 1000));
+    const link = wrap.querySelector<HTMLSpanElement>('#resend-link');
+    
+    // Se o link nao existir (primeira renderizacao ou DOM resetado), recriar estrutura base
+    if (!link) {
+       hint.innerHTML = `NÃO RECEBESTE O CÓDIGO? <span id="resend-link" class="underline cursor-pointer text-[#1f4590]">ENVIAR NOVAMENTE</span>`;
+       // Re-bind do click porque o elemento foi criado agora
+       setupResendLink();
+       // Chamar recursivamente para atualizar o texto logo a seguir
+       updateResendLink();
+       return;
+    }
+
+    // Atualizar apenas o texto do link existente, preservando os event listeners
     if (remain > 0) {
-      hint.innerHTML = `NÃO RECEBESTE O CÓDIGO? <span id="resend-link" class="underline cursor-pointer text-[#1f4590]">ENVIAR NOVAMENTE (${remain}S)</span>`;
+      link.textContent = `ENVIAR NOVAMENTE (${remain}S)`;
+      link.style.opacity = '0.5';
+      link.style.pointerEvents = 'none';
     } else {
-      hint.innerHTML = `NÃO RECEBESTE O CÓDIGO? <span id="resend-link" class="underline cursor-pointer text-[#1f4590]">ENVIAR NOVAMENTE</span>`;
+      link.textContent = 'ENVIAR NOVAMENTE';
+      link.style.opacity = '1';
+      link.style.pointerEvents = 'auto';
     }
   };
 
@@ -336,13 +356,16 @@ export function EmailLogin(onSent: () => void, onCancel: () => void, getPendingS
           msg.textContent = '';
           nextResendAt = Date.now() + RESEND_COOLDOWN_SECONDS * 1000;
           clearResendTimer();
+          // Atualizar UI imediatamente antes de iniciar o timer
+          updateStepUI();
+          
           resendTimer = window.setInterval(() => {
-            updateResendButton();
+            // updateResendButton(); // Removido pois o botão está escondido
             updateResendLink();
-            setupResendLink(); // Reconfigurar o link após atualização
+            // setupResendLink(); // Removido, não é necessário re-bindar se não destruirmos o DOM
           }, 500) as unknown as number;
-          updateResendLink();
-          setupResendLink(); // Configurar o link inicial
+          
+          // setupResendLink(); // Já é chamado dentro de updateResendLink se necessário
         } catch (e: any) {
           const code = (e?.code || e?.message || String(e)) as string;
           msg.textContent = `FALHA AO ENVIAR CÓDIGO. ${mapError(code)}`;
