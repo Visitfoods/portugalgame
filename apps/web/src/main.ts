@@ -11,7 +11,7 @@ import { EmailLogin } from './ui/components/EmailLogin'
 import { AuthComplete } from './ui/screens/AuthComplete'
 import { UsernamePicker } from './ui/screens/UsernamePicker'
 import { AuthService, getCachedUser, setCachedUser } from './services/auth'
-import { ensureAutoplayAudioGate, isDesktopDevice } from './platform/DeviceGuard'
+import { ensureAutoplayAudioGate, isDesktopDevice, isLandscapeOrientation, isMobileDevice } from './platform/DeviceGuard'
 import { getUserProfile } from './services/user'
 import { ensureFirestoreOnline, getFirebaseAuth } from './lib/firebase'
 import { userStore } from './services/userStore'
@@ -118,6 +118,80 @@ function showDesktopWarningModal() {
   };
 
   document.body.appendChild(modal);
+}
+
+// Função para mostrar/ocultar modal de orientação horizontal
+let landscapeWarningModal: HTMLDivElement | null = null;
+
+function updateLandscapeWarning() {
+  // Só mostrar em mobile e quando está em landscape
+  if (!isMobileDevice() || !isLandscapeOrientation()) {
+    // Esconder modal se existir
+    if (landscapeWarningModal) {
+      landscapeWarningModal.remove();
+      landscapeWarningModal = null;
+    }
+    return;
+  }
+
+  // Se já existe, não criar novamente
+  if (landscapeWarningModal) {
+    return;
+  }
+
+  // Criar modal de aviso landscape
+  const modal = document.createElement('div');
+  modal.id = 'landscape-warning-modal';
+  modal.className = 'fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm';
+  
+  modal.innerHTML = `
+    <div class="relative w-full max-w-[90vw] max-w-[420px] bg-white/95 rounded-[22px] shadow-[0_20px_40px_rgba(2,20,60,0.3)] overflow-hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-center p-4 border-b-2 border-[#243b78]/30 bg-[#243b78]">
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          <h2 class="text-xl font-[800] text-white">RODA O ECRÃ</h2>
+        </div>
+      </div>
+      
+      <!-- Content -->
+      <div class="p-6 text-center">
+        <div class="text-[#0a2960] font-[600] text-lg mb-4">ESTE JOGO É PARA JOGAR EM MODO VERTICAL</div>
+        <div class="text-[#0a2960]/70 text-sm mb-6">
+          Por favor, roda o teu dispositivo para modo vertical (portrait) para continuares a jogar.
+          <br/><br/>
+          O jogo funciona melhor quando o dispositivo está na posição vertical.
+        </div>
+      </div>
+    </div>
+  `;
+
+  // NÃO permitir fechar o modal - bloquear cliques fora
+  modal.onclick = (e) => {
+    e.stopPropagation();
+  };
+
+  document.body.appendChild(modal);
+  landscapeWarningModal = modal;
+}
+
+// Inicializar monitorização de orientação
+function initOrientationWatcher() {
+  // Verificar orientação inicial
+  updateLandscapeWarning();
+  
+  // Monitorizar mudanças de orientação
+  const handleOrientationChange = () => {
+    // Pequeno delay para garantir que as dimensões foram atualizadas
+    setTimeout(() => {
+      updateLandscapeWarning();
+    }, 100);
+  };
+  
+  window.addEventListener('orientationchange', handleOrientationChange);
+  window.addEventListener('resize', handleOrientationChange);
 }
 
 // Função para mostrar modal de erro personalizado
@@ -374,6 +448,9 @@ AuthService.onAuth(async (u) => {
 });
 
 // Redirect consumption é tratado na userStore.init()
+
+// Inicializar monitorização de orientação
+initOrientationWatcher();
 
 // Verificar se voltamos de um login bem-sucedido
 window.addEventListener('load', () => {

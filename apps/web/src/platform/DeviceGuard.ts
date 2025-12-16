@@ -41,3 +41,13 @@ export function isDesktopDevice(): boolean {
   return !isMobileDevice();
 }
 
+export function isLandscapeOrientation(): boolean {
+  // Deteta se está em modo horizontal (landscape)
+  return window.innerWidth > window.innerHeight;
+}
+
+export function isPortraitOrientation(): boolean {
+  // Deteta se está em modo vertical (portrait)
+  return window.innerHeight >= window.innerWidth;
+}
+
