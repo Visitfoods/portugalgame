@@ -49,7 +49,6 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
   let bottomDecor: HTMLImageElement | null = null;
   let topLogoWrap: HTMLDivElement | null = null;
   let soundBtnEl: HTMLButtonElement | null = null;
-  let devFinishBtn: HTMLButtonElement | null = null;
   let mouthOpenSince = 0;
   let prevMouthOpen = false;
   let lastMouthWarningAt = 0;
@@ -88,7 +87,6 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     try { bottomDecor?.remove(); bottomDecor = null; } catch {}
     try { topLogoWrap?.remove(); topLogoWrap = null; } catch {}
     try { soundBtnEl?.remove(); soundBtnEl = null; } catch {}
-    try { devFinishBtn?.remove(); devFinishBtn = null; } catch {}
     if (clearCanvas) {
       try { const ctx = canvas.getContext('2d'); ctx && ctx.clearRect(0,0,canvas.width,canvas.height); } catch {}
     }
@@ -249,7 +247,6 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
           try { bottomDecor?.remove(); bottomDecor = null; } catch {}
           try { topLogoWrap?.remove(); topLogoWrap = null; } catch {}
           try { soundBtnEl?.remove(); soundBtnEl = null; } catch {}
-          try { devFinishBtn?.remove(); devFinishBtn = null; } catch {}
           
           // Remover quaisquer elementos órfãos do DOM que possam estar a causar flicker
           try {
@@ -346,16 +343,6 @@ export function Game(onFinish: (score: number) => void, onCancel?: () => void) {
     }
     
     loop.start();
-    // Developer helper: finish button visible during countdown/gameplay
-    if (!devFinishBtn) {
-      const btn = document.createElement('button');
-      btn.id = 'btn-finish-dev';
-      btn.textContent = 'Terminar (dev)';
-      btn.className = 'fixed top-3 right-3 z-[50] px-3 py-2 rounded bg-white/20 text-white border border-white/40 backdrop-blur-sm';
-      btn.onclick = () => { try { cleanup(true); } catch {} try { onFinish(loop?.getScore() ?? 0); } catch { onFinish(0); } };
-      document.body.appendChild(btn);
-      devFinishBtn = btn;
-    }
 
     // Sound toggle button (bottom-left)
     if (!soundBtnEl) {

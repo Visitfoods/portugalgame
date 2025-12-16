@@ -247,25 +247,6 @@ export class GameLoop {
         ctx.fill();
       }
     }
-
-    // mouth debug point
-    ctx.beginPath();
-    ctx.fillStyle = this.mouthOpen ? '#22c55e' : '#ef4444';
-    ctx.arc(this.mouthPos.x, this.mouthPos.y, 3, 0, Math.PI*2);
-    ctx.fill();
-
-    // mouth capture ellipse mask (rotated)
-    ctx.save();
-    ctx.globalAlpha = this.mouthOpen ? 0.18 : 0.10;
-    ctx.fillStyle = this.mouthOpen ? '#22c55e' : '#ef4444';
-    ctx.beginPath();
-    ctx.ellipse(this.mouthEllipse.cx, this.mouthEllipse.cy, this.mouthEllipse.rx, this.mouthEllipse.ry, this.mouthEllipse.rot, 0, Math.PI*2);
-    ctx.fill();
-    ctx.globalAlpha = 0.8;
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = this.mouthOpen ? '#22c55e' : '#ef4444';
-    ctx.stroke();
-    ctx.restore();
   }
 
   registerMouthTrigger(atMs: number) {
