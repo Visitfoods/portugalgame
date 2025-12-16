@@ -75,10 +75,17 @@ function showSuccessModal(message: string, onClose: () => void) {
   document.body.appendChild(modal);
 }
 
-// Função para mostrar modal de aviso desktop
-function showDesktopWarningModal(onClose: () => void) {
+// Função para mostrar modal de aviso desktop (não pode ser fechado)
+function showDesktopWarningModal() {
+  // Verificar se já existe um modal
+  const existingModal = document.querySelector('#desktop-warning-modal');
+  if (existingModal) {
+    return; // Já existe, não mostrar novamente
+  }
+
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm';
+  modal.id = 'desktop-warning-modal';
+  modal.className = 'fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm';
   
   modal.innerHTML = `
     <div class="relative w-full max-w-[90vw] max-w-[420px] bg-white/95 rounded-[22px] shadow-[0_20px_40px_rgba(2,20,60,0.3)] overflow-hidden">
@@ -94,50 +101,23 @@ function showDesktopWarningModal(onClose: () => void) {
       
       <!-- Content -->
       <div class="p-6 text-center">
-        <div class="text-[#0a2960] font-[600] text-lg mb-4">ESTE JOGO É PARA TELEMÓVEL</div>
+        <div class="text-[#0a2960] font-[600] text-lg mb-4">ESTE JOGO É APENAS PARA TELEMÓVEL</div>
         <div class="text-[#0a2960]/70 text-sm mb-6">
-          Para teres a melhor experiência, acede a este jogo através do teu telemóvel ou tablet.
+          Para jogares, deves aceder a este jogo através do teu telemóvel ou tablet.
           <br/><br/>
-          O jogo utiliza a câmara frontal do dispositivo para funcionar corretamente.
+          O jogo utiliza a câmara frontal do dispositivo para funcionar corretamente e não está disponível para computadores desktop.
         </div>
-        <button id="close-desktop-warning-modal" class="w-full px-6 py-3 rounded-full bg-[#243b78] text-white font-[800] text-lg shadow-[0_8px_20px_rgba(2,20,60,0.35)] border border-white/50 active:scale-[.98] transition">
-          ENTENDI
-        </button>
       </div>
     </div>
   `;
 
-  // Fechar modal
-  const closeBtn = modal.querySelector<HTMLButtonElement>('#close-desktop-warning-modal')!;
-  closeBtn.onclick = () => {
-    modal.remove();
-    onClose();
-  };
-  
-  // Fechar ao clicar fora
+  // NÃO permitir fechar o modal - bloquear cliques fora
   modal.onclick = (e) => {
-    if (e.target === modal) {
-      modal.remove();
-      onClose();
-    }
+    // Prevenir que feche ao clicar fora
+    e.stopPropagation();
   };
-
-  // ESC para fechar
-  const handleEsc = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      modal.remove();
-      document.removeEventListener('keydown', handleEsc);
-      onClose();
-    }
-  };
-  document.addEventListener('keydown', handleEsc);
 
   document.body.appendChild(modal);
-  
-  // Focar no botão para acessibilidade
-  setTimeout(() => {
-    closeBtn.focus();
-  }, 100);
 }
 
 // Função para mostrar modal de erro personalizado
@@ -262,11 +242,9 @@ function startFlow() {
   const home = Home(() => startGameDirect(), Object.assign(() => showHowTo(), { gotoAccount: () => showAccount() }), () => showRanking(), () => showTerms());
   mount(home);
   
-  // Mostrar aviso se for desktop
+  // Mostrar aviso permanente se for desktop (não pode fechar)
   if (isDesktopDevice()) {
-    showDesktopWarningModal(() => {
-      // Modal fechado - continuar normalmente
-    });
+    showDesktopWarningModal();
   }
 }
 
@@ -291,6 +269,12 @@ function showTerms() {
 }
 
 async function startGameDirect() {
+  // Bloquear completamente em desktop
+  if (isDesktopDevice()) {
+    showDesktopWarningModal();
+    return;
+  }
+
   try {
     // Garante desbloqueio de áudio em iOS (primeiro gesto do utilizador)
     try { ensureAutoplayAudioGate(); } catch {}

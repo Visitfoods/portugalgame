@@ -1,4 +1,5 @@
 import { BackgroundMusic } from '../../core/engine/Audio';
+import { isDesktopDevice } from '../../platform/DeviceGuard';
 
 // Importar funções de modal do main.ts
 declare function showInfoModal(message: string, onClose?: () => void): void;
@@ -92,13 +93,25 @@ export function Home(onPlay: () => void, onHow?: () => void, onRanking?: () => v
   const playSrcNormal = '/assets/graphics/Botao-Jogar_Normal.svg';
   const playSrcPressed = '/assets/graphics/Botao-Jogar_Pressed.svg';
   const setPressed = (pressed: boolean) => {
-    playBtn.src = pressed ? playSrcPressed : playSrcNormal;
+    if (!isDesktopDevice()) {
+      playBtn.src = pressed ? playSrcPressed : playSrcNormal;
+    }
   };
-  playBtn.onpointerdown = () => setPressed(true);
-  playBtn.onpointerup = () => setPressed(false);
-  playBtn.onpointerleave = () => setPressed(false);
-  playBtn.onpointercancel = () => setPressed(false);
-  playBtn.onclick = () => onPlay();
+  
+  // Bloquear botão JOGAR em desktop
+  if (isDesktopDevice()) {
+    playBtn.style.opacity = '0.5';
+    playBtn.style.cursor = 'not-allowed';
+    playBtn.onclick = () => {
+      // Não fazer nada em desktop - jogo bloqueado
+    };
+  } else {
+    playBtn.onpointerdown = () => setPressed(true);
+    playBtn.onpointerup = () => setPressed(false);
+    playBtn.onpointerleave = () => setPressed(false);
+    playBtn.onpointercancel = () => setPressed(false);
+    playBtn.onclick = () => onPlay();
+  }
   el.querySelector<HTMLButtonElement>('#how')!.onclick = () => { if (onHow) onHow(); else showInfoModal('COMO JOGAR: MANTER O ROSTO VISÍVEL E CENTRADO. ABRE A BOCA PARA APANHAR OS ÍCONES. EVITA OS FALSOS!'); };
   el.querySelector<HTMLButtonElement>('#account')!.onclick = () => { const fn = (onHow as any)?.gotoAccount; if (typeof fn === 'function') fn(); else showInfoModal('CONTA: EM BREVE.'); };
   el.querySelector<HTMLButtonElement>('#ranking')!.onclick = () => { if (onRanking) onRanking(); else showInfoModal('RANKING: EM BREVE.'); };
