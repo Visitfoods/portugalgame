@@ -11,7 +11,7 @@ import { EmailLogin } from './ui/components/EmailLogin'
 import { AuthComplete } from './ui/screens/AuthComplete'
 import { UsernamePicker } from './ui/screens/UsernamePicker'
 import { AuthService, getCachedUser, setCachedUser } from './services/auth'
-import { ensureAutoplayAudioGate } from './platform/DeviceGuard'
+import { ensureAutoplayAudioGate, isDesktopDevice } from './platform/DeviceGuard'
 import { getUserProfile } from './services/user'
 import { ensureFirestoreOnline, getFirebaseAuth } from './lib/firebase'
 import { userStore } from './services/userStore'
@@ -73,6 +73,71 @@ function showSuccessModal(message: string, onClose: () => void) {
   document.addEventListener('keydown', handleEsc);
 
   document.body.appendChild(modal);
+}
+
+// Função para mostrar modal de aviso desktop
+function showDesktopWarningModal(onClose: () => void) {
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm';
+  
+  modal.innerHTML = `
+    <div class="relative w-full max-w-[90vw] max-w-[420px] bg-white/95 rounded-[22px] shadow-[0_20px_40px_rgba(2,20,60,0.3)] overflow-hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-center p-4 border-b-2 border-[#243b78]/30 bg-[#243b78]">
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>
+          <h2 class="text-xl font-[800] text-white">AVISO</h2>
+        </div>
+      </div>
+      
+      <!-- Content -->
+      <div class="p-6 text-center">
+        <div class="text-[#0a2960] font-[600] text-lg mb-4">ESTE JOGO É PARA TELEMÓVEL</div>
+        <div class="text-[#0a2960]/70 text-sm mb-6">
+          Para teres a melhor experiência, acede a este jogo através do teu telemóvel ou tablet.
+          <br/><br/>
+          O jogo utiliza a câmara frontal do dispositivo para funcionar corretamente.
+        </div>
+        <button id="close-desktop-warning-modal" class="w-full px-6 py-3 rounded-full bg-[#243b78] text-white font-[800] text-lg shadow-[0_8px_20px_rgba(2,20,60,0.35)] border border-white/50 active:scale-[.98] transition">
+          ENTENDI
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Fechar modal
+  const closeBtn = modal.querySelector<HTMLButtonElement>('#close-desktop-warning-modal')!;
+  closeBtn.onclick = () => {
+    modal.remove();
+    onClose();
+  };
+  
+  // Fechar ao clicar fora
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      modal.remove();
+      onClose();
+    }
+  };
+
+  // ESC para fechar
+  const handleEsc = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      modal.remove();
+      document.removeEventListener('keydown', handleEsc);
+      onClose();
+    }
+  };
+  document.addEventListener('keydown', handleEsc);
+
+  document.body.appendChild(modal);
+  
+  // Focar no botão para acessibilidade
+  setTimeout(() => {
+    closeBtn.focus();
+  }, 100);
 }
 
 // Função para mostrar modal de erro personalizado
@@ -196,6 +261,13 @@ function startFlow() {
   try { BackgroundMusic.init(); } catch {}
   const home = Home(() => startGameDirect(), Object.assign(() => showHowTo(), { gotoAccount: () => showAccount() }), () => showRanking(), () => showTerms());
   mount(home);
+  
+  // Mostrar aviso se for desktop
+  if (isDesktopDevice()) {
+    showDesktopWarningModal(() => {
+      // Modal fechado - continuar normalmente
+    });
+  }
 }
 
 function showHowTo() {

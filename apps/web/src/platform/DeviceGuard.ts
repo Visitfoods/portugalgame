@@ -26,3 +26,18 @@ export function ensureAutoplayAudioGate(): void {
   document.addEventListener('click', resume, { once: true });
 }
 
+export function isMobileDevice(): boolean {
+  // Deteta se é um dispositivo móvel baseado no user agent e touch support
+  const ua = navigator.userAgent.toLowerCase();
+  const hasTouchScreen = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
+  const isSmallScreen = window.innerWidth <= 768;
+  
+  // Considera mobile se: (tem touch E user agent mobile) OU (user agent mobile) OU (tem touch E ecrã pequeno)
+  return (hasTouchScreen && isMobileUA) || isMobileUA || (hasTouchScreen && isSmallScreen);
+}
+
+export function isDesktopDevice(): boolean {
+  return !isMobileDevice();
+}
+
