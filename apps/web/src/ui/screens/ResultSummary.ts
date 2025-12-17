@@ -179,7 +179,7 @@ export function ResultSummary(score: number, onSubmit: () => void, onPlayAgain: 
   // Função para gerar texto de partilha (precisa estar antes do event delegation)
   const generateShareText = async () => {
     const title = '🏆 Alves Bandeira — 50 Anos, 50 Prémios! 🎉';
-    const shareUrl = 'https://saboresdeportugal.vercel.app/?utm_source=share&utm_medium=game&utm_campaign=abgame';
+    const shareUrl = 'https://saboresdeportugal.alvesbandeira.pt/?utm_source=share&utm_medium=game&utm_campaign=abgame';
     let handle = '';
     try {
       const { getCachedUser } = await import('../../services/auth');
