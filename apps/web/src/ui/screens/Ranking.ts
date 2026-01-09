@@ -123,26 +123,62 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
       </div>
     `).join('');
   }
-  function toUniqueByUsername(rows: { username: string; score: number }[], max = 50) {
+  function toUniqueByUsername(rows: { username?: string; uid?: string; score: number }[], max = 50) {
     const seen = new Set<string>();
     const out: RankEntry[] = [];
+    let skipped = 0;
+    let withUsername = 0;
+    let withUidOnly = 0;
+    
     for (const r of rows) {
-      const key = r.username?.toLowerCase?.() || '';
-      if (!key || seen.has(key)) continue;
+      // Usar username se disponível, senão usar uid como fallback
+      const username = r.username?.trim() || '';
+      const uid = r.uid || '';
+      const key = username ? username.toLowerCase() : (uid ? `uid:${uid}` : '');
+      
+      if (!key) {
+        skipped++;
+        continue;
+      }
+      
+      if (seen.has(key)) {
+        continue; // Já existe este jogador (duplicado)
+      }
+      
       seen.add(key);
-      out.push({ pos: out.length + 1, name: r.username, score: r.score });
+      
+      // Contar estatísticas
+      if (username) {
+        withUsername++;
+      } else if (uid) {
+        withUidOnly++;
+      }
+      
+      // Usar username se disponível, senão mostrar "Jogador" + parte do uid
+      const displayName = username || (uid ? `Jogador ${uid.slice(0, 6)}` : 'Jogador');
+      out.push({ pos: out.length + 1, name: displayName, score: r.score });
       if (out.length >= max) break;
     }
+    
+    console.log(`[Ranking] Estatísticas de deduplicação:`, {
+      total: rows.length,
+      únicos: out.length,
+      comUsername: withUsername,
+      apenasUid: withUidOnly,
+      ignorados: skipped
+    });
+    
     return out;
   }
 
   (async () => {
     try {
       // Buscar mais registos e depois deduplicar por username para ficar só o melhor de cada jogador
-      const rows = await topScores(300);
+      const rows = await topScores(1000); // Aumentado para garantir registos suficientes
       top = toUniqueByUsername(rows, 50);
       renderRows(top); // Mostra apenas top 3 por defeito
-    } catch {
+    } catch (error) {
+      console.error('[Ranking] Erro ao carregar scores iniciais:', error);
       renderRows([]);
     }
   })();
@@ -277,8 +313,13 @@ export function Ranking(onPlay: () => void, onBack?: () => void) {
     // Carregar dados completos
     (async () => {
       try {
-        const allRows = await topScores(1000); // Buscar mais registos
-        const allUnique = toUniqueByUsername(allRows, 1000);
+        console.log('[Ranking] A carregar todos os scores...');
+        // Buscar um número grande de registos para garantir que temos jogadores únicos suficientes
+        // Mesmo que muitos não tenham username, queremos mostrar todos os que têm
+        const allRows = await topScores(5000); // Aumentado para 5000 para garantir registos suficientes
+        console.log(`[Ranking] Recebidos ${allRows.length} registos do Firebase`);
+        const allUnique = toUniqueByUsername(allRows, 5000); // Permitir até 5000 jogadores únicos
+        console.log(`[Ranking] Após deduplicação: ${allUnique.length} jogadores únicos`);
         renderModalList(allUnique);
         
         // Search no modal
